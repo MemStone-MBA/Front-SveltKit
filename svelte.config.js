@@ -1,6 +1,6 @@
 import adapter from '@sveltejs/adapter-auto';
 import preprocess from 'svelte-preprocess';
-
+import {SocketServer} from './modules/socket.js'
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -8,7 +8,21 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		vite: {
+			plugins: [
+				{
+					name: 'sveltekit-socket-io',
+					configureServer(server) {
+
+						SocketServer(server)
+						//SocketIoPart
+
+						console.log('SocketIO injected');
+					}
+				}
+			]
+		}
 	}
 };
 
