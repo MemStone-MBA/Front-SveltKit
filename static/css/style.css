@@ -1,3 +1,11 @@
+:root {
+    --color-head: #2E2E2E;
+    --color-title: #FFFFFF;
+    --color-subtitle: #E7C318;
+    --color-background: #000000;
+}
+
+
 body{
     background: linear-gradient(107.56deg, #FFFFFF 0%, #FAF3B4 100%);
 }
@@ -5,6 +13,7 @@ body{
 .bg-gradient{
     background: linear-gradient(107.56deg, #FFFFFF 0%, #FAF3B4 100%);
 }
+
 
 .img-contain{
     width: 100%;
