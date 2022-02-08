@@ -13,4 +13,9 @@
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
+
+    @font-face {
+    font-family: Hamston;
+    src: url("../../static/font/Hamston.ttf");
+    }
 </style>
