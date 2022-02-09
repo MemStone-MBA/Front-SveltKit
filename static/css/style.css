@@ -3,6 +3,7 @@
     --color-title: #FFFFFF;
     --color-subtitle: #E7C318;
     --color-background: #000000;
+    
 }
 
 
@@ -21,3 +22,4 @@ body{
     background-size: contain;
     background-size: cover;
 }
+
