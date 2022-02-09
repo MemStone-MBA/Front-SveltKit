@@ -31,7 +31,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@three-ts/orbit-controls": "^1.4.7",
     "socket.io": "^4.4.1",
-    "socket.io-client": "^4.4.1"
+    "socket.io-client": "^4.4.1",
+    "three": "^0.137.5"
   }
 }
