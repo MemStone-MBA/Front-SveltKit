@@ -1,5 +1,5 @@
 <link rel='stylesheet' href='static/css/matchmaking.css'>
-<link rel='stylesheet' href='static/css/index.css'>
+
 
 <script>
 	import Friend from '../components/friendmenu.svelte';
