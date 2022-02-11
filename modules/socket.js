@@ -19,6 +19,25 @@ export function SocketServer (server) {
 				time: new Date().toLocaleString()
 			});
 		});
+
+
+
+		io.on('register',(data)=>{
+
+
+			io.emit("register-res",{})
+			io.emit("register-err",{})
+		})
+
+		io.on('connect',(data)=>{
+
+
+
+			io.emit("connect-res",{})
+			io.emit("connect-err",{})
+		})
+
+
 	});
 
 }
