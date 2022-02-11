@@ -6,15 +6,11 @@
 	var username = ""
 	var password = ""
 
-	var data_error;
 	var data_reult;
 
 	onMount(() => {
 		io.on("connect-res", res => { // Listen to the message event
 			data_reult = res;
-		})
-		io.on("connect-err", err => { // Another listener for the name:
-			data_error = err // Update the name so it can be displayed
 		})
 	})
 
@@ -42,5 +38,8 @@
         <input class="loginform" type="text" placeholder="Username" bind:value={username}>
         <input class="loginform" type="password" placeholder="Password" bind:value={password}>
         <div class="play" on:click={Login}>Se connecter</div>
+
+
+		<span>{ data_reult }</span>
     </div>
 </div>

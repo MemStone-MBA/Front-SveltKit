@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-
+import { get } from './database.js'
 
 export function SocketServer (server) {
 
@@ -7,6 +7,7 @@ export function SocketServer (server) {
 	const io = new Server(server.httpServer);
 
 	io.on('connection', (socket) => {
+		console.log("connect")
 		// Generate a random username and send it to the client to display it
 		let username = `User ${Math.round(Math.random() * 999999)}`;
 		socket.emit('name', username);
@@ -22,19 +23,20 @@ export function SocketServer (server) {
 
 
 
-		io.on('register',(data)=>{
+		socket.on('register',(data)=>{
 
 
 			io.emit("register-res",{})
 			io.emit("register-err",{})
 		})
 
-		io.on('connect',(data)=>{
+		socket.on('login',(data)=>{
 
+			console.log("login")
 
-
-			io.emit("connect-res",{})
-			io.emit("connect-err",{})
+			get("cards").then((res) => {
+				io.emit("connect-res", res)
+			})
 		})
 
 
