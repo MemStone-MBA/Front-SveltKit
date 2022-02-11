@@ -5,6 +5,10 @@
     --color-yellowmenu: #E7C318;
 }
 
+html{
+    background-color: var(--color-darkgraymenu);
+}
+
 .colorbackmenu{
     background-color: var(--color-darkgraymenu);
 }
@@ -316,20 +320,11 @@
   
   /* 3rd progress bar */
   .mask .fill {
-    clip: rect(0px, 150px, 250px, 0px);
+    clip: rect(0px, 11vh, 20vh, 0px);
     background-color: #E7C318;
   }
   
   .mask.full,
   .circle .fill {
     transform: rotate(135deg);
-  }
-  
-  @keyframes fill{
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(135deg);
-    }
   }
