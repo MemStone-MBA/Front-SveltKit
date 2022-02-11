@@ -1,8 +1,4 @@
 <link rel='stylesheet' href='static/css/index.css'>
-<script>
-	import Nav from '../components/nav.svelte';
-</script>
-
 
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-3/4 flex flex-col ">
@@ -31,12 +27,12 @@
                 </div>
             </div>
             <div class="flex flex-row footer px-4">
-                <div class="flex-1 flex flex-row items-center justify-center">
+                <div class="flex-1 flex flex-row items-center justify-center borderyellow">
                     <div class="buttonCollection mr-4">
                         Collection
                     </div>
                     <div>
-                        <img src="static/assets/deck.svg">
+                        <img src="static/assets/deck.svg" class="deckImage">
                     </div>
                 </div>
                 <div class="buttonFight p-8 flex-1">
@@ -53,7 +49,7 @@
             <div class="onefriend m-4 p-4 text-black">
                 <div class="pl-4">
                     Guillian
-                </div>
+                </div>  
             </div>
         </div>
     </div>

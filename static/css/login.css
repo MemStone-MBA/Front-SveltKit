@@ -1,0 +1,12 @@
+:root{
+    --color-titlefriend: #C4C4C4;
+    --color-lightgraymenu: #575757;
+    --color-darkgraymenu: #2E2E2E;
+    --color-yellowmenu: #E7C318;
+}
+
+.back{
+    background-color: var(--color-darkgraymenu);
+    height: 100vh;
+    max-height: 100vh;
+}

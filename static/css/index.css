@@ -2,6 +2,7 @@
     --color-titlefriend: #C4C4C4;
     --color-lightgraymenu: #575757;
     --color-darkgraymenu: #2E2E2E;
+    --color-yellowmenu: #E7C318;
 }
 
 .colorbackmenu{
@@ -63,7 +64,7 @@
 }
 
 .littleExp{
-    background: #E7C318;
+    background: var(--color-yellowmenu);
     height: 100%;
     width: 150px;
     box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
@@ -106,7 +107,7 @@
 }
 
 .buttonFight{
-    background: #E7C318;
+    background: var(--color-yellowmenu);
     box-shadow: 3px 10px 15px rgba(0, 0, 0, 0.25);
     border-radius: 5px;
 
@@ -118,8 +119,23 @@
     align-items: center;
     text-align: center;
     color: #000000;
+    margin-left: 10px;
 }
 
 .flexBetween{
     height: 100%;
+}
+
+.borderyellow{
+    border: 5px solid var(--color-yellowmenu);
+    box-sizing: border-box;
+    filter: drop-shadow(3px 10px 15px rgba(0, 0, 0, 0.25));
+    border-radius: 5px;
+    margin-right: 10px;
+    height: 100%;
+}
+
+.deckImage{
+    width: 50px;
+    height: auto;
 }
