@@ -5,6 +5,10 @@
     --color-yellowmenu: #E7C318;
 }
 
+html{
+    background-color: var(--color-darkgraymenu);
+}
+
 .colorbackmenu{
     background-color: var(--color-darkgraymenu);
 }
