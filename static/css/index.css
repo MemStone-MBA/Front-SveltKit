@@ -106,6 +106,10 @@
     color: #DBDBDB;
 }
 
+.borderyellow:hover{
+    cursor: pointer;
+}
+
 .buttonFight{
     background: var(--color-yellowmenu);
     box-shadow: 3px 10px 15px rgba(0, 0, 0, 0.25);
@@ -120,6 +124,10 @@
     text-align: center;
     color: #000000;
     margin-left: 10px;
+}
+
+.buttonFight:hover{
+    cursor: pointer;
 }
 
 .flexBetween{

@@ -37,10 +37,9 @@
     <div class='content-center w-1/3 mx-auto pt-12'>
         <img src='static/assets/memstone_logo.png' class='img-contain'>
     </div>
-    <div class="items-center w-1/2">
-        <div class="flex flex-col">
-            <input type="text" placeholder="Username">
-        </div>
-        
+    <div class="w-1/3 m-auto">
+        <input class="loginform" type="text" placeholder="Username">
+        <input class="loginform" type="text" placeholder="Password">
+        <div class="play">Se connecter</div>
     </div>
 </div>
