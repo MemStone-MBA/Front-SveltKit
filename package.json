@@ -31,6 +31,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@sveltejs/adapter-node": "^1.0.0-next.68",
     "@three-ts/orbit-controls": "^1.4.7",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",

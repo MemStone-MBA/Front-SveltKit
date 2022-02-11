@@ -28,7 +28,7 @@
          * Get request
         */
         try {
-            const res = await fetch("http://localhost:1337/cards", {
+            const res = await fetch("http://51.210.104.99:1337/cards", {
               method: "GET",
               headers: {
                  'Content-Type': 'application/json'
@@ -51,6 +51,7 @@
             <th>Name</th>
             <th>Life</th>
             <th>Damage</th>
+            <th>Cost</th>
         </tr>
 
       {#each cards as card}
@@ -58,6 +59,7 @@
             <td>{card.name}</td>
             <td>{card.life}</td>
             <td>{card.damage}</td>
+            <td>{card.cost}</td>
         </tr>
       {/each}
       </table>
