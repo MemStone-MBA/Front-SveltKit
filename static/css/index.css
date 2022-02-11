@@ -46,11 +46,115 @@
 }
 
 .profilImage{
-    height: 150px;
-    width: 150px;
+    height: 100px;
+    width: 100px;
     background-color: #bbb;
-    border-radius: 50%;
     display: inline-block;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.profil{
+    width: auto;
+    height: 80%;
+}
+
+.middleitem{
+    height: 100%;
+}
+
+.divmenu{
+    background-color: #E7C318 ;
+    box-shadow: 2px 6px 7px rgba(0, 0, 0, 0.25);
+    height: 100px;
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.itemmenu{
+    width: auto;
+    height: 80%;
+}
+
+.MMR{
+    height: 100%;
+    background: #656565;
+    width: 100%;
+}
+
+.iconpack{
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    z-index: 5;
+    animation: colorgradient 2s linear 2s infinite alternate;
+    background: radial-gradient(50% 50% at 50% 50%, #E7C318 0%, rgba(196, 196, 196, 0) 80%);
+}
+
+.packlight{
+    z-index: 10;
+    color: white;
+    height: 200px;
+    width: auto;
+    filter: invert(1);
+}
+
+@keyframes colorgradient{
+    0% {
+        opacity: 0.1;
+    }
+    100% {
+        opacity: 1;
+    }
+  }
+
+.buttonOpen{
+    cursor: pointer;
+    background: #E7C318;
+    box-shadow: 2px 6px 7px rgba(0, 0, 0, 0.25);
+    height: 80px;
+    width: 400px;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: barlow-eb;
+    text-transform: uppercase;
+}
+
+.nbpack{
+    color: #E7C318;
+}
+
+.pack{
+    color: white;
+}
+
+.txtpack{
+    font-family: barlow-eb;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 62px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+}
+
+.txtMMR{
+    font-family: barlow-eb;
+    color: white;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 38px;
+    line-height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .profilName{
@@ -77,8 +181,9 @@
 }
 
 .boxName{
-    width: 80%;
+    width: 100%;
 }
+
 
 .lvlExp{
     font-family: barlow-eb;
@@ -104,6 +209,7 @@
     align-items: center;
     text-align: center;
     color: #DBDBDB;
+    text-transform: uppercase;
 }
 
 .borderyellow:hover{
@@ -124,6 +230,7 @@
     text-align: center;
     color: #000000;
     margin-left: 10px;
+    text-transform: uppercase;
 }
 
 .buttonFight:hover{
@@ -147,3 +254,83 @@
     width: 50px;
     height: auto;
 }
+
+
+/* progress WR */
+
+
+.circle-wrap {
+    margin-top: 30px;
+    width: 250px;
+    height: 250px;
+    background: #C4C4C4;
+    border-radius: 50%;
+    border: 1px solid #cdcbd0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .circle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .circle-wrap .circle .mask,
+  .circle-wrap .circle .fill {
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    border-radius: 50%;
+  }
+  
+  .circle-wrap .circle .mask {
+    clip: rect(0px, 250px, 250px, 125px);
+  }
+  
+  /**
+  * Cercle inside (dark gray)
+  */
+  .circle-wrap .inside-circle {
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    background: #656565;
+    text-align: center;
+    color: white;
+    position: absolute;
+    z-index: 100;
+    font-weight: 700;
+    font-size: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    line-height: 30px;
+  }
+  
+  
+  /* color animation */
+  
+  /* 3rd progress bar */
+  .mask .fill {
+    clip: rect(0px, 150px, 250px, 0px);
+    background-color: #E7C318;
+  }
+  
+  .mask.full,
+  .circle .fill {
+    transform: rotate(135deg);
+  }
+  
+  @keyframes fill{
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(135deg);
+    }
+  }

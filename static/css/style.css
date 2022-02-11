@@ -6,6 +6,9 @@
     
 }
 
+*, *:before, *:after {
+    box-sizing: border-box;
+}
 
 body{
     background: linear-gradient(107.56deg, #FFFFFF 0%, #FAF3B4 100%);

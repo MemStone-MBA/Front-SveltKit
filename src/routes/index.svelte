@@ -5,12 +5,14 @@
         <div class='content-center w-1/4 mx-auto mt-6'>
             <img src='static/assets/memstone_logo.png' class='img-contain'>
         </div>
-        <div class="flex flex-1 flex-col justify-between flexBetween">
-            <div class="m-8 ml-16 flex flex-row">
-                <div class="profilImage">
-    
-                </div>
-                <div class="flex flex-col ml-8 mr-32 boxName">
+        <div class="flex flex-1 flex-col flexBetween">
+            <div class="m-4 ml-12 flex flex-row">
+                <div class="flex flex-col justify-end">
+                    <div class="profilImage">
+                        <img src="static/assets/avatar.svg" alt="" class="profil">
+                    </div>
+                </div>  
+                <div class="flex flex-col ml-8 boxName">
                     <div class="flex flex-row justify-between">
                         <div class="profilName ">
                             JustinBridou
@@ -22,6 +24,61 @@
                     <div class="bigExp mt-8">
                         <div class="littleExp">
     
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row m-4 ml-12 middleitem">
+                <div class="flex flex-col justify-around">
+                    <div class="divmenu flex">
+                        <img src="static/assets/icon_settings.svg" alt="" class="itemmenu">
+                    </div>
+                    <div class="divmenu flex">
+                        <img src="static/assets/icon_pack.svg" alt="" class="itemmenu">
+                    </div>
+                    <div class="divmenu flex">
+                        <img src="static/assets/icon_shop.svg" alt="" class="itemmenu">
+                    </div>
+                </div>
+                <div class="MMR ml-8">
+                    <div class="flex flex-row w-full h-full">
+                        <div class="flex flex-col justify-around m-auto">
+                            <div class="flex flex-row justify-center txtpack my-4">
+                                <div class="nbpack mr-2">
+                                    1
+                                </div>
+                                <div class="pack">
+                                    pack
+                                </div>
+                            </div>
+                            <div class="flex justify-center my-4">
+                                <img src="static/assets/icon_pack.svg" alt="" class="packlight">
+                                <div class="iconpack">
+                                </div>
+                            </div>
+                            <div class="buttonOpen my-4">
+                                Ouvrir
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-around m-auto">
+                            <div class="txtMMR">
+                                MMR : 1228
+                            </div>
+
+                            <div class="circle-wrap">
+                                <div class="circle">
+                                  <div class="mask full">
+                                    <div class="fill"></div>
+                                  </div>
+                                  <div class="mask half">
+                                    <div class="fill"></div>
+                                  </div>
+                                  <div class="inside-circle"> 
+                                      <span>W/L</span> 
+                                      <span>0.75</span>
+                                    </div>
+                                </div>
+                              </div>
                         </div>
                     </div>
                 </div>
@@ -49,6 +106,11 @@
             <div class="onefriend m-4 p-4 text-black">
                 <div class="pl-4">
                     Guillian
+                </div>  
+            </div>
+            <div class="onefriend m-4 p-4 text-black">
+                <div class="pl-4">
+                    Kirtsu
                 </div>  
             </div>
         </div>
