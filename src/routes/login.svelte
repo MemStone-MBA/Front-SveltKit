@@ -3,13 +3,11 @@
 	import { io } from "$lib/realtime";
 	import { onMount } from "svelte";
 
+	var username = ""
+	var password = ""
 
-	let username = ""
-	let password = ""
-
-	let data_error;
-	let data_reult;
-
+	var data_error;
+	var data_reult;
 
 	onMount(() => {
 		io.on("connect-res", res => { // Listen to the message event
@@ -27,7 +25,10 @@
 		password = password.trim()
 		if(!password) return
 
-		io.emit("connect", {username,password}) // Send the message
+		console.log(username)
+		console.log(password)
+
+		io.emit("login", {username,password}) // Send the message
 	}
 </script>
 
@@ -38,8 +39,8 @@
         <img src='static/assets/memstone_logo.png' class='img-contain'>
     </div>
     <div class="w-1/3 m-auto">
-        <input class="loginform" type="text" placeholder="Username">
-        <input class="loginform" type="text" placeholder="Password">
-        <div class="play">Se connecter</div>
+        <input class="loginform" type="text" placeholder="Username" bind:value={username}>
+        <input class="loginform" type="password" placeholder="Password" bind:value={password}>
+        <div class="play" on:click={Login}>Se connecter</div>
     </div>
 </div>
