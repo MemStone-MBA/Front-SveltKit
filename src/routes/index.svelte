@@ -7,12 +7,12 @@
         </div>
         <div class="flex flex-1 flex-col flexBetween">
             <div class="m-4 ml-12 flex flex-row">
-                <div class="flex flex-col justify-end">
+                <div class="flex flex-col justify-end buttonDetail">
                     <div class="profilImage">
                         <img src="static/assets/avatar.svg" alt="" class="profil">
                     </div>
                 </div>  
-                <div class="flex flex-col ml-8 boxName">
+                <div class="flex flex-col ml-8 boxName justify-end">
                     <div class="flex flex-row justify-between">
                         <div class="profilName ">
                             JustinBridou
@@ -21,7 +21,7 @@
                             lvl 25
                         </div>
                     </div>
-                    <div class="bigExp mt-8">
+                    <div class="bigExp">
                         <div class="littleExp">
     
                         </div>
@@ -30,13 +30,13 @@
             </div>
             <div class="flex flex-row m-4 ml-12 middleitem">
                 <div class="flex flex-col justify-around">
-                    <div class="divmenu flex">
+                    <div class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_settings.svg" alt="" class="itemmenu">
                     </div>
-                    <div class="divmenu flex">
+                    <div class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_pack.svg" alt="" class="itemmenu">
                     </div>
-                    <div class="divmenu flex">
+                    <div class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_shop.svg" alt="" class="itemmenu">
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                                 <div class="iconpack">
                                 </div>
                             </div>
-                            <div class="buttonOpen my-4">
+                            <div class="buttonOpen my-4 buttonDetail">
                                 Ouvrir
                             </div>
                         </div>
@@ -84,7 +84,7 @@
                 </div>
             </div>
             <div class="flex flex-row footer px-4">
-                <div class="flex-1 flex flex-row items-center justify-center borderyellow">
+                <div class="flex-1 flex flex-row items-center justify-center borderyellow buttonDetail">
                     <div class="buttonCollection mr-4">
                         Collection
                     </div>
@@ -92,7 +92,7 @@
                         <img src="static/assets/deck.svg" class="deckImage">
                     </div>
                 </div>
-                <div class="buttonFight p-8 flex-1">
+                <div class="buttonFight p-8 flex-1 buttonDetail">
                     Combat
                 </div>
             </div>
