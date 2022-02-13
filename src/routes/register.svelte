@@ -4,6 +4,7 @@
 	import { onMount } from "svelte";
 	import { user } from './auth.js'
 
+	var username = ""
 	var mail = ""
 	var password = ""
 
@@ -14,7 +15,7 @@
 		/**
 		 * Server response for login
 		*/
-		io.on("login-res", res => {
+		io.on("register-res", res => {
 			$user = res;
 			if(res == null) {
 				bad_credentials = true
@@ -29,8 +30,8 @@
 	/**
 	 * Can be username or mail
 	 */
-	function Login() {
-		io.emit("login", {mail,password})
+	function Register() {
+		io.emit("register", {username, mail, password})
 	}
 
 	function Logout() {
@@ -38,6 +39,7 @@
 	}
 
 	function resetInput() {
+		username = ""
 		mail = ""
 		password = ""
 	}
@@ -58,14 +60,15 @@
 		</div>
 	{:else}
 		<div class="w-1/3 m-auto mb-20">
+			<input class="loginform" type="text" placeholder="Username" bind:value={username}>
 			<input class="loginform" type="text" placeholder="Mail" bind:value={mail}>
 			<input class="loginform" type="password" placeholder="Password" bind:value={password}>
-			<div class="play" on:click={Login}>Se connecter</div>
+			<div class="play" on:click={Register}>S'enregistrer</div>
 
-			<a href="/register" class="flex justify-center mt-5 text-white text-center w-full">Créer un compte</a>
+			<a href="/login" class="flex justify-center mt-5 text-white text-center w-full">Se connecter</a>
 
 			{#if bad_credentials == true}
-				<p class="mt-5 text-rose-600 text-center">Identifiant ou mot de passe incorrect</p>
+				<p class="mt-5 text-rose-600 text-center">Email déja utilisée ou incorrect / Mot de passe incorrect</p>
 			{/if}
 		</div>
 	{/if}
