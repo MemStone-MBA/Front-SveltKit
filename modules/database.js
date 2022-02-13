@@ -23,7 +23,7 @@ export async function login(mail, password, cb) {
         /**
          * Auth OK
          */
-        cb(response.data.user)
+        me(response.data.jwt, cb)
     }).catch(error => {
         /**
          * Auth not OK
@@ -42,7 +42,7 @@ export async function register(username, mail, password, cb) {
       /**
        * Register OK
        */
-    cb(response.data.user)
+    me(response.data.jwt, cb)
   }).catch(error => {
     /**
      * Email already used / password not enought strong
@@ -65,5 +65,20 @@ export async function get(table) {
     } catch (e) {
         return e
     }
+}
+
+function me(jwt, cb) {
+
+    const config = {
+        headers: { Authorization: `Bearer ${jwt}` }
+    };
+    
+    axios.get(URL + 'users/me',
+      config
+    ).then((res) => {
+        cb(res.data)
+    }).catch((error) => {
+        cb(null)
+    });
 }
 

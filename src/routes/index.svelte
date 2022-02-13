@@ -1,6 +1,32 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
 	import Friend from '../components/friendmenu.svelte';
+    import { user } from './auth.js'
+    import { onMount } from 'svelte';
+
+    var userName = $user ? $user.username : "no user"
+    var userLevel = $user ? $user.level : 25
+    var userMMR = $user ? $user.mmr : 1080
+
+    var ratio = $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 0.5 : 0.5
+
+    ratio = Math.round(ratio * 100) / 100
+
+    var circleDeg = Math.round(180 * ratio)
+
+    onMount(() => {
+        var mask = document.querySelector('.mask.full')
+        var circleFill = document.querySelectorAll('.circle .fill')
+
+        // @ts-ignore
+        mask.style = "transform: rotate("+circleDeg+"deg)"
+
+        circleFill.forEach((element) => {
+            // @ts-ignore
+            element.style = "transform: rotate("+circleDeg+"deg)"
+        })
+    });
+
 </script>
 
 
@@ -20,10 +46,10 @@
                 <div class="flex flex-col ml-8 boxName justify-end">
                     <div class="flex flex-row justify-between">
                         <div class="profilName ">
-                            JustinBridou
+                            {userName}
                         </div>
                         <div class="lvlExp">
-                            lvl 25
+                            lvl {userLevel}
                         </div>
                     </div>
                     <div class="bigExp">
@@ -67,7 +93,7 @@
                         </div>
                         <div class="flex flex-col justify-around m-auto">
                             <div class="txtMMR">
-                                MMR : 1228
+                                MMR : {userMMR}
                             </div>
 
                             <div class="circle-wrap">
@@ -80,7 +106,7 @@
                                   </div>
                                   <div class="inside-circle"> 
                                       <span>W/L</span> 
-                                      <span>0.75</span>
+                                      <span>{ratio}</span>
                                     </div>
                                 </div>
                               </div>

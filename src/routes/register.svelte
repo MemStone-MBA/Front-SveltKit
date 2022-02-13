@@ -3,6 +3,7 @@
 	import { io } from "$lib/realtime";
 	import { onMount } from "svelte";
 	import { user } from './auth.js'
+	import { goto } from '$app/navigation';
 
 	var username = ""
 	var mail = ""
@@ -23,6 +24,8 @@
 			} else {
 				bad_credentials = false
 				resetInput()
+
+				goto("/")
 			}
 		})
 	})
