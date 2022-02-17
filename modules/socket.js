@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { get } from './database.js'
+import { get, login, register } from './database.js'
 
 export function SocketServer (server) {
 
@@ -21,27 +21,19 @@ export function SocketServer (server) {
 			});
 		});
 
-
-
-		socket.on('register',(data)=>{
-
-
-			io.emit("register-res",{})
-			io.emit("register-err",{})
-		})
-
 		socket.on('login',(data)=>{
-
-			console.log("login")
-
-			get("cards").then((res) => {
-				io.emit("connect-res", res)
+			login(data.mail, data.password, (res) => {
+				io.emit("login-res", res)
 			})
 		})
 
+		socket.on('register',(data)=>{
+			register(data.username, data.mail, data.password, (res) => {
+				io.emit("register-res", res)
+			})
+		})
 
 	});
-
 }
 
 

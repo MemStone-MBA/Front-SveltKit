@@ -11,8 +11,6 @@ html{
 
 .back{
     background-color: var(--color-darkgraymenu);
-    height: 100vh;
-    max-height: 100vh;
 }
 
 .loginform{

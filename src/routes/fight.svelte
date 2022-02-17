@@ -1,14 +1,107 @@
 <link rel='stylesheet' href='static/css/fight.css'>
-<div class="flex flex-row">
-    <div class="flex flex-col">
-        <div class="flex flex-row">
+<div class="flex flex-row backgroundsize">
+    <div class="flex flex-col  w-5/6">
+        <div class="flex flex-row EnemyDeck mb-1">
+            <div class="pioche">
+                <img src="static/assets/card_back.png" alt="" class="cardPioche">
+            </div>
+            <div class="EnemyHand p-4 pl-12 pr-16 flex flex-row">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                <img src="static/assets/card_back.png" alt="" class="EnemyCard">
+            </div>
 
         </div>
-        <div>
-            
+        <div class="tray ">
+            <div class="undertray flex flex-col">
+                <div class="EnemyTrail flex flex-row">
+                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+                </div>
+                <div class="MyTrail flex flex-row">
+                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+                </div>
+            </div>
         </div>
-        <div class="flex flex-row">
-
+        <div class="flex flex-row MyDeck mt-1">
+            <div class="pioche">
+                <img src="static/assets/card_back.png" alt="" class="cardPioche">
+            </div>
+            <div class="MyHand p-4 pl-12 pr-16 flex flex-row">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 rightContainer m-1">
+        <div class="flex flex-col h-full">
+            <div class="EnemyInfo flex-1 flex flex-col">
+                <div class="titleRightContainer">
+                    Enemy
+                </div>
+                <div class="flex-1 flex flex-row">
+                    <div class="EnemyEnergy flex flex-col">
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                    </div>
+                    <div class="EnemyHp">
+                        <div class="MaxHp">
+                            <div class="EnemyHpBar">
+                                <div class="EnemyHpTxt">
+                                    30
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="MyInfo h-full flex-1 flex flex-col">
+                <div class="titleRightContainer">
+                    Player
+                </div>
+                <div class="flex-1 flex flex-row">
+                    <div class="MyEnergy flex flex-col">
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyEmpty"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                        <div class="EnergyFull"></div>
+                    </div>
+                    <div class="MyHp">
+                        <div class="MaxHp">
+                            <div class="MyHpBar">
+                                <div class="MyHpTxt">
+                                    30
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
