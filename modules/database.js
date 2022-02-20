@@ -76,6 +76,7 @@ function me(jwt, cb) {
     axios.get(URL + 'users/me',
       config
     ).then((res) => {
+        res.data.jwt = jwt
         cb(res.data)
     }).catch((error) => {
         cb(null)

@@ -3,18 +3,21 @@
 	import Friend from '../components/friendmenu.svelte';
     import { user } from './auth.js'
     import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
+    import Loader from '../components/loader.svelte';
 
     var userName = $user ? $user.username : "no user"
     var userLevel = $user ? $user.level : 25
     var userMMR = $user ? $user.mmr : 1080
 
-    var ratio = $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 0.5 : 0.5
+    var ratio = $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5
 
     ratio = Math.round(ratio * 100) / 100
 
     var circleDeg = Math.round(180 * ratio)
 
     onMount(() => {
+
         var mask = document.querySelector('.mask.full')
         var circleFill = document.querySelectorAll('.circle .fill')
 
@@ -27,9 +30,19 @@
         })
     });
 
+    function goToCollection() {
+        goto("/collection")
+    }
+
+    function logOut() {
+        $user = null
+        window.localStorage.clear();
+        goto("/login")
+    }
+
 </script>
 
-
+<Loader></Loader>
 
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-3/4 flex flex-col ">
@@ -39,7 +52,7 @@
         <div class="flex flex-1 flex-col flexBetween">
             <div class="m-4 ml-12 flex flex-row">
                 <div class="flex flex-col justify-end buttonDetail">
-                    <div class="profilImage">
+                    <div class="profilImage" on:click={logOut}>
                         <img src="static/assets/avatar.svg" alt="" class="profil">
                     </div>
                 </div>  
@@ -115,7 +128,7 @@
                 </div>
             </div>
             <div class="flex flex-row footer px-4">
-                <div class="flex-1 flex flex-row items-center justify-center borderyellow buttonDetail">
+                <div on:click={goToCollection} class="flex-1 flex flex-row items-center justify-center borderyellow buttonDetail">
                     <div class="buttonCollection mr-4">
                         Collection
                     </div>

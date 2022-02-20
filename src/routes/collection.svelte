@@ -1,23 +1,33 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
-    import { user } from './auth.js'
-    import { onMount } from 'svelte';
     import { getCards } from './database';
-    import axios from 'axios';
+    import Loader from '../components/loader.svelte';
+    import { user } from './auth'
+    import { goto } from '$app/navigation';
 
-    const SERVER = "http://51.210.104.99:8001/"
     var cardsTitle = "Cards "
 
     var cards = []
 
-    getCards().then((resp) => {
-        cardsTitle = "Cards (" + resp.length + ")"
-        cards = resp
-    })
+    if($user) {
+        getCards($user.jwt).then((resp) => {
+            if(resp.status) {
+                return
+            }
+            cardsTitle = "Cards (" + resp.length + ")"
+            cards = resp
+        })
+    }
+
+    function goToMenu() {
+        goto('/')
+    }
 
 </script>
 
 <link rel='stylesheet' href='static/css/collection.css'>
+
+<Loader></Loader>
 
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-row ">
@@ -25,7 +35,7 @@
             <div class="text-center titleCollection m-2">Deck</div>
             <div class="gray_bg_custom flex-1 overflow-y-scroll">container cards</div>
             <div class="flex justify-center">
-                <div class="buttonSave buttonDetail p-4 m-6">Retour</div>
+                <div on:click={goToMenu} class="buttonSave buttonDetail p-4 m-6">Retour</div>
             </div>
        </div>
 

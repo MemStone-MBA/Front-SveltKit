@@ -12,6 +12,16 @@
 
 	onMount(() => {
 
+		let saveUsername = localStorage.getItem('username')
+		let savePassword = localStorage.getItem('password')
+		
+		if(savePassword && saveUsername) {
+			mail = saveUsername
+			password = savePassword
+
+			Login()
+		}
+
 		/**
 		 * Server response for login
 		*/
@@ -21,6 +31,9 @@
 				bad_credentials = true
 				resetInput()
 			} else {
+				localStorage.setItem('username', mail)
+				localStorage.setItem('password', password)
+
 				bad_credentials = false
 				resetInput()
 
@@ -54,22 +67,15 @@
         <img src='static/assets/memstone_logo.png' class='img-contain'>
     </div>
 
-	{#if $user != null}
-		<div>
-			<h1>Vous êtes déja connecté</h1>
-			<button on:click={Logout}>Se deconnecter</button>
-		</div>
-	{:else}
-		<div class="w-1/3 m-auto mb-20">
-			<input class="loginform" type="text" placeholder="Mail" bind:value={mail}>
-			<input class="loginform" type="password" placeholder="Password" bind:value={password}>
-			<div class="play" on:click={Login}>Se connecter</div>
+	<div class="w-1/3 m-auto mb-20">
+		<input class="loginform" type="text" placeholder="Mail" bind:value={mail}>
+		<input class="loginform" type="password" placeholder="Password" bind:value={password}>
+		<div class="play" on:click={Login}>Se connecter</div>
 
-			<a href="/register" class="flex justify-center mt-5 text-white text-center w-full">Créer un compte</a>
+		<a href="/register" class="flex justify-center mt-5 text-white text-center w-full">Créer un compte</a>
 
-			{#if bad_credentials == true}
-				<p class="mt-5 text-rose-600 text-center">Identifiant ou mot de passe incorrect</p>
-			{/if}
-		</div>
-	{/if}
+		{#if bad_credentials == true}
+			<p class="mt-5 text-rose-600 text-center">Identifiant ou mot de passe incorrect</p>
+		{/if}
+	</div>
 </div>
