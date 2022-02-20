@@ -1,0 +1,147 @@
+.backgroundsize {
+    height: 100vh;
+    background-color: #E7C318;
+}
+
+.rightContainer {
+    background: #575757;
+}
+
+.MyDeck,
+.EnemyDeck {
+    width: 97%;
+    margin-left: 3%;
+    height: 20%;
+}
+
+.pioche {
+    background-color: #6A6A6A;
+    width: 25%;
+}
+
+.EnemyHand,
+.MyHand {
+    background-color: #2E2E2E;
+    flex: 1;
+    overflow: hidden;
+}
+
+.tray {
+    height: 60%;
+    background-color: #575757;
+    width: 100%;
+    padding: 1%;
+    box-shadow: 0px -10px 12px rgba(0, 0, 0, 0.25), 0px 10px 12px rgba(0, 0, 0, 0.25);
+}
+
+.cardPioche {
+    transform: rotate(90deg);
+    width: 35%;
+    height: auto;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.25))
+}
+
+.EnemyCard {
+    transform: rotate(180deg);
+    width: auto;
+    height: auto;
+}
+
+.MyCard {
+    width: auto;
+    height: auto;
+}
+
+.EnemyTrail,
+.MyTrail {
+    width: 100%;
+    height: 50%;
+}
+
+.undertray {
+    background: #878787;
+    height: 100%;
+}
+
+.CardTrail {
+    width: 10%;
+    height: 80%;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 1%;
+}
+
+.titleRightContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: barlow-eb;
+    font-weight: bold;
+    Color: White;
+    font-size: 32px;
+}
+
+.EnemyEnergy,
+.MyEnergy {
+    height: 100%;
+    width: 50%;
+    padding: 5% 10% 5% 10%
+}
+
+.EnergyFull,
+.EnergyEmpty {
+    height: 8%;
+    Width: 100%;
+    margin: 5% 0 5% 0;
+}
+
+.EnergyFull {
+    background: #E7C318;
+}
+
+.EnergyEmpty {
+    background: #C4C4C4;
+}
+
+.EnemyHp,
+.MyHp {
+    height: 100%;
+    width: 50%;
+    padding: 5% 10% 5% 10%;
+}
+
+.MyHpBar,
+.EnemyHpBar {
+    background: #DA272A;
+    height: 100%;
+    width: 100%;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+}
+
+.MaxHp {
+    background: #C4C4C4;
+    height: 100%;
+    width: 100%;
+    border-radius: 12px;
+    position: relative;
+}
+
+.MyHpTxt,
+.EnemyHpTxt {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 100%;
+    font-weight: bold;
+    Color: White;
+    font-family: barlow-eb;
+    font-size: 48px;
+}
