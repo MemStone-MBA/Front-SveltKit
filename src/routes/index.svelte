@@ -34,6 +34,10 @@
         goto("/collection")
     }
 
+    function goToOpening() {
+        goto("/opening")
+    }
+
     function logOut() {
         $user = null
         window.localStorage.clear();
@@ -100,7 +104,7 @@
                                 <div class="iconpack">
                                 </div>
                             </div>
-                            <div class="buttonOpen my-4 buttonDetail">
+                            <div on:click={goToOpening} class="buttonOpen my-4 buttonDetail">
                                 Ouvrir
                             </div>
                         </div>
