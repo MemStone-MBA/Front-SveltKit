@@ -1,0 +1,104 @@
+.main_container {
+    width: 70%;
+}
+
+.title_journeyPack,
+.title_journeyCard {
+    font-family: barlow-eb;
+    font-size: 52px;
+    align-items: center;
+    text-align: center;
+    color: #DBDBDB;
+    width: 100%;
+}
+
+.journeyCard {
+    width: 50%;
+    height: auto;
+    margin: auto;
+}
+
+.price {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.textprice {
+    font-family: barlow-eb;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 43px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    color: #DBDBDB;
+}
+
+.coin {
+    width: 50px;
+    height: auto;
+}
+
+.journeyPack {
+    width: 40%;
+    height: auto;
+    margin: auto;
+    fill: white;
+}
+
+.ButtonRetour {
+    font-family: barlow-eb;
+    font-weight: 900;
+    font-size: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 10vh;
+    background: #E7C318;
+    box-shadow: 3px 10px 15px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+}
+
+.ourMoney {
+    border-radius: 5px 5px 0px 0px;
+    background-color: white;
+    color: black;
+    align-items: center;
+    justify-content: center;
+    font-family: barlow-eb;
+    font-weight: 700;
+    font-size: 48px;
+    height: 60%;
+}
+
+.euroMoney {
+    background: #E7C318;
+    color: black;
+    align-items: center;
+    justify-content: center;
+    font-family: barlow-eb;
+    font-weight: 700;
+    font-size: 48px;
+    border-radius: 0px 0px 5px 5px;
+}
+
+.playerMoney {
+    font-family: barlow-eb;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 52px;
+    display: flex;
+    align-items: center;
+    color: #DBDBDB;
+    text-align: right;
+    justify-content: right;
+    margin-bottom: 50px;
+}
+
+.Pcoin {
+    width: 75px;
+    height: auto;
+}
