@@ -1,23 +1,37 @@
 <link rel='stylesheet' href='static/css/index.css'>
-<script>
-    import { getCards } from './database';
+
+
+<script >
+    import { io } from "$lib/realtime";
     import Loader from '../components/loader.svelte';
     import { user } from './auth'
     import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
 
     var cardsTitle = "Cards "
-
     var cards = []
 
-    if($user) {
-        getCards($user.jwt).then((resp) => {
-            if(resp.status) {
-                return
-            }
-            cardsTitle = "Cards (" + resp.length + ")"
-            cards = resp
+    onMount(() => {
+
+      if($user) {
+
+        io.emit("cards-user", {jwt:$user.jwt})
+
+        io.on("cards-user", (res) => {
+          if(res.status) {
+            return
+          }
+          cardsTitle = "Cards (" + res.length + ")"
+          console.table(res)
+          console.log($user)
+          cards = res
         })
-    }
+
+      }
+    });
+
+
+
 
     function goToMenu() {
         goto('/')

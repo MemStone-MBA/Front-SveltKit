@@ -28,9 +28,12 @@
 		io.on("login-res", (res) => {
 			$user = res;
 			if(res == null) {
+				console.log(res)
 				bad_credentials = true
 				resetInput()
 			} else {
+
+
 				localStorage.setItem('username', mail)
 				localStorage.setItem('password', password)
 

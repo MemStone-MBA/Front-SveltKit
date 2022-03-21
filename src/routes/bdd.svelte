@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
-    
+
+
     let cards = [];
     let error = null
     
@@ -28,7 +29,7 @@
          * Get request
         */
         try {
-            const res = await fetch("http://51.210.104.99:1337/cards", {
+            const res = await fetch(process.env.URL+"cards", {
               method: "GET",
               headers: {
                  'Content-Type': 'application/json'

@@ -1,8 +1,11 @@
 import adapter from '@sveltejs/adapter-auto';
 import preprocess from 'svelte-preprocess';
 import {SocketServer} from './modules/socket.js'
+import { config } from 'dotenv';
+import replace from '@rollup/plugin-replace';
+
 /** @type {import('@sveltejs/kit').Config} */
-const config = {
+const configs = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
 	preprocess: preprocess(),
@@ -20,10 +23,17 @@ const config = {
 
 						console.log('SocketIO injected');
 					}
-				}
+				},
+				replace({
+					process: JSON.stringify({
+						env: {
+							...config().parsed
+						}
+					}),
+				}),
 			]
 		}
 	}
 };
 
-export default config;
+export default configs;

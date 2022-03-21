@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const parseJSON = (resp) => (resp.json ? resp.json() : resp);
 
 const checkStatus = (resp) => {
@@ -11,12 +12,9 @@ const checkStatus = (resp) => {
     });
 };
 
-const URL = "http://51.210.104.99:1337/"
-// const URL = "http://localhost:1337/"
-
 export async function login(mail, password, cb) {
 
-    axios.post(URL + 'auth/local', {
+    axios.post(process.env.URL + 'auth/local', {
         identifier: mail,
         password: password,
     }).then(response => {
@@ -34,7 +32,7 @@ export async function login(mail, password, cb) {
 
 export async function register(username, mail, password, cb) {
 
-    axios.post(URL + 'auth/local/register', {
+    axios.post(process.env.URL + 'auth/local/register', {
     username: username,
     email: mail,
     password: password,
@@ -54,7 +52,7 @@ export async function register(username, mail, password, cb) {
 
 export async function get(table) {
     try {
-        const res = await fetch(URL + table, {
+        const res = await fetch(process.env.URL + table, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json'
@@ -73,7 +71,7 @@ function me(jwt, cb) {
         headers: { Authorization: `Bearer ${jwt}` }
     };
     
-    axios.get(URL + 'users/me',
+    axios.get(process.env.URL + 'users/me',
       config
     ).then((res) => {
         res.data.jwt = jwt
@@ -82,4 +80,37 @@ function me(jwt, cb) {
         cb(null)
     });
 }
+
+
+export const getAllCards = async function(jwt) {
+
+
+
+				let conf = await process;
+   var response = axios.get(  conf.env.URL+'card', {
+
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        console.log(res)
+        return res.data
+    })
+
+    return response
+}
+
+export const getCardsByUser = async function(jwt, userId) {
+
+
+    let conf = await process;
+    var response = axios.get(  conf.env.URL+'card', {
+
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        console.log(res)
+        return res.data
+    })
+
+    return response
+}
+
 
