@@ -9,7 +9,6 @@
     import { onMount } from 'svelte';
 
     var cardsTitle = "Cards "
-    var cardsId =[]
     var cards = []
     var deck = []
 
@@ -27,16 +26,21 @@
           }
           cardsTitle = "Cards (" + res.length + ")"
           cards = res
-          console.log(cards)
         })
-
 
         io.on("cards-user", (res) => {
           if(res.status) {
             return
           }
-          cardsId = res
-          console.log(res)
+
+          let myCardsId = res.map(card => { return card.idCard})
+          cards.filter(function(card) {
+            if( myCardsId.includes(card.id))
+              card.owned = true;
+            else
+              card.owned = false;
+          });
+          cards=cards;
         })
       }
     });
@@ -95,7 +99,13 @@
                 
                 
                 {#each cards as img}
+
+                  {#if img.owned == true}
                     <div><img src="http://51.210.104.99:8001/getImage/{img.path}" class="p-2 {img.name}" on:dblclick={()=>{HandleAddCard(img)}}></div>
+                  {:else}
+                    <div><img src="http://51.210.104.99:8001/getImage/{img.path}" class="p-2 not-owned" on:dblclick={()=>{HandleAddCard(img)}}></div>
+
+                  {/if}
                 {/each}
 
             </div>

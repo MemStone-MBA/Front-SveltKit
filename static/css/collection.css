@@ -75,3 +75,8 @@
     top: -250%;
     opacity: 0.6;
 }
+
+.not-owned{
+    filter: grayscale(1);
+    pointer-events: none;
+}
