@@ -19,7 +19,7 @@
       if($user) {
         console.log($user)
         io.emit("cards", {jwt:$user.jwt})
-        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
+        //io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
         io.on("cards", (res) => {
           if(res.status) {
             return
@@ -27,6 +27,7 @@
           cardsTitle = "Cards (" + res.length + ")"
           cards = res
         })
+
 
         io.on("cards-user", (res) => {
           if(res.status) {
@@ -42,6 +43,7 @@
           });
           cards=cards;
         })
+
       }
     });
 
