@@ -17,7 +17,7 @@
       if($user) {
         console.log($user)
         io.emit("cards", {jwt:$user.jwt})
-        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
+        //io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
         io.on("cards", (res) => {
           if(res.status) {
             return
@@ -26,18 +26,14 @@
           cards = res
         })
 
-
-        io.on("cards-user", (res) => {
-          if(res.status) {
-            return
-          }
-          cardsId = res
-        })
+        // io.on("cards-user", (res) => {
+        //   if(res.status) {
+        //     return
+        //   }
+        //   cardsId = res
+        // })
       }
     });
-
-
-
 
     function goToMenu() {
         goto('/')

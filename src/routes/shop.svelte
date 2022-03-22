@@ -1,4 +1,13 @@
 <link rel='stylesheet' href='static/css/shop.css'>
+
+<script>
+import { goto } from "$app/navigation";
+
+function goToMenu() {
+    goto('/')
+}
+</script>
+
 <div class="backgroundsize colorbackmenu flex flex-row">
     <div class="main_container">
         <div class="title_journeyCard mt-8">
@@ -125,7 +134,7 @@
             </div>
         </div>
         <div class="mx-4">
-            <div class="ButtonRetour">
+            <div on:click={goToMenu} class="ButtonRetour buttonDetail">
                 Retour
             </div>
         </div>

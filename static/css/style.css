@@ -15,10 +15,12 @@
 
 body{
     background: linear-gradient(107.56deg, #FFFFFF 0%, #FAF3B4 100%);
+    background-color: #2E2E2E;
 }
 
 .bg-gradient{
-    background: linear-gradient(107.56deg, #FFFFFF 0%, #FAF3B4 100%);
+    /* background: linear-gradient(107.56deg, #FFFFFF 0%, #FAF3B4 100%); */
+    background-color: #2E2E2E;
 }
 
 

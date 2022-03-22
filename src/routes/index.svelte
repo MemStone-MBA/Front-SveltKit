@@ -38,6 +38,10 @@
         goto("/opening")
     }
 
+    function goToShop() {
+        goto("/shop")
+    }
+
     function logOut() {
         $user = null
         window.localStorage.clear();
@@ -84,7 +88,7 @@
                     <div class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_pack.svg" alt="" class="itemmenu">
                     </div>
-                    <div class="divmenu flex buttonDetail">
+                    <div on:click={goToShop} class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_shop.svg" alt="" class="itemmenu">
                     </div>
                 </div>

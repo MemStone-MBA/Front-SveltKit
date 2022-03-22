@@ -1,10 +1,9 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
-    import { getCards } from './database';
     import Loader from '../components/loader.svelte';
     import { user } from './auth'
     import { goto } from '$app/navigation';
-import { onMount } from 'svelte';
+    import { onMount } from 'svelte';
 
     function goToMenu() {
         goto('/')
