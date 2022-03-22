@@ -100,19 +100,36 @@ export const getAllCards = async function(jwt) {
 }
 
 export const getCardsByUser = async function(jwt, userId) {
-
-
-
     let conf = await process;
     var response = axios.get(  conf.env.URL+'inventory/user/' +userId, {
-
         headers: { "Authorization": "Bearer " + jwt, handler : "inventory.findUserCard"},
-
     }).then((res) => {
-
         return res.data
     })
 
+    return response
+}
+
+
+export const getDeckByUser = async function(jwt, userId) {
+    let conf = await process;
+    var response = axios.get(  conf.env.URL+'deck/user/' +userId, {
+        headers: { "Authorization": "Bearer " + jwt, handler : "deck.findUserDeck"},
+    }).then((res) => {
+        return res.data
+    })
+    return response
+}
+
+export const saveDeckByUser = async function(jwt, deck) {
+    let conf = await process;
+
+    var response = axios.put(  conf.env.URL+'deck/' +deck.id, {'listCards': deck.listCards},{
+        headers: { "Authorization": "Bearer " + jwt, handler : "deck.update"},
+    }).then((res) => {
+        console.log(res)
+        return res.data
+    })
     return response
 }
 

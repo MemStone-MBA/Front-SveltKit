@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { get, getAllCards, getCardsByUser, login, register } from './database.js';
+import { get, getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
 
 export function SocketServer (server) {
 
@@ -14,7 +14,7 @@ export function SocketServer (server) {
 
 		// Receive incoming messages and broadcast them
 		socket.on('message', (message) => {
-			io.emit('message', {
+			socket.emit('message', {
 				from: username,
 				message: message,
 				time: new Date().toLocaleString()
@@ -23,38 +23,42 @@ export function SocketServer (server) {
 
 		socket.on('login',(data)=>{
 			login(data.mail, data.password, (res) => {
-				io.emit("login-res", res)
+				socket.emit("login-res", res)
 			})
 		})
 
 		socket.on('register',(data)=>{
 			register(data.username, data.mail, data.password, (res) => {
-				io.emit("register-res", res)
+				socket.emit("register-res", res)
 			})
 		})
 
 		socket.on('cards',(data)=>{
-
-
 			getAllCards(data.jwt).then((res)=>{
-
-
-				io.emit('cards',res)
+				socket.emit('cards',res)
 			})
 		})
 
 
 		socket.on('cards-user',(data)=>{
-
-			console.log(data)
-
 			getCardsByUser(data.jwt,data.userId).then((res)=>{
-
-				console.log(res)
-
-				io.emit('cards-user',res)
+				socket.emit('cards-user',res)
 			})
 		})
+
+		socket.on('deck-user', (data) => {
+			getDeckByUser(data.jwt,data.userId).then((res)=>{
+				socket.emit('deck-user',res)
+			})
+		})
+
+		socket.on('deck-save', (data) => {
+			saveDeckByUser(data.jwt,data.deck).then((res)=>{
+				console.log(res)
+				socket.emit('deck-save',res)
+			})
+		})
+
 
 
 	});

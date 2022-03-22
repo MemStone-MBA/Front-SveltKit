@@ -9,17 +9,30 @@
     import { onMount } from 'svelte';
 
     var cardsTitle = "Cards "
+
+
     var cards = []
-    var deck = []
+    var deck;
+    var deckCards = [];
 
     var IndexDeck = 0
 
     onMount(() => {
+      bindCards()
+      bindDeck()
 
+
+
+
+
+
+    });
+
+
+    function bindCards(){
       if($user) {
-        console.log($user)
         io.emit("cards", {jwt:$user.jwt})
-        //io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
+        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
         io.on("cards", (res) => {
           if(res.status) {
             return
@@ -45,31 +58,71 @@
         })
 
       }
-    });
-
-
-    function HandleAddCard(img){
-      console.log(deck)
-      document.querySelector("."+img.name).classList.add("disableElement")
-      deck[IndexDeck] = img
-      IndexDeck++
     }
 
-    function HandleDeleteCard(img){
-      for(var i=0;i<deck.length;i++){
-        if(deck[i].id === img.id){
-          deck.splice(i,1)
-          console.log(document.querySelector("."+img.name))
-          document.querySelector("."+img.name).classList.remove("disableElement")
-          IndexDeck--
-        }
+    function bindDeck() {
+      if ($user) {
+
+        io.emit("deck-user", { jwt: $user.jwt, userId: $user.id })
+        io.on("deck-user", (res) => {
+          if (res.status) {
+            return
+          }
+
+          deck = res[0] || [];
+          deckCards = deck.listCards || [];
+          IndexDeck = deckCards.length - 1;
+          if (IndexDeck < 0 || IndexDeck == undefined)
+            IndexDeck = 0;
+
+
+          /* let myDeckCardsId = deckCards.map(card => { return card.id})
+          cards.filter(function(card) {
+            if (myDeckCardsId.includes(card.id))
+              card.inDeck = true;
+            else
+              card.inDeck = false;
+          });*/
+        })
       }
-      deck = deck
     }
 
-    function goToMenu() {
+      function saveDeck() {
+        deck.listCards = deckCards;
+        io.emit("deck-save", { jwt: $user.jwt, deck: deck })
+        io.on("deck-save", (res) => {
+          if (res.status) {
+            return
+          }
+          bindDeck()
+        })
+      }
+
+      function HandleAddCard(img) {
+
+        console.log(img)
+        document.querySelector("." + img.name).classList.add("disableElement")
+        deckCards[IndexDeck] = img
+        IndexDeck++
+        console.log(deckCards[IndexDeck])
+        console.log(IndexDeck)
+      }
+
+      function HandleDeleteCard(img) {
+        for (var i = 0; i < deckCards.length; i++) {
+          if (deckCards[i].id === img.id) {
+            deckCards.splice(i, 1)
+            document.querySelector("." + img.name).classList.remove("disableElement")
+            IndexDeck--
+          }
+        }
+        deckCards = deckCards
+      }
+
+      function goToMenu() {
         goto('/')
-    }
+      }
+
 
 </script>
 
@@ -82,7 +135,7 @@
        <div class="colorbackfriend w-1/4 mr-10 flex flex-col">
             <div class="text-center titleCollection m-2">Deck</div>
             <div class="gray_bg_custom flex-1 overflow-y-scroll">
-              {#each deck as element}
+              {#each deckCards as element}
               <div class="flex flex-row justify-between containercard my-2">
                 <img src="http://51.210.104.99:8001/getImage/{element.path}" class="backgroundimage">
                 <div class="deckcard ml-4">{element.name}</div>
@@ -112,7 +165,7 @@
 
             </div>
             <div class="flex justify-center">
-                <div class="buttonSave buttonDetail p-4 m-6">Sauvegarder</div>
+                <div on:click={saveDeck} class="buttonSave buttonDetail p-4 m-6">Sauvegarder</div>
             </div>
        </div>
     </div>
