@@ -9,24 +9,30 @@
     import { onMount } from 'svelte';
 
     var cardsTitle = "Cards "
+    var cardsId =[]
     var cards = []
 
     onMount(() => {
 
       if($user) {
+        console.log($user)
+        io.emit("cards", {jwt:$user.jwt})
+        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
+        io.on("cards", (res) => {
+          if(res.status) {
+            return
+          }
+          cardsTitle = "Cards (" + res.length + ")"
+          cards = res
+        })
 
-        io.emit("cards-user", {jwt:$user.jwt})
 
         io.on("cards-user", (res) => {
           if(res.status) {
             return
           }
-          cardsTitle = "Cards (" + res.length + ")"
-          console.table(res)
-          console.log($user)
-          cards = res
+          cardsId = res
         })
-
       }
     });
 

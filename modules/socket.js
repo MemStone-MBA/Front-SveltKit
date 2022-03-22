@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { get, getAllCards, getCards, login, register } from './database.js';
+import { get, getAllCards, getCardsByUser, login, register } from './database.js';
 
 export function SocketServer (server) {
 
@@ -33,10 +33,22 @@ export function SocketServer (server) {
 			})
 		})
 
-		socket.on('cards-user',(data)=>{
+		socket.on('cards',(data)=>{
 
 
 			getAllCards(data.jwt).then((res)=>{
+
+
+				io.emit('cards',res)
+			})
+		})
+
+
+		socket.on('cards-user',(data)=>{
+
+			console.log(data)
+
+			getCardsByUser(data.jwt,data.userId).then((res)=>{
 
 				console.log(res)
 

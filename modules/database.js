@@ -1,4 +1,5 @@
 import axios from "axios";
+import { user } from '../src/routes/auth.js';
 
 
 const parseJSON = (resp) => (resp.json ? resp.json() : resp);
@@ -91,7 +92,7 @@ export const getAllCards = async function(jwt) {
 
         headers: { "Authorization": "Bearer " + jwt}
     }).then((res) => {
-        console.log(res)
+
         return res.data
     })
 
@@ -101,12 +102,14 @@ export const getAllCards = async function(jwt) {
 export const getCardsByUser = async function(jwt, userId) {
 
 
-    let conf = await process;
-    var response = axios.get(  conf.env.URL+'card', {
 
-        headers: { "Authorization": "Bearer " + jwt}
+    let conf = await process;
+    var response = axios.get(  conf.env.URL+'inventory/user/' +userId, {
+
+        headers: { "Authorization": "Bearer " + jwt, handler : "inventory.findUserCard"},
+
     }).then((res) => {
-        console.log(res)
+
         return res.data
     })
 
