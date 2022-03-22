@@ -18,6 +18,10 @@
     margin: auto;
 }
 
+.journeyPack{
+    filter: invert(1);
+}
+
 .price {
     width: 100%;
     display: flex;

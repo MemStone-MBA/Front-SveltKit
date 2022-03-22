@@ -87,43 +87,47 @@
             </div>
         </div>
     </div>
-    <div class="flex-1 p-4 flex-col">
-        <div class="playerMoney flex flex-row">
-            200
-            <img src='static/assets/coin.svg' class='Pcoin mt-4 ml-4 mr-4'>
+    <div class="flex-1 p-4 flex flex-col justify-between">
+        <div class="flex-1 p-4 flex-col">
+            <div class="playerMoney flex flex-row">
+                200
+                <img src='static/assets/coin.svg' class='Pcoin mt-4 ml-4 mr-4'>
+            </div>
+            <div class="flex h-1/5 flex-col mb-4 bottom-0">
+                <div class="ourMoney flex flex-row  w-full">
+                    1200
+                    <img src='static/assets/coin.svg' class='coin mt-1'>
+    
+                </div>
+                <div class="flex-1 euroMoney flex flex-row w-full">
+                    9.99€
+                </div>
+            </div>
+            <div class="flex h-1/5 flex-col mb-4 transactioncontainere">
+                <div class="ourMoney flex flex-row  w-full">
+                    4000
+                    <img src='static/assets/coin.svg' class='coin mt-1'>
+    
+                </div>
+                <div class="flex-1 euroMoney flex flex-row w-full">
+                    29.99€
+                </div>
+            </div>
+            <div class="flex h-1/5 flex-col mb-4">
+                <div class="ourMoney flex flex-row  w-full">
+                    15000
+                    <img src='static/assets/coin.svg' class='coin mt-1'>
+    
+                </div>
+                <div class="flex-1 euroMoney flex flex-row w-full">
+                    99.99€
+                </div>
+            </div>
         </div>
-        <div class="flex h-1/5 flex-col mb-4 bottom-0">
-            <div class="ourMoney flex flex-row  w-full">
-                1200
-                <img src='static/assets/coin.svg' class='coin mt-1'>
-
+        <div class="mx-4">
+            <div class="ButtonRetour">
+                Retour
             </div>
-            <div class="flex-1 euroMoney flex flex-row w-full">
-                9.99€
-            </div>
-        </div>
-        <div class="flex h-1/5 flex-col mb-4 transactioncontainere">
-            <div class="ourMoney flex flex-row  w-full">
-                4000
-                <img src='static/assets/coin.svg' class='coin mt-1'>
-
-            </div>
-            <div class="flex-1 euroMoney flex flex-row w-full">
-                29.99€
-            </div>
-        </div>
-        <div class="flex h-1/5 flex-col mb-4">
-            <div class="ourMoney flex flex-row  w-full">
-                15000
-                <img src='static/assets/coin.svg' class='coin mt-1'>
-
-            </div>
-            <div class="flex-1 euroMoney flex flex-row w-full">
-                99.99€
-            </div>
-        </div>
-        <div class="ButtonRetour mt-24">
-            Retour
         </div>
     </div>
 </div>
