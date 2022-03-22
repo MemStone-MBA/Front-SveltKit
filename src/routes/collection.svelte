@@ -32,6 +32,7 @@
             return
           }
           cardsId = res
+          console.log(res)
         })
       }
     });
