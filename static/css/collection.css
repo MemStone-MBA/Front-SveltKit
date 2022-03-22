@@ -25,11 +25,53 @@
 .gray_bg_custom {
     background-color: #656565;
     max-height: 80vh;
-    padding: 20px;
+    padding: 10px;
     width: 100%;
 }
 
 .gray_bg_custom img {
     width: 15vw;
     height: auto;
+}
+
+.disableElement{
+    pointer-events: none;
+    filter: contrast(0.6);
+}
+
+.deckcard{
+    color: #2E2E2E;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.unselectcard{
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    z-index: 10;
+}
+
+.containercard{
+    background-color: #E7C318;
+    border-radius: 4px;
+    overflow-y: hidden;
+    position: relative;
+}
+
+.backgroundimage{
+    height: auto;
+    width: 100% !important;
+    z-index: 0;
+    position: absolute;
+    left: -8%;
+    top: -250%;
+    opacity: 0.6;
 }
