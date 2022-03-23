@@ -222,31 +222,7 @@
     }
 
     function bindDeck() {
-        checkUser(_=>{
-          io.emit("deck-user", { jwt: $user.jwt, userId: $user.id })
-          io.on("deck-user", (res) => {
-            if (!res.status) {
-              deck = res[0] || [];
-              //console.log(deck)
-              let myDeckCardsId = deck?.listCards.map(card => { return card.id})
-              cards.filter(function(card) {
-                if (myDeckCardsId.includes(card.id)){
-                  card.inDeck = true;
-                  refreshCards()
-                  //console.log("indeck : ", card);
-                }
-                else{
-                  card.inDeck = false;
-                  refreshCards()
-                  //console.log("not in deck : ", card);
-                }
-
-              })
-            }
-
-          })
-
-
+      checkUser(_=>{
         io.emit("deck-user", { jwt: $user.jwt, userId: $user.id }, ((res) => {
           if (res.status) {
             return
@@ -254,7 +230,7 @@
 
           deck = res[0] || [];
           //console.log(deck)
-           let myDeckCardsId = deck?.listCards.map(card => { return card.id})
+          let myDeckCardsId = deck?.listCards.map(card => { return card.id})
           cards.filter(function(card) {
             if (myDeckCardsId.includes(card.id)){
               card.inDeck = true;
