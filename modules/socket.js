@@ -54,7 +54,7 @@ export function SocketServer (server) {
 
 		socket.on('deck-save', (data) => {
 			saveDeckByUser(data.jwt,data.deck).then((res)=>{
-				console.log(res)
+				//console.log(res)
 				socket.emit('deck-save',res)
 			})
 		})

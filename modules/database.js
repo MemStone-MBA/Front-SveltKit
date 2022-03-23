@@ -127,7 +127,7 @@ export const saveDeckByUser = async function(jwt, deck) {
     var response = axios.put(  conf.env.URL+'deck/' +deck.id, {'listCards': deck.listCards},{
         headers: { "Authorization": "Bearer " + jwt, handler : "deck.update"},
     }).then((res) => {
-        console.log(res)
+        //console.log(res)
         return res.data
     })
     return response
