@@ -84,11 +84,8 @@ function me(jwt, cb) {
 
 
 export const getAllCards = async function(jwt) {
-
-
-
-				let conf = await process;
-   var response = axios.get(  conf.env.URL+'card', {
+	let conf = await process;
+    var response = axios.get(  conf.env.URL+'card', {
 
         headers: { "Authorization": "Bearer " + jwt}
     }).then((res) => {
@@ -96,6 +93,16 @@ export const getAllCards = async function(jwt) {
         return res.data
     })
 
+    return response
+}
+
+export const getCardById = async function(jwt, cardID) {
+	let conf = await process;
+    var response = axios.get(conf.env.URL+'card/' + cardID , {
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        return res.data
+    })
     return response
 }
 
