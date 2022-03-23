@@ -84,11 +84,8 @@ function me(jwt, cb) {
 
 
 export const getAllCards = async function(jwt) {
-
-
-
-				let conf = await process;
-   var response = axios.get(  conf.env.URL+'card', {
+	let conf = await process;
+    var response = axios.get(  conf.env.URL+'card', {
 
         headers: { "Authorization": "Bearer " + jwt}
     }).then((res) => {
@@ -96,6 +93,16 @@ export const getAllCards = async function(jwt) {
         return res.data
     })
 
+    return response
+}
+
+export const getCardById = async function(jwt, cardID) {
+	let conf = await process;
+    var response = axios.get(conf.env.URL+'card/' + cardID , {
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        return res.data
+    })
     return response
 }
 
@@ -125,6 +132,21 @@ export const saveDeckByUser = async function(jwt, deck) {
     let conf = await process;
 
     var response = axios.put(  conf.env.URL+'deck/' +deck.id, {'listCards': deck.listCards},{
+        headers: { "Authorization": "Bearer " + jwt, handler : "deck.update"},
+    }).then((res) => {
+        //console.log(res)
+        return res.data
+    })
+    return response
+}
+
+export const insertNewCardInventory = async function(jwt, userId, cardId) {
+    let conf = await process;
+
+    var response = axios.post(  conf.env.URL+'inventory/', {
+        'idUser':userId,
+        'idCard': cardId
+    },{
         headers: { "Authorization": "Bearer " + jwt, handler : "deck.update"},
     }).then((res) => {
         //console.log(res)

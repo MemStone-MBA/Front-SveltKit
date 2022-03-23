@@ -23,15 +23,13 @@
     import { OrbitControls } from '@three-ts/orbit-controls';
 
 
-    let cardsTitle = "Cards "
-    let cards = []
-    let deck;
+    var cards = []
+    var deck;
 
+    var cardsOwned = 0
 
     onMount(() => {
       bindCards()
-
-
 
     });
 
@@ -195,31 +193,31 @@
     }
 
     function bindCards(){
-
-      checkUser(_=>{
-        io.emit("cards", {jwt:$user.jwt})
-        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id})
-        io.on("cards", (res) => {
-          if(!res.status) {
-            cardsTitle = "Cards (" + res.length + ")"
-            cards = res
+        checkUser(_=>{
+        io.emit("cards", {jwt:$user.jwt}, ((res) => {
+          if(res.status) {
+            return
           }
-        })
+          cards = res
+        }))
 
-        io.on("cards-user", (res) => {
-          if(!res.status) {
-            let myCardsId = res.map(card => { return card.idCard})
-            cards.filter(function(card) {
-              if( myCardsId.includes(card.id))
-                card.owned = true;
-              else
-                card.owned = false;
-            });
-            refreshCards()
-            bindDeck()
+        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id}, ((res) => {
+          if(res.status) {
+            return
           }
 
-        })
+          let myCardsId = res.map(card => { return card.idCard})
+          cards.filter(function(card) {
+            if( myCardsId.includes(card.id)) {
+              card.owned = true;
+              cardsOwned ++
+            }
+            else
+              card.owned = false;
+          });
+          refreshCards()
+          bindDeck()
+        }))
       })
     }
 
@@ -243,12 +241,35 @@
                   //console.log("not in deck : ", card);
                 }
 
-              });
+              })
             }
 
           })
-        })
 
+
+        io.emit("deck-user", { jwt: $user.jwt, userId: $user.id }, ((res) => {
+          if (res.status) {
+            return
+          }
+
+          deck = res[0] || [];
+          //console.log(deck)
+           let myDeckCardsId = deck?.listCards.map(card => { return card.id})
+          cards.filter(function(card) {
+            if (myDeckCardsId.includes(card.id)){
+              card.inDeck = true;
+              refreshCards()
+              //console.log("indeck : ", card);
+            }
+            else{
+              card.inDeck = false;
+              refreshCards()
+              //console.log("not in deck : ", card);
+            }
+
+          });
+        }))
+      })
     }
 
       function saveDeck() {
@@ -262,12 +283,13 @@
         });
         deck.listCards = cardsSaved
         console.table(deck.listCards)
-        io.emit("deck-save", { jwt: $user.jwt, deck: deck })
-        io.on("deck-save", (res) => {
-          if (!res.status) {
-            bindDeck()
+
+        io.emit("deck-save", { jwt: $user.jwt, deck: deck }, ((res) => {
+          if (res.status) {
+            return
           }
-        })
+          bindDeck()
+        }))
       }
 
       function HandleAddCard(card) {
@@ -324,7 +346,7 @@
        </div>
 
        <div class="colorbackfriend flex-1 flex flex-col">
-            <div class="text-center titleCollection m-2">{ cardsTitle }</div>
+            <div class="text-center titleCollection m-2">Cards ( {cardsOwned} / {cards.length} )</div>
             <div class="gray_bg_custom flex-1 overflow-y-scroll flex flex-wrap justify-center">
                 
                 

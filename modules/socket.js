@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
-import {  getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
+
+import {  insertNewCardInventory, getCardById, getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
 
 export function SocketServer (server) {
 
@@ -33,34 +34,52 @@ export function SocketServer (server) {
 			})
 		})
 
-		socket.on('cards',(data)=>{
+		socket.on('cards',(data, cb)=>{
 			getAllCards(data.jwt).then((res)=>{
-				socket.emit('cards',res)
+				cb(res)
 			})
 		})
 
+		socket.on('getCardById',(data, cb) =>{
+			getCardById(data.jwt, data.cardId).then((res)=>{
+				cb(res)
+			})
+		})
 
-		socket.on('cards-user',(data)=>{
+		socket.on('cards-user',(data, cb)=>{
 			getCardsByUser(data.jwt,data.userId).then((res)=>{
-				socket.emit('cards-user',res)
+				cb(res)
 			})
 		})
 
-		socket.on('deck-user', (data) => {
+		socket.on('deck-user', (data, cb) => {
 			getDeckByUser(data.jwt,data.userId).then((res)=>{
-				socket.emit('deck-user',res)
+				cb(res)
 			})
 		})
 
-		socket.on('deck-save', (data) => {
+		socket.on('deck-save', (data, cb) => {
 			saveDeckByUser(data.jwt,data.deck).then((res)=>{
-				//console.log(res)
-				socket.emit('deck-save',res)
+				cb(res)
 			})
 		})
 
+		socket.on('drawNewCard', (data) => {
+			getCardsByUser(data.jwt,data.userId).then((res)=>{
+				var same = false
+				for(let card of res) {
+					if(card.idCard == data.cardId) {
+						same = true
+					}
+				}
 
-
+				if(!same) {
+					insertNewCardInventory(data.jwt, data.userId, data.cardId, ((res) => {
+						console.log("new card in inventory")
+					}))
+				}
+			})
+		})
 	});
 }
 
