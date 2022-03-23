@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { get, getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
+import {  getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
 
 export function SocketServer (server) {
 

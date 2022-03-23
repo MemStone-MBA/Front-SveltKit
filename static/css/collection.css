@@ -79,3 +79,18 @@
     filter: grayscale(1);
     pointer-events: none;
 }
+
+#world{
+    z-index: 20;
+    position: fixed;
+    background: rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+#world canvas{
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
