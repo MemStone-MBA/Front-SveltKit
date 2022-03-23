@@ -8,30 +8,30 @@
 
     var CHEST = {
         "62115ed3457d2c67b6a0dda4": 10,
+        "62115ef8457d2c67b6a0dda5": 300,
         "62115e48457d2c67b6a0dda2": 2000,
         "62115eb7457d2c67b6a0dda3": 3000,
+    }
+
+    var CHEST_EQ = {
+        "62115ed3457d2c67b6a0dda4": 1000,
+        "62115ef8457d2c67b6a0dda5": 1000,
+        "62115e48457d2c67b6a0dda2": 1000,
+        "62115eb7457d2c67b6a0dda3": 1000,
     }
 
     var drawCardController = true;
     var drawCardPath;
 
-    console.log("page")
-
     onMount(() => {
-        console.log("onmount")
         draw(CHEST, ((cardID) => {
-            io.emit('getCardById', {jwt:$user.jwt, cardId: cardID}, ((res) => {
+            io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: cardID}, ((res) => {
                 drawCardPath = res.path
                 drawCardController = false
-                console.log("dismiss")
                 dismissCard()
             }))
-        // io.on('getCardById', ((res) => {
-        //     drawCardPath = res.path
-        //     drawCardController = false
-        //     console.log("dismiss")
-        //     dismissCard()
-        // }))
+
+           io.emit('drawNewCard', {jwt:$user.jwt, userId: $user.id, cardId: cardID})
         }))
     })
 
@@ -65,7 +65,6 @@
     }
 
     function goToMenu() {
-        console.log("go to menu")
         goto('/')
     }
 
@@ -77,9 +76,8 @@
 
     function dismissCard() {
         toDisplay = setTimeout(() => {
-            console.log("remove display")
             document.querySelector('.cardContainer').classList.remove("fadeDisplay")
-        }, 4500);
+        }, 3500);
 
         toMenu = setTimeout(() => {
             goToMenu()
@@ -89,7 +87,6 @@
     onDestroy(() => {
         clearTimeout(toDisplay)
         clearTimeout(toMenu)
-        console.log("destroy")
     })
 
 </script>

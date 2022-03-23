@@ -35,7 +35,6 @@
 }
 
 .disableElement{
-    pointer-events: none;
     filter: contrast(0.6);
 }
 

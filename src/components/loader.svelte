@@ -3,7 +3,7 @@
     import { onMount } from "svelte";
     import { user, isLog } from '../routes/auth';
 
-	export let wait;
+	export let wait = false;
 
     var display = true
 

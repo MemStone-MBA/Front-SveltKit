@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { get, getCardById, getAllCards, getCardsByUser, login, register } from './database.js';
+import { get, insertNewCardInventory, getCardById, getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
 
 export function SocketServer (server) {
 
@@ -14,7 +14,7 @@ export function SocketServer (server) {
 
 		// Receive incoming messages and broadcast them
 		socket.on('message', (message) => {
-			io.emit('message', {
+			socket.emit('message', {
 				from: username,
 				message: message,
 				time: new Date().toLocaleString()
@@ -23,13 +23,13 @@ export function SocketServer (server) {
 
 		socket.on('login',(data)=>{
 			login(data.mail, data.password, (res) => {
-				io.emit("login-res", res)
+				socket.emit("login-res", res)
 			})
 		})
 
 		socket.on('register',(data)=>{
 			register(data.username, data.mail, data.password, (res) => {
-				io.emit("register-res", res)
+				socket.emit("register-res", res)
 			})
 		})
 
@@ -40,7 +40,6 @@ export function SocketServer (server) {
 		})
 
 		socket.on('getCardById',(data, cb) =>{
-			console.log(data)
 			getCardById(data.jwt, data.cardId).then((res)=>{
 				cb(res)
 			})
@@ -49,6 +48,35 @@ export function SocketServer (server) {
 		socket.on('cards-user',(data, cb)=>{
 			getCardsByUser(data.jwt,data.userId).then((res)=>{
 				cb(res)
+			})
+		})
+
+		socket.on('deck-user', (data, cb) => {
+			getDeckByUser(data.jwt,data.userId).then((res)=>{
+				cb(res)
+			})
+		})
+
+		socket.on('deck-save', (data, cb) => {
+			saveDeckByUser(data.jwt,data.deck).then((res)=>{
+				cb(res)
+			})
+		})
+
+		socket.on('drawNewCard', (data) => {
+			getCardsByUser(data.jwt,data.userId).then((res)=>{
+				var same = false
+				for(let card of res) {
+					if(card.idCard == data.cardId) {
+						same = true
+					}
+				}
+
+				if(!same) {
+					insertNewCardInventory(data.jwt, data.userId, data.cardId, ((res) => {
+						console.log("new card in inventory")
+					}))
+				}
 			})
 		})
 	});
