@@ -9,7 +9,7 @@ import {
 	login,
 	register,
 	saveDeckByUser,
-	getFriendsByUser
+	getFriendsByUser,
 } from './database.js';
 
 export function SocketServer (server) {
@@ -49,6 +49,8 @@ export function SocketServer (server) {
 				cb(res)
 			})
 		})
+
+
 
 		socket.on('cards',(data, cb)=>{
 			getAllCards(data.jwt).then((res)=>{

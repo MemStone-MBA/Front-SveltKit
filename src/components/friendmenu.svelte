@@ -3,7 +3,7 @@
     import FriendCard from './friendCard.svelte';
     import { user } from '../routes/auth.js';
     import { io } from "$lib/realtime";
-    let friends =  [ {name:"Guillian", connected:true} ,{name:"admin", connected:false}]
+    let friends =  []
 
     onMount(() => {
         GetFriends()
@@ -30,17 +30,14 @@
         checkUser(_=>{
 
             io.emit("friends-user",{ jwt: $user.jwt, userId: $user.id}, ((res)=>{
-            console.log(res)
             if(res.status) {
                 return
             }
-            
-            res.forEach(friend =>{
-                console.log(friend)
-                friends.push({name:friend.id, connected:true})
+            console.log(res)
+            res?.forEach(friend =>{
+                friends.push({name:friend.username, connected:true})
                 friends = friends
             })
-            console.log(friends)
             }))
         })
     
