@@ -1,11 +1,30 @@
 <script>
     import { onMount } from 'svelte';
+    import FriendCard from './friendCard.svelte';
+    import { user } from '../routes/auth.js';
+    import { io } from "$lib/realtime";
+    let friends =  [ {name:"Guillian", connected:true} ,{name:"admin", connected:false}]
 
     onMount(() => {
-       /* document.querySelector('.closeFriendMenu').addEventListener('click', () => {
-            document.querySelector('.friend').classList.toggle('closeFriendMenuTransition')
-        })*/
+        GetFriends()
+
+
     })
+
+    function GetFriends(){
+        io.emit("friends-user",{ jwt: $user.jwt, userId: $user.id}, ((res)=>{
+            console.log(res)
+            if(res.status) {
+                return
+            }
+            res.forEach(friend =>{
+                console.log(friend)
+                friends.push({name:friend.id, connected:true})
+                friends = friends
+            })
+            console.log(friends)
+        }))
+    }
 
     export function ToggleMenu(){
 
@@ -25,16 +44,9 @@
         Amis
     </h1>
     <div class="listfriend m-6">
-        <div class="onefriend m-4 p-4 text-black">
-            <div class="pl-4">
-                Guillian
-            </div>  
-        </div>
-        <div class="onefriend m-4 p-4 text-black">
-            <div class="pl-4">
-                Kirtsu
-            </div>  
-        </div>
+        {#each friends as friend}
+            <FriendCard bind:name={friend.name} bind:connected={friend.connected}></FriendCard>
+        {/each}
     </div>
     <div class="closeFriendMenu" on:click={()=>{ToggleMenu()}}>X</div>
 </div>
@@ -52,6 +64,8 @@
 
     .closeFriendMenu {
         position: absolute;
+        width: 25px;
+        height: 25px;
         background-color: red;
         transition: 1s all ease-in-out;
     }

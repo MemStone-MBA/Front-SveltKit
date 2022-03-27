@@ -229,7 +229,7 @@
 
 <!-- {#if !drawCardController} -->
 <div class="fixedSize">
-   <video src="./static/assets/pack_opening.mp4" class="absolute" autoplay></video>
+   <video src="./static/assets/pack_opening.mp4" class="absolute w-full h-full top-0 left-0 object-cover" autoplay></video>
    <div class="cardContainer fadeDisplay">
         <!-- <div><img src="http://51.210.104.99:8001/getImage/{drawCardPath}" ></div> -->
         <div id="fakeContainer"></div>
