@@ -27,6 +27,7 @@
 		*/
 		io.on("login-res", (res) => {
 			$user = res;
+			console.log(res)
 			if(res == null) {
 				console.log(res)
 				bad_credentials = true
@@ -49,6 +50,8 @@
 	 * Can be username or mail
 	 */
 	function Login() {
+		console.log(mail)
+		console.log(password)
 		io.emit("login", {mail,password})
 	}
 

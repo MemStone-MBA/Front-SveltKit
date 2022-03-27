@@ -202,10 +202,11 @@
         }))
 
         io.emit("cards-user", {jwt:$user.jwt, userId:$user.id}, ((res) => {
+          console.log(res)
           if(res.status) {
             return
           }
-
+          
           let myCardsId = res.map(card => { return card.idCard})
           cards.filter(function(card) {
             if( myCardsId.includes(card.id)) {
@@ -230,8 +231,9 @@
 
           deck = res[0] || [];
           //console.log(deck)
-          let myDeckCardsId = deck?.listCards.map(card => { return card.id})
-          cards.filter(function(card) {
+          if( deck?.listCards != null && deck?.listCards.length > 0 ){
+            let myDeckCardsId = deck?.listCards?.map(card => { return card.id})
+            cards.filter(function(card) {
             if (myDeckCardsId.includes(card.id)){
               card.inDeck = true;
               refreshCards()
@@ -244,6 +246,9 @@
             }
 
           });
+          }
+
+          
         }))
       })
     }
