@@ -5,11 +5,139 @@
     import { goto } from '$app/navigation';
     import { onDestroy, onMount } from 'svelte';
     import { io } from "$lib/realtime";
+    import { CanvasTexture,  Mesh,  MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene, WebGLRenderer, Group, Matrix4, Clock } from 'three';
+    import { OrbitControls } from '@three-ts/orbit-controls';
 
     var CHEST = {}
 
     var drawCardController = true;
     var drawCardPath;
+
+    //const DISPLAY_TIME = 0;
+    const DISPLAY_TIME = 3500;
+    const TOTAL_TIME = 60000;
+
+    function ShowCard(card_url){
+      document.querySelector("#world-container")?.classList.remove("hidden")
+      var card_front = card_url ?? "./static/assets/card_front.png"
+      var card_back = "./static/assets/card_back.png"
+
+      var scene,
+        camera,
+        renderer,
+        controls,
+        frontcard,
+        backcard;
+
+      init()
+      function init() {
+
+        var container = document.getElementById("world");
+        container.innerHTML = ""
+        let aspectX = (window.innerHeight / 5)*3
+        let aspectY =  (window.innerHeight / 3)*2
+        camera = new PerspectiveCamera(
+          30,
+          aspectX   /aspectY,
+          1,
+          10000
+        );
+
+        camera.position.z = 100;
+
+        scene = new Scene();
+        renderer = new WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setPixelRatio(2);
+        renderer.setSize( aspectX,aspectY);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+
+        controls.enabled = false;
+
+        controls.enableDamping = false;
+        controls.dampingFactor = 0.03;
+        controls.autoRotate = true;
+
+        let rad = 1;
+        controls.minPolarAngle = 0 + rad ; // radians
+        controls.maxPolarAngle = Math.PI - rad; // radians
+
+        controls.minAzimuthAngle = - Infinity; // radians
+        controls.maxAzimuthAngle = Infinity;
+
+        controls.enableZoom = true;
+        controls.maxDistance = 90
+        controls.minDistance = 70
+
+        controls.update();
+        container.appendChild(renderer.domElement);
+
+        cardFront();
+        cardBack();
+
+        animate();
+      }
+
+      function cardFront() {
+        var geometry = new PlaneGeometry(20, 30);
+
+        mapImage(card_front, (material) => {
+          frontcard = new Mesh(geometry, material);
+          scene.add(frontcard);
+        })
+      }
+
+      function cardBack() {
+        var geometry = new PlaneGeometry(20, 30);
+
+        mapImage(card_back, (material) => {
+          backcard = new Mesh(geometry, material);
+          backcard.rotation.set(0, Math.PI, 0);
+          backcard.position.set(0,0,0)
+          scene.add(backcard);
+        })
+      }
+
+      function mapImage(url, cb) {
+        var img = new Image
+        var canvas = document.createElement("canvas"),
+          ctx = canvas.getContext("2d")
+
+        img.crossorigin = "anonymous";
+        img.src = url;
+
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage( img, 0, 0 );
+
+          var mat=new MeshBasicMaterial();
+          mat.transparent = true;
+          mat.opacity = 1
+          mat.map = new CanvasTexture(canvas);
+
+          cb(mat)
+        }
+
+      }
+
+    // @ts-ignore
+    controls.autoRotateSpeed = 150
+
+    function animate(deltaTime) {
+        requestAnimationFrame(animate);
+
+        // decrease controls.autoRotateSpeed to 3
+        if(controls.autoRotateSpeed > 3){
+          controls.autoRotateSpeed -= 0.1
+        }
+        controls.update();
+        renderer.render(scene, camera);
+        
+      }
+      //window.addEventListener("load", init, false);
+    }
 
     onMount(() => {
 
@@ -21,7 +149,6 @@
           CHEST[card.id] = card.drop_rate*100;
         })
 
-
         draw(CHEST, ((cardID) => {
 
           console.log(cardID)
@@ -29,6 +156,7 @@
           io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: cardID}, ((res) => {
             drawCardPath = res.path
             drawCardController = false
+            ShowCard("./static/assets/"+res.path)
             dismissCard()
           }))
 
@@ -81,11 +209,11 @@
     function dismissCard() {
         toDisplay = setTimeout(() => {
             document.querySelector('.cardContainer').classList.remove("fadeDisplay")
-        }, 3500);
+        }, DISPLAY_TIME);
 
         toMenu = setTimeout(() => {
             goToMenu()
-        }, 60000);
+        }, TOTAL_TIME);
     }
 
     onDestroy(() => {
@@ -99,18 +227,20 @@
 
 <Loader wait={drawCardController}></Loader>
 
-{#if !drawCardController}
+<!-- {#if !drawCardController} -->
 <div class="fixedSize">
    <video src="./static/assets/pack_opening.mp4" class="absolute" autoplay></video>
    <div class="cardContainer fadeDisplay">
-        <div><img src="http://51.210.104.99:8001/getImage/{drawCardPath}" ></div>
+        <!-- <div><img src="http://51.210.104.99:8001/getImage/{drawCardPath}" ></div> -->
+        <div id="fakeContainer"></div>
+        <div id="world" ></div>
 
         <div class="flex justify-center">
             <div on:click={goToMenu} disabled={!drawCardController} class="buttonSave buttonDetail p-4 m-6">Valider</div>
         </div>
    </div>
 </div>
-{/if}
+<!-- {/if} -->
 
 <style>
     .fixedSize {
