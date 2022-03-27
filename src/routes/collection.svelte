@@ -199,6 +199,7 @@
 
 
     function checkUser(callback){
+     
       if($user != null && typeof $user === 'object' ){
         if (callback != null && typeof callback === "function"){
           callback()

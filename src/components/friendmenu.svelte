@@ -11,19 +11,39 @@
 
     })
 
+    function checkUser(callback){
+       
+      if($user != null && typeof $user === 'object' ){
+        if (callback != null && typeof callback === "function"){
+          callback()
+        }else{
+          console.error("Missing callback function")
+        }
+      }else{
+        console.error("Missing User")
+      
+      }
+    }
+
+
     function GetFriends(){
-        io.emit("friends-user",{ jwt: $user.jwt, userId: $user.id}, ((res)=>{
+        checkUser(_=>{
+
+            io.emit("friends-user",{ jwt: $user.jwt, userId: $user.id}, ((res)=>{
             console.log(res)
             if(res.status) {
                 return
             }
+            
             res.forEach(friend =>{
                 console.log(friend)
                 friends.push({name:friend.id, connected:true})
                 friends = friends
             })
             console.log(friends)
-        }))
+            }))
+        })
+    
     }
 
     export function ToggleMenu(){

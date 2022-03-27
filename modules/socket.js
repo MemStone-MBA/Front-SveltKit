@@ -64,7 +64,6 @@ export function SocketServer (server) {
 
 		socket.on('cards-user',(data, cb)=>{
 			getCardsByUser(data.jwt,data.userId).then((res)=>{
-				console.log(res)
 				cb(res)
 			})
 		})
@@ -99,5 +98,3 @@ export function SocketServer (server) {
 		})
 	});
 }
-
-
