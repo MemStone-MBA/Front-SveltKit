@@ -32,6 +32,7 @@
     function HideCard(){
       let world = document.querySelector("#world")
       world.addEventListener('click', function( event ) {
+        // @ts-ignore
         if (event.target.tagName != "CANVAS") {
           document.querySelector("#world-container")?.classList.add("hidden")
           cardShowed = false
@@ -92,6 +93,7 @@
         camera.position.z = 100;
 
         scene = new Scene();
+        // @ts-ignore
         renderer = new WebGLRenderer({ antialias: true, autoSize: true, alpha: true });
 
         renderer.setPixelRatio(2);
@@ -152,7 +154,7 @@
         var canvas = document.createElement("canvas"),
           ctx = canvas.getContext("2d")
 
-        img.crossorigin = "anonymous";
+        img.crossOrigin = "anonymous";
         img.src = url;
 
         img.onload = function() {
@@ -169,24 +171,9 @@
         }
 
       }
-      var modelgroup = new Group();
-
-      var matrix = new Matrix4();
-      var period = 5;
-      var clock = new Clock();
-
-      function updateDraw(deltaTime) {
-        //modelgroup.rotation.set(-camera.rotation._x, -camera.rotation._y, 0);
-        /* if (options.isanimate) {
-					 matrix.makeRotationY((clock.getDelta() * 0.7 * Math.PI) / period);
-					 camera.position.applyMatrix4(matrix);
-					 camera.lookAt(frontcard.position);
-				 }*/
-      }
 
       function animate(deltaTime) {
         requestAnimationFrame(animate);
-        updateDraw(deltaTime);
         controls.update();
         renderer.render(scene, camera);
       }
@@ -197,6 +184,7 @@
 
 
     function checkUser(callback){
+     
       if($user != null && typeof $user === 'object' ){
         if (callback != null && typeof callback === "function"){
           callback()
@@ -253,8 +241,9 @@
 
           deck = res[0] || [];
           //console.log(deck)
-          let myDeckCardsId = deck?.listCards.map(card => { return card.id})
-          cards.filter(function(card) {
+          if( deck?.listCards != null && deck?.listCards.length > 0 ){
+            let myDeckCardsId = deck?.listCards?.map(card => { return card.id})
+            cards.filter(function(card) {
             if (myDeckCardsId.includes(card.id)){
               card.inDeck = true;
               refreshCards()
@@ -267,6 +256,9 @@
             }
 
           });
+          }
+
+          
         }))
       })
     }
@@ -334,7 +326,7 @@
               {#each cards as card}
                 {#if card.inDeck == true}
                   <div class="flex flex-row justify-between containercard my-2">
-                    <img src="./static/assets/{card.path}" class="backgroundimage">
+                    <img src="http://51.210.104.99:8001/getImage/{card.path}" class="backgroundimage">
                     <div class="deckcard ml-4">{card.name}</div>
                     <div class="unselectcard px-4 py-2" on:click={()=>{HandleDeleteCard(card)}}>X</div>
                   </div>
@@ -357,12 +349,12 @@
                   <div>
                   {#if card.owned == true}
                     {#if card.inDeck == true}
-                      <img src="./static/assets/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
+                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
                     {:else}
-                      <img src="./static/assets/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
+                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
                     {/if}
                   {:else}
-                    <img src="./static/assets/{card.path}" class="p-2 not-owned" >
+                    <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 not-owned" >
 
                   {/if}
                   </div>

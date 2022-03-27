@@ -21,15 +21,20 @@
 
     onMount(() => {
 
-        var mask = document.querySelector('.mask.full')
+        var mask = document.querySelector('.mask .full')
         var circleFill = document.querySelectorAll('.circle .fill')
 
-        // @ts-ignore
-        mask.style = "transform: rotate("+circleDeg+"deg)"
+       
+        
+        if(mask !== null)
+            // @ts-ignore
+            mask.style = "transform: rotate("+circleDeg+"deg)"
 
         circleFill.forEach((element) => {
-            // @ts-ignore
-            element.style = "transform: rotate("+circleDeg+"deg)"
+            
+            if(element !== null)
+                // @ts-ignore
+                element.style = "transform: rotate("+circleDeg+"deg)"
         })
     });
 

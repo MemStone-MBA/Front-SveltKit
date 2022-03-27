@@ -123,14 +123,14 @@
       }
 
     // @ts-ignore
-    controls.autoRotateSpeed = 150
+    controls.autoRotateSpeed = 75
 
     function animate(deltaTime) {
         requestAnimationFrame(animate);
 
         // decrease controls.autoRotateSpeed to 3
         if(controls.autoRotateSpeed > 3){
-          controls.autoRotateSpeed -= 0.1
+          controls.autoRotateSpeed -= 0.05
         }
         controls.update();
         renderer.render(scene, camera);

@@ -15,6 +15,7 @@ const checkStatus = (resp) => {
 
 export async function login(mail, password, cb) {
 
+    
     axios.post(process.env.URL + 'auth/local', {
         identifier: mail,
         password: password,
@@ -22,6 +23,7 @@ export async function login(mail, password, cb) {
         /**
          * Auth OK
          */
+         
         me(response.data.jwt, cb)
     }).catch(error => {
         /**
