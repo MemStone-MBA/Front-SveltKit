@@ -1,6 +1,16 @@
 import { Server } from 'socket.io';
 
-import {  insertNewCardInventory, getCardById, getAllCards, getCardsByUser, getDeckByUser, login, register, saveDeckByUser } from './database.js';
+import {
+	insertNewCardInventory,
+	getCardById,
+	getAllCards,
+	getCardsByUser,
+	getDeckByUser,
+	login,
+	register,
+	saveDeckByUser,
+	getFriendsByUser
+} from './database.js';
 
 export function SocketServer (server) {
 
@@ -31,6 +41,12 @@ export function SocketServer (server) {
 		socket.on('register',(data)=>{
 			register(data.username, data.mail, data.password, (res) => {
 				socket.emit("register-res", res)
+			})
+		})
+
+		socket.on('friends-user', (data,cb) => {
+			getFriendsByUser(data.jwt,data.userId).then((res)=>{
+				cb(res)
 			})
 		})
 

@@ -7,38 +7,64 @@
     import { user } from './auth'
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
-    import {
-      CanvasTexture,
-      Mesh,
-      MeshBasicMaterial,
-      OrthographicCamera,
-      PerspectiveCamera,
-      PlaneGeometry,
-      Scene,
-      WebGLRenderer,
-      Group,
-      Matrix4,
-      Clock
-    } from 'three';
+    import { CanvasTexture,  Mesh,  MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene, WebGLRenderer, Group, Matrix4, Clock } from 'three';
     import { OrbitControls } from '@three-ts/orbit-controls';
 
-
+    //All existing cards
     var cards = []
+    //User Deck
     var deck;
 
+    //Cards showing
+    var mouseClicked;
+    var mouseCount=0;
+    var cardShowed = false;
+
+    //Title
     var cardsOwned = 0
 
     onMount(() => {
       bindCards()
-
+      HideCard()
     });
 
 
+    function HideCard(){
+      let world = document.querySelector("#world")
+      world.addEventListener('click', function( event ) {
+        // @ts-ignore
+        if (event.target.tagName != "CANVAS") {
+          document.querySelector("#world-container")?.classList.add("hidden")
+          cardShowed = false
+        }
+      });
+
+    }
+
+    function MouseDown(cardpath){
+      mouseClicked = true;
+      mouseCount++;
+      let promise = new Promise((resolve , reject) => {
+        let actualCount = mouseCount;
+          setTimeout(function(){
+            if (mouseClicked == true && cardShowed == false && actualCount == mouseCount)
+              resolve();
+            else
+              reject()
+          },1000)
+      });
+      promise.then(res => {ShowCard(cardpath)})
+    }
+
+    function MouseUp(){
+      mouseClicked = false
+    }
 
     function ShowCard(card_url){
-      console.log(card_url)
+      document.querySelector("#world-container")?.classList.remove("hidden")
       var card_front = card_url ?? "./static/assets/card_front.png"
       var card_back = "./static/assets/card_back.png"
+      cardShowed = true;
 
 
       var scene,
@@ -48,36 +74,30 @@
         frontcard,
         backcard;
 
-      var options = {
-        isanimate: true,
-      };
-
-// var gui = new dat.GUI();
-// var isanim = gui.addFolder("Animate");
-// isanim.add(options, "isanimate").name("Animate");
-// isanim.open();
-
-// gui.close()
       init()
       function init() {
 
 
 
         var container = document.getElementById("world");
-
+        container.innerHTML = ""
+        let aspectX = (window.innerHeight / 5)*3
+        let aspectY =  (window.innerHeight / 3) *3
         camera = new PerspectiveCamera(
           30,
-          1301 / 2 / window.innerHeight,
+          aspectX   /aspectY,
           1,
           10000
         );
+
         camera.position.z = 100;
 
         scene = new Scene();
+        // @ts-ignore
         renderer = new WebGLRenderer({ antialias: true, autoSize: true, alpha: true });
 
         renderer.setPixelRatio(2);
-        renderer.setSize( window.innerHeight, window.innerHeight);
+        renderer.setSize( aspectX,aspectY);
 
         controls = new OrbitControls(camera, renderer.domElement);
 
@@ -97,11 +117,11 @@
         controls.maxAzimuthAngle = Infinity;
 
         controls.enableZoom = true;
-        controls.maxDistance = 150
+        controls.maxDistance = 90
         controls.minDistance = 70
 
         controls.update();
-        document.getElementById("world").appendChild(renderer.domElement);
+        container.appendChild(renderer.domElement);
 
         cardFront();
         cardBack();
@@ -124,6 +144,7 @@
         mapImage(card_back, (material) => {
           backcard = new Mesh(geometry, material);
           backcard.rotation.set(0, Math.PI, 0);
+          backcard.position.set(0,0,0)
           scene.add(backcard);
         })
       }
@@ -133,7 +154,7 @@
         var canvas = document.createElement("canvas"),
           ctx = canvas.getContext("2d")
 
-        img.crossorigin = "anonymous";
+        img.crossOrigin = "anonymous";
         img.src = url;
 
         img.onload = function() {
@@ -142,6 +163,8 @@
           ctx.drawImage( img, 0, 0 );
 
           var mat=new MeshBasicMaterial();
+          mat.transparent = true;
+          mat.opacity = 1
           mat.map = new CanvasTexture(canvas);
 
           cb(mat)
@@ -199,26 +222,27 @@
             return
           }
           cards = res
+
+          io.emit("cards-user", {jwt:$user.jwt, userId:$user.id}, ((res) => {
+            if(res.status) {
+              return
+            }
+
+            let myCardsId = res.map(card => { return card.idCard})
+            cards.filter(function(card) {
+              if( myCardsId.includes(card.id)) {
+                card.owned = true;
+                cardsOwned ++
+              }
+              else
+                card.owned = false;
+            });
+            refreshCards()
+            bindDeck()
+          }))
         }))
 
-        io.emit("cards-user", {jwt:$user.jwt, userId:$user.id}, ((res) => {
-          console.log(res)
-          if(res.status) {
-            return
-          }
-          
-          let myCardsId = res.map(card => { return card.idCard})
-          cards.filter(function(card) {
-            if( myCardsId.includes(card.id)) {
-              card.owned = true;
-              cardsOwned ++
-            }
-            else
-              card.owned = false;
-          });
-          refreshCards()
-          bindDeck()
-        }))
+
       })
     }
 
@@ -301,7 +325,11 @@
 <link rel='stylesheet' href='static/css/collection.css'>
 
 <Loader></Loader>
-<div style='' class=' overflow-hidden w-full h-full' id="world"></div>
+<div id="world-container" class='world-container hidden w-full h-full' >
+  <div id="world-bg" class=' w-full h-full'  ></div>
+  <div  class='w-full h-full' id="world" ></div>
+</div>
+
 
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-row ">
@@ -314,7 +342,7 @@
                   <div class="flex flex-row justify-between containercard my-2">
                     <img src="./static/assets/{card.path}" class="backgroundimage">
                     <div class="deckcard ml-4">{card.name}</div>
-                    <div class="unselectcard px-4 py-2" on:dblclick={()=>{HandleDeleteCard(card)}}>X</div>
+                    <div class="unselectcard px-4 py-2" on:click={()=>{HandleDeleteCard(card)}}>X</div>
                   </div>
                 {/if}
 
@@ -335,12 +363,12 @@
                   <div>
                   {#if card.owned == true}
                     {#if card.inDeck == true}
-                      <img src="./static/assets/{card.path}" class="p-2 {card.name} disableElement" on:click={()=> ShowCard("./static/assets/"+card.path)} on:dblclick={()=>{HandleDeleteCard(card)}}>
+                      <img src="./static/assets/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
                     {:else}
-                      <img src="./static/assets/{card.path}" class="p-2 {card.name}" on:click={()=> ShowCard("./static/assets/"+card.path)} on:dblclick={()=>{HandleAddCard(card)}}>
+                      <img src="./static/assets/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
                     {/if}
                   {:else}
-                    <img src="./static/assets/{card.path}" class="p-2 not-owned"  on:dblclick={()=>{HandleAddCard(card)}}>
+                    <img src="./static/assets/{card.path}" class="p-2 not-owned" >
 
                   {/if}
                   </div>

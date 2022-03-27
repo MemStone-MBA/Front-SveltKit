@@ -6,33 +6,37 @@
     import { onDestroy, onMount } from 'svelte';
     import { io } from "$lib/realtime";
 
-    var CHEST = {
-        "62115ed3457d2c67b6a0dda4": 10,
-        "62115ef8457d2c67b6a0dda5": 300,
-        "62115e48457d2c67b6a0dda2": 2000,
-        "62115eb7457d2c67b6a0dda3": 3000,
-    }
-
-    var CHEST_EQ = {
-        "62115ed3457d2c67b6a0dda4": 1000,
-        "62115ef8457d2c67b6a0dda5": 1000,
-        "62115e48457d2c67b6a0dda2": 1000,
-        "62115eb7457d2c67b6a0dda3": 1000,
-    }
+    var CHEST = {}
 
     var drawCardController = true;
     var drawCardPath;
 
     onMount(() => {
-        draw(CHEST, ((cardID) => {
-            io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: cardID}, ((res) => {
-                drawCardPath = res.path
-                drawCardController = false
-                dismissCard()
-            }))
 
-           io.emit('drawNewCard', {jwt:$user.jwt, userId: $user.id, cardId: cardID})
+      io.emit("cards", {jwt:$user.jwt}, ((res) => {
+        if(res.status) {
+          return
+        }
+        res?.forEach(card => {
+          CHEST[card.id] = card.drop_rate*100;
+        })
+
+
+        draw(CHEST, ((cardID) => {
+
+          console.log(cardID)
+
+          io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: cardID}, ((res) => {
+            drawCardPath = res.path
+            drawCardController = false
+            dismissCard()
+          }))
+
+          io.emit('drawNewCard', {jwt:$user.jwt, userId: $user.id, cardId: cardID})
         }))
+      }))
+
+
     })
 
     function draw(chest, cb) {
@@ -97,7 +101,7 @@
 
 {#if !drawCardController}
 <div class="fixedSize">
-   <video src="./static/assets/pack_opening.mp4" class="absolute" autoplay></video>
+   <video src="./static/assets/pack_opening.mp4" class="absolute w-full h-full top-0 left-0 object-cover" autoplay></video>
    <div class="cardContainer fadeDisplay">
         <div><img src="http://51.210.104.99:8001/getImage/{drawCardPath}" ></div>
 

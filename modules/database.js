@@ -130,6 +130,17 @@ export const getDeckByUser = async function(jwt, userId) {
     return response
 }
 
+export const getFriendsByUser = async function(jwt, userId) {
+    let conf = await process;
+    var response = axios.get(  conf.env.URL+'users-friends/user/' +userId, {
+        headers: { "Authorization": "Bearer " + jwt, handler : "users-friend.findUserFriends"},
+    }).then((res) => {
+        return res.data
+    })
+    return response
+}
+
+
 export const saveDeckByUser = async function(jwt, deck) {
     let conf = await process;
 
@@ -141,6 +152,7 @@ export const saveDeckByUser = async function(jwt, deck) {
     })
     return response
 }
+
 
 export const insertNewCardInventory = async function(jwt, userId, cardId) {
     let conf = await process;

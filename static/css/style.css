@@ -126,3 +126,6 @@ body{
       opacity: 0;
     }
   }
+.friend-open{
+    transform: translateX(0%) !important;
+}

@@ -1,10 +1,13 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
-	import Friend from '../components/friendmenu.svelte';
+	  import Friend from '../components/friendmenu.svelte';
     import { user } from './auth.js'
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import Loader from '../components/loader.svelte';
+    let friendActive;
+
+
 
     var userName = $user ? $user.username : "no user"
     var userLevel = $user ? $user.level : 25
@@ -30,6 +33,15 @@
         })
     });
 
+    function showFriends(){
+        let friendMenu = document.querySelector('.friend')
+        console.log(friendMenu)
+        if (friendMenu.classList.contains("friend-open"))
+            friendMenu.classList.remove("friend-open")
+        else
+            friendMenu.classList.add("friend-open")
+    }
+
     function goToCollection() {
         goto("/collection")
     }
@@ -52,8 +64,10 @@
 
 <Loader></Loader>
 
+
+
 <div class="flex flex-row backgroundsize">
-    <div class="colorbackmenu w-3/4 flex flex-col ">
+    <div class="colorbackmenu w-full flex flex-col ">
         <div class='content-center w-1/4 mx-auto mt-6'>
             <img src='static/assets/memstone_logo.png' class='img-contain'>
         </div>
@@ -150,6 +164,10 @@
             </div>
         </div>
     </div>
-    <Friend></Friend>
+
+    <div on:click={showFriends} class="absolute divmenu top-0.5 right-0.5">
+        <img src="static/assets/icon_friend.png" alt="" class="itemmenu">
+    </div>
 </div>
+<Friend ></Friend>
 
