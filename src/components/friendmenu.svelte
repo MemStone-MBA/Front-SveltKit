@@ -54,7 +54,7 @@
 
 </script>
 
-<div class="colorbackfriend w-1/4 text-2xl friend h-full z-40">
+<div id="friend-container" class="colorbackfriend w-1/4 text-2xl friend h-full z-40 ">
     <h1 class="justify-content p-6 pl-0 ml-8 uppercase titlefriend">
         Amis
     </h1>

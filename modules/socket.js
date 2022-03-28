@@ -113,20 +113,23 @@ export function SocketServer (server) {
 			}
 		})
 
-		socket.on('matchmakingFriend', (user,userFriend) => {
+		socket.on('matchmakingFriend', (userId,userFriendId) => {
 
-			if(matchMakingSearch[user.id] == null && matchMakingSearch[userFriend.id] == null ) {
-				let idPlayer = user.id;
-				let idFriend = userFriend.id;
-				matchMakingSearch[user.id] = {
-					idPlayer :{
+			if(matchMakingSearch[userId] == null && matchMakingSearch[userFriendId] == null ) {
+		
+				matchMakingSearch[userId] = {
+					userId :{
 						"waiting":true
 					},
-					idFriend : {
+					userFriendId : {
 						"waiting":false
 					}
 				}
-				sockets[userFriend.id].emit('matchmakingFriendWait', {userId: user})
+
+					console.log(matchMakingSearch[userId])
+				console.log(sockets[userFriendId] )
+				if(sockets[userFriendId] !== undefined)
+					sockets[userFriendId].emit('matchmakingFriendWait', {userId: user})
 			}
 		})
 
