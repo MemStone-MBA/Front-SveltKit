@@ -38,15 +38,6 @@
         })
     });
 
-    function showFriends(){
-        let friendMenu = document.querySelector('.friend')
-        console.log(friendMenu)
-        if (friendMenu.classList.contains("friend-open"))
-            friendMenu.classList.remove("friend-open")
-        else
-            friendMenu.classList.add("friend-open")
-    }
-
     function goToCollection() {
         goto("/collection")
     }
@@ -174,9 +165,9 @@
         </div>
     </div>
 
-    <div on:click={showFriends} class="absolute showFriends divmenu buttonDetail top-0.5 right-0.5">
+    <!-- <div on:click={showFriends} class="absolute showFriends divmenu buttonDetail top-0.5 right-0.5">
         <img src="static/assets/icon_friend.png" alt="" class="itemmenu">
-    </div>
+    </div> -->
 </div>
 <Friend ></Friend>
 
