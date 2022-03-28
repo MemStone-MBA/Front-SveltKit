@@ -113,7 +113,7 @@ export function SocketServer (server) {
 					sockets[user.id].emit('matchmakingSearch', {actualUser: user, selectedUser: selectedPlayer})
 
 					for(let i = 0; i < matchMakingSearch.length; i++) {
-						if(matchMakingSearch[i] == selectedPlayer.id) {
+						if(matchMakingSearch[i].id == selectedPlayer.id) {
 							matchMakingSearch.splice(i, 1)
 						}
 					}
