@@ -35,7 +35,7 @@
             }
             console.log(res)
             res?.forEach(friend =>{
-                friends.push({name:friend.username, connected:true})
+                friends.push({name:friend.username, connected:true, friendId:friend.id})
                 friends = friends
             })
             }))
@@ -62,7 +62,7 @@
     </h1>
     <div class="listfriend m-6">
         {#each friends as friend}
-            <FriendCard bind:name={friend.name} bind:connected={friend.connected}></FriendCard>
+            <FriendCard bind:name={friend.name} bind:connected={friend.connected} bind:friendId={friend.friendId} ></FriendCard>
         {/each}
     </div>
     <div class="closeFriendMenu" on:click={()=>{ToggleMenu()}}>X</div>

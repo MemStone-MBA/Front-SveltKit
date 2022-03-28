@@ -3,10 +3,15 @@
 
 	export let name
 	export let connected
+	export let friendId
+
+	function friendClicked(){
+		console.log(friendId);
+	}
 
 </script>
 
-<div class="onefriend m-4 p-4 text-black relative">
+<div on:click={friendClicked } class="onefriend m-4 p-4 text-black relative">
 	<div class="pl-4 overflow-hidden">
 		{name} <div class="pastille {connected === true ? 'connected' : 'disconnected'} "></div>
 	</div>

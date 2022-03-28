@@ -16,22 +16,12 @@ export function SocketServer (server) {
 
 	const io = new Server(server.httpServer);
 	const matchMakingSearch = [];
+	const matchMakingFriend = [];
 	const sockets = []
 
 	io.on('connection', (socket) => {
-		console.log("connect")
-		// Generate a random username and send it to the client to display it
-		let username = `User ${Math.round(Math.random() * 999999)}`;
-		socket.emit('name', username);
+		console.log("connect : " , socket.id)
 
-		// Receive incoming messages and broadcast them
-		socket.on('message', (message) => {
-			socket.emit('message', {
-				from: username,
-				message: message,
-				time: new Date().toLocaleString()
-			});
-		});
 
 		socket.on('login',(data)=>{
 			login(data.mail, data.password, (res) => {
@@ -120,6 +110,23 @@ export function SocketServer (server) {
 				}
 			} else {
 				matchMakingSearch.push(user)
+			}
+		})
+
+		socket.on('matchmakingFriend', (user,userFriend) => {
+
+			if(matchMakingSearch[user.id] == null && matchMakingSearch[userFriend.id] == null ) {
+				let idPlayer = user.id;
+				let idFriend = userFriend.id;
+				matchMakingSearch[user.id] = {
+					idPlayer :{
+						"waiting":true
+					},
+					idFriend : {
+						"waiting":false
+					}
+				}
+				sockets[userFriend.id].emit('matchmakingFriendWait', {userId: user})
 			}
 		})
 
