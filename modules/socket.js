@@ -14,10 +14,9 @@ import {
 
 export function SocketServer (server) {
 
-
 	const io = new Server(server.httpServer);
-
 	const matchMakingSearch = [];
+	const sockets = []
 
 	io.on('connection', (socket) => {
 		console.log("connect")
@@ -36,6 +35,9 @@ export function SocketServer (server) {
 
 		socket.on('login',(data)=>{
 			login(data.mail, data.password, (res) => {
+				if(res.id) {
+					sockets[res.id] = socket;
+				}
 				socket.emit("login-res", res)
 			})
 		})
@@ -99,20 +101,33 @@ export function SocketServer (server) {
 			})
 		})
 
-		socket.on('matchmakingSearch', (data) => {
+		socket.on('matchmakingSearch', (user) => {
 
 			if(matchMakingSearch.length > 0) {
 				var selectedPlayer = matchMakingSearch[matchMakingSearch.length - 1]
 				matchMakingSearch.splice(matchMakingSearch.length - 1, 1);
 
+				if(selectedPlayer.id != user.id) {
 
+					sockets[selectedPlayer.id].emit('matchmakingSearch', {actualUser: selectedPlayer, selectedUser: user})
+					sockets[user.id].emit('matchmakingSearch', {actualUser: user, selectedUser: selectedPlayer})
 
-				if(last.userId != data.userId) {
-					matchMakingSearch.push(data)
-					io.emit('matchmakingSearch', data)
+					for(let i = 0; i < matchMakingSearch.length; i++) {
+						if(matchMakingSearch[i] == selectedPlayer.id) {
+							matchMakingSearch.splice(i, 1)
+						}
+					}
 				}
 			} else {
-				matchMakingSearch.push(data.user.userID)
+				matchMakingSearch.push(user)
+			}
+		})
+
+		socket.on('matchmakingLeave', (user) => {
+			for(let i = 0; i < matchMakingSearch.length; i++) {
+				if(matchMakingSearch[i] == user?.id) {
+					matchMakingSearch.splice(i, 1)
+				}
 			}
 		})
 	});

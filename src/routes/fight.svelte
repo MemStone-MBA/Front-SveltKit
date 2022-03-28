@@ -1,4 +1,12 @@
+<script>
+    import Loader from "../components/loader.svelte";
+    import { user, dataMatch } from './auth';
+</script>
+
 <link rel='stylesheet' href='static/css/fight.css'>
+
+<Loader></Loader>
+
 <div class="flex flex-row backgroundsize">
     <div class="flex flex-col  w-5/6">
         <div class="flex flex-row EnemyDeck mb-1">
@@ -48,7 +56,9 @@
         <div class="flex flex-col h-full">
             <div class="EnemyInfo flex-1 flex flex-col">
                 <div class="titleRightContainer">
-                    Enemy
+                    { 
+                        $dataMatch.selectedUser.username 
+                    }
                 </div>
                 <div class="flex-1 flex flex-row">
                     <div class="EnemyEnergy flex flex-col">
@@ -76,7 +86,9 @@
             </div>
             <div class="MyInfo h-full flex-1 flex flex-col">
                 <div class="titleRightContainer">
-                    Player
+                    { 
+                        $dataMatch.actualUser.username 
+                    }
                 </div>
                 <div class="flex-1 flex flex-row">
                     <div class="MyEnergy flex flex-col">
