@@ -59,6 +59,10 @@
         goto("/shop")
     }
 
+    function goToMM() {
+        goto("/matchmaking")
+    }
+
     function logOut() {
         $user = null
         window.localStorage.clear();
@@ -163,7 +167,7 @@
                         <img src="static/assets/deck.svg" class="deckImage">
                     </div>
                 </div>
-                <div class="buttonFight p-8 flex-1 buttonDetail">
+                <div on:click={goToMM} class="buttonFight p-8 flex-1 buttonDetail">
                     Combat
                 </div>
             </div>

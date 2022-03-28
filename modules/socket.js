@@ -17,6 +17,8 @@ export function SocketServer (server) {
 
 	const io = new Server(server.httpServer);
 
+	const matchMakingSearch = [];
+
 	io.on('connection', (socket) => {
 		console.log("connect")
 		// Generate a random username and send it to the client to display it
@@ -49,8 +51,6 @@ export function SocketServer (server) {
 				cb(res)
 			})
 		})
-
-
 
 		socket.on('cards',(data, cb)=>{
 			getAllCards(data.jwt).then((res)=>{
@@ -97,6 +97,23 @@ export function SocketServer (server) {
 					}))
 				}
 			})
+		})
+
+		socket.on('matchmakingSearch', (data) => {
+
+			if(matchMakingSearch.length > 0) {
+				var selectedPlayer = matchMakingSearch[matchMakingSearch.length - 1]
+				matchMakingSearch.splice(matchMakingSearch.length - 1, 1);
+
+
+
+				if(last.userId != data.userId) {
+					matchMakingSearch.push(data)
+					io.emit('matchmakingSearch', data)
+				}
+			} else {
+				matchMakingSearch.push(data.user.userID)
+			}
 		})
 	});
 }
