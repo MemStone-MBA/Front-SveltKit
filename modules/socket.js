@@ -125,7 +125,7 @@ export function SocketServer (server) {
 
 		socket.on('matchmakingLeave', (user) => {
 			for(let i = 0; i < matchMakingSearch.length; i++) {
-				if(matchMakingSearch[i] == user?.id) {
+				if(matchMakingSearch[i].id == user?.id) {
 					matchMakingSearch.splice(i, 1)
 				}
 			}
