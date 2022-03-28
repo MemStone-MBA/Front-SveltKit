@@ -349,9 +349,9 @@
                   <div>
                   {#if card.owned == true}
                     {#if card.inDeck == true}
-                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
+                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
                     {:else}
-                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("./static/assets/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
+                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
                     {/if}
                   {:else}
                     <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 not-owned" >

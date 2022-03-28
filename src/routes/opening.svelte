@@ -104,7 +104,7 @@
         var canvas = document.createElement("canvas"),
           ctx = canvas.getContext("2d")
 
-        img.crossorigin = "anonymous";
+        img.crossOrigin = "anonymous";
         img.src = url;
 
         img.onload = function() {
@@ -156,7 +156,7 @@
           io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: cardID}, ((res) => {
             drawCardPath = res.path
             drawCardController = false
-            ShowCard("./static/assets/"+res.path)
+            ShowCard("http://51.210.104.99:8001/getImage/"+res.path)
             dismissCard()
           }))
 

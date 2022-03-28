@@ -65,26 +65,33 @@
             <FriendCard bind:name={friend.name} bind:connected={friend.connected}></FriendCard>
         {/each}
     </div>
-    <div class="closeFriendMenu" on:click={()=>{ToggleMenu()}}>X</div>
+    <div class="closeFriendMenu buttonDetail" on:click={()=>{ToggleMenu()}}><span>X</span></div>
 </div>
 
 <style>
     .friend{
         position: fixed;
         right: 0;
-        top:0;
+        top: 0;
         transition: 0.5s all ease;
         transform: translateX(100%);
-
+        background-color: #383838f0;
     }
 
 
     .closeFriendMenu {
         position: absolute;
-        width: 25px;
-        height: 25px;
-        background-color: red;
-        transition: 1s all ease-in-out;
+        width: 30px;
+        height: 30px;
+        background-color: #e7c318;
+        color: black;
+    }
+
+    .closeFriendMenu span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
 </style>
