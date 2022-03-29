@@ -1,6 +1,6 @@
 import axios from "axios";
 import { user } from '../src/routes/auth.js';
-
+import { LogsError } from './log.js'
 
 const parseJSON = (resp) => (resp.json ? resp.json() : resp);
 
@@ -29,6 +29,7 @@ export async function login(mail, password, cb) {
         /**
          * Auth not OK
          */
+        LogsError(error);
         cb(null)
     });
 }
@@ -48,6 +49,7 @@ export async function register(username, mail, password, cb) {
     /**
      * Email already used / password not enought strong
      */
+      LogsError(error);
     cb(null)
   });
  
@@ -64,6 +66,7 @@ export async function get(table) {
     .then(parseJSON);
         return res
     } catch (e) {
+        LogsError(e);
         return e
     }
 }
@@ -80,6 +83,7 @@ function me(jwt, cb) {
         res.data.jwt = jwt
         cb(res.data)
     }).catch((error) => {
+        LogsError(error);
         cb(null)
     });
 }
@@ -93,6 +97,8 @@ export const getAllCards = async function(jwt) {
     }).then((res) => {
 
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
 
     return response
@@ -104,6 +110,8 @@ export const getCardById = async function(jwt, cardID) {
         headers: { "Authorization": "Bearer " + jwt}
     }).then((res) => {
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
     return response
 }
@@ -114,6 +122,8 @@ export const getCardsByUser = async function(jwt, userId) {
         headers: { "Authorization": "Bearer " + jwt, handler : "inventory.findUserCard"},
     }).then((res) => {
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
 
     return response
@@ -126,6 +136,8 @@ export const getDeckByUser = async function(jwt, userId) {
         headers: { "Authorization": "Bearer " + jwt, handler : "deck.findUserDeck"},
     }).then((res) => {
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
     return response
 }
@@ -136,6 +148,8 @@ export const getFriendsByUser = async function(jwt, userId) {
         headers: { "Authorization": "Bearer " + jwt, handler : "users-friend.findUserFriends"},
     }).then((res) => {
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
     return response
 }
@@ -149,6 +163,8 @@ export const saveDeckByUser = async function(jwt, deck) {
     }).then((res) => {
         //console.log(res)
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
     return response
 }
@@ -165,6 +181,8 @@ export const insertNewCardInventory = async function(jwt, userId, cardId) {
     }).then((res) => {
         //console.log(res)
         return res.data
+    }).catch(err => {
+        LogsError(err);
     })
     return response
 }

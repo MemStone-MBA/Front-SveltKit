@@ -4,6 +4,7 @@ import {SocketServer} from './modules/socket.js'
 import { config } from 'dotenv';
 import replace from '@rollup/plugin-replace';
 
+
 /** @type {import('@sveltejs/kit').Config} */
 const configs = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -27,10 +28,11 @@ const configs = {
 				replace({
 					process: JSON.stringify({
 						env: {
-							...config().parsed
+							...config().parsed,
 						}
 					}),
 				}),
+				
 			]
 		}
 	}

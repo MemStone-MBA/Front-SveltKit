@@ -1,4 +1,5 @@
 import { Server } from 'socket.io';
+import { LogsError } from './log.js'
 
 import {
 	insertNewCardInventory,
@@ -25,7 +26,7 @@ export function SocketServer (server) {
 
 		socket.on('login',(data)=>{
 			login(data.mail, data.password, (res) => {
-				if(res.id) {
+				if (res.id != null) {
 					sockets[res.id] = socket;
 				}
 				socket.emit("login-res", res)
