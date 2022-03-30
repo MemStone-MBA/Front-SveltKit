@@ -1,6 +1,6 @@
 import adapter from '@sveltejs/adapter-auto';
 import preprocess from 'svelte-preprocess';
-import {SocketServer} from './modules/socket.js'
+import {SocketServer,  sockets} from './modules/socket.js'
 import { config } from 'dotenv';
 import replace from '@rollup/plugin-replace';
 

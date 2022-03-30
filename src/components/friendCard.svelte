@@ -19,6 +19,19 @@ import { io } from "$lib/realtime";
 	
 			 popup.classList.remove("optionFriend-open")
 		})
+
+
+		io.on("matchmakingFriend-duel",(res)=>{
+			console.log("U are ",res.status)
+		})
+
+		io.on("matchmakingFriend-fight",(res)=>{
+			console.log("U are ",res.status)
+		})
+
+		io.on("matchmakingFriend-cancel",(res)=>{
+			console.log("U are ",res.status)
+		})
     })
 	function friendClicked(){
 		let pos = findPopupCoords()
@@ -48,7 +61,16 @@ import { io } from "$lib/realtime";
 	function fightClicked(){
 		popup.classList.remove("optionFriend-open")
 		checkUser(_=>{
-			io.emit('matchmakingFriend', ({userId:$user.id, userFriendId:friendId }) )
+			io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId }) )
+		})
+
+		
+	}
+
+	function cancelClicked(){
+		popup.classList.remove("optionFriend-open")
+		checkUser(_=>{
+			io.emit('matchmakingFriend-cancel', ({userId:$user.id, userFriendId:friendId }) )
 		})
 
 		
@@ -80,22 +102,35 @@ import { io } from "$lib/realtime";
 		{name} <div class="pastille {connected === true ? 'connected' : 'disconnected'} "></div>
 	</div>
 </div>
-<div on:click={fightClicked} id="popup" class="inline p-4 text-black relative onefriend optionFriend cursor-pointer">
-	Fight
+<div  id="popup" class="inline text-black relative  optionFriend cursor-pointer">
+	
+	<div class=" p-4 optionFriend-bubble" on:click={fightClicked}>
+		Fight
+	</div>
+	<div class=" p-4 optionFriend-bubble" on:click={cancelClicked}>
+		Cancel
+	</div>
 </div>
 
 <style>
 
 	.optionFriend{
-	 background-color: 	#E7C318;
+	 
 	 position: absolute;
      transition: all ease 0.5s;
 	 opacity: 0;
 	 pointer-events: none;
 	}
 
-	.optionFriend:hover{
+	.optionFriend-bubble:hover{
 	 background-color: 	#bda321;
+	}
+
+	.optionFriend-bubble{
+		border: black 1px solid;
+		background-color: 	#E7C318;
+		border-radius: 30px;
+		transition: all ease 0.5s;
 	}
 	
 
