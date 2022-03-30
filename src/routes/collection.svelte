@@ -156,6 +156,7 @@
 
         img.crossOrigin = "anonymous";
         img.src = url;
+        img.alt = "Rotating card"
 
         img.onload = function() {
           canvas.width = img.width;
@@ -326,7 +327,7 @@
               {#each cards as card}
                 {#if card.inDeck == true}
                   <div class="flex flex-row justify-between containercard my-2">
-                    <img src="http://51.210.104.99:8001/getImage/{card.path}" class="backgroundimage">
+                    <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="backgroundimage">
                     <div class="deckcard ml-4">{card.name}</div>
                     <div class="unselectcard px-4 py-2" on:click={()=>{HandleDeleteCard(card)}}>X</div>
                   </div>
@@ -349,12 +350,12 @@
                   <div>
                   {#if card.owned == true}
                     {#if card.inDeck == true}
-                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
+                      <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
                     {:else}
-                      <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
+                      <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
                     {/if}
                   {:else}
-                    <img src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 not-owned" >
+                    <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 not-owned" >
 
                   {/if}
                   </div>
