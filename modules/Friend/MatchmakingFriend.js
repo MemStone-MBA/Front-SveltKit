@@ -1,4 +1,4 @@
-import { Status } from "./MatchmakingStatus.js";
+import { Status, MatchmakingStatus } from "./Status.js";
 import { sockets } from "../socket.js";
 
 
@@ -13,41 +13,41 @@ export function MF_Fight(socket){
             if (sockets[userId].matchmaking.duelArray[userFriendId] == null) {
 
                 sockets[userId].matchmaking.duelArray[userFriendId] = {
-                    'status': Status.IsWaiting
+                    'status': MatchmakingStatus.IsWaiting
                 }
     
-                send_duel(userId,{status :  Status.IsWaiting })
+                send_duel(userId,{status :  MatchmakingStatus.IsWaiting })
 
             } else {
     
                 switch (sockets[userId].matchmaking.duelArray[userFriendId].status) {
-                    case Status.IsWaited:
+                    case MatchmakingStatus.IsWaited:
 
                         sockets[userId].matchmaking.duelArray[userFriendId] = {
-                            'status': Status.InMatch
+                            'status': MatchmakingStatus.InMatch
                         }
 
                         sockets[userFriendId].matchmaking.duelArray[userId] = {
-                            'status': Status.InMatch
+                            'status': MatchmakingStatus.InMatch
                         }
 
-                        send_fight(userId,userFriendId,{status:Status.InMatch ,userId, userFriendId})
+                        send_fight(userId,userFriendId,{status:MatchmakingStatus.InMatch ,userId, userFriendId})
                         return;
                         break;
-                    case Status.IsWaiting:
-                        send_duel(userId, {status :  Status.IsWaiting })
+                    case MatchmakingStatus.IsWaiting:
+                        send_duel(userId, {status :  MatchmakingStatus.IsWaiting })
                         break;
-                    case Status.Cancelled:
+                    case MatchmakingStatus.Cancelled:
 
                         sockets[userId].matchmaking.duelArray[userFriendId] = {
-                            'status': Status.IsWaiting
+                            'status': MatchmakingStatus.IsWaiting
                         }
 
-                        send_duel(userId, {status :  Status.IsWaiting })
+                        send_duel(userId, {status :  MatchmakingStatus.IsWaiting })
                      
                         break;
-                    case Status.InMatch:
-                        send_duel(userId, {status :  Status.InMatch })
+                    case MatchmakingStatus.InMatch:
+                        send_duel(userId, {status :  MatchmakingStatus.InMatch })
                         //console.log("Already fighting")
                         break;
                     default:
@@ -60,41 +60,41 @@ export function MF_Fight(socket){
             if (sockets[userFriendId].matchmaking.duelArray[userId] == null) {
     
                 sockets[userFriendId].matchmaking.duelArray[userId] = {
-                    'status': Status.IsWaited
+                    'status': MatchmakingStatus.IsWaited
                 }
     
-                send_duel(userFriendId,{status :  Status.IsWaited })
+                send_duel(userFriendId,{status :  MatchmakingStatus.IsWaited })
     
             } else {
     
                 switch (sockets[userFriendId].matchmaking.duelArray[userId].status) {
-                    case Status.IsWaited:
+                    case MatchmakingStatus.IsWaited:
                        
-                        send_duel(userFriendId,{status :  Status.IsWaited })
+                        send_duel(userFriendId,{status :  MatchmakingStatus.IsWaited })
                         break;
-                    case Status.IsWaiting:
+                    case MatchmakingStatus.IsWaiting:
 
                         sockets[userFriendId].matchmaking.duelArray[userId] = {
-                            'status': Status.InMatch
+                            'status': MatchmakingStatus.InMatch
                         }
 
                         sockets[userId].matchmaking.duelArray[userFriendId] = {
-                            'status': Status.InMatch
+                            'status': MatchmakingStatus.InMatch
                         }
 
-                        send_fight(userFriendId,userId,{status:Status.InMatch ,userId, userFriendId})
+                        send_fight(userFriendId,userId,{status:MatchmakingStatus.InMatch ,userId, userFriendId})
                         return;
                         break;
-                    case Status.Cancelled:
+                    case MatchmakingStatus.Cancelled:
 
                         sockets[userFriendId].matchmaking.duelArray[userId] = {
-                            'status': Status.IsWaited
+                            'status': MatchmakingStatus.IsWaited
                         }
-                        send_duel(userFriendId,{status :  Status.IsWaited })
+                        send_duel(userFriendId,{status :  MatchmakingStatus.IsWaited })
                    
                         break;
-                    case Status.InMatch:
-                        send_duel(userFriendId,{status :  Status.InMatch })
+                    case MatchmakingStatus.InMatch:
+                        send_duel(userFriendId,{status :  MatchmakingStatus.InMatch })
                         break;
                     default:
                         console.error(`userId status of socket : ${userFriendId} is null or wrong Type`)
@@ -118,16 +118,16 @@ export function MF_Cancel(socket){
         
             if (sockets[userId].matchmaking.duelArray[userFriendId] != null) {
 
-                if(sockets[userId].matchmaking.duelArray[userFriendId].status == Status.IsWaiting){
+                if(sockets[userId].matchmaking.duelArray[userFriendId].status == MatchmakingStatus.IsWaiting){
 
                     sockets[userId].matchmaking.duelArray[userFriendId] = {
-                        'status': Status.Cancelled
+                        'status': MatchmakingStatus.Cancelled
                     }
 
                     sockets[userFriendId].matchmaking.duelArray[userId] = {
-                        'status': Status.Cancelled
+                        'status': MatchmakingStatus.Cancelled
                     }
-                    send_cancel(userId,{status :  Status.Cancelled })
+                    send_cancel(userId,{status :  MatchmakingStatus.Cancelled })
                 }
             }        
 

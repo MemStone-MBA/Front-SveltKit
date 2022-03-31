@@ -3,15 +3,24 @@
 import { onMount } from "svelte";
 import { user } from "../routes/auth";
 import { io } from "$lib/realtime";
+import { Status } from "$lib/Status";
 
 	export let name
-	export let connected
+	export let status
 	export let friendId
 
 	let popup;
 	let friendCap;
 	let friendContainer;
 	onMount(() => {
+
+		console.log({
+			name,
+			status,
+			friendId
+
+		})
+
 		popup = document.querySelector("#popup")
 		friendContainer = document.querySelector("#friend-container")
 		
@@ -22,15 +31,15 @@ import { io } from "$lib/realtime";
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
-			console.log("U are ",res.status)
+			status = res.status
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
-			console.log("U are ",res.status)
+			status = res.status
 		})
 
 		io.on("matchmakingFriend-cancel",(res)=>{
-			console.log("U are ",res.status)
+			status = res.status
 		})
     })
 	function friendClicked(){
@@ -99,7 +108,16 @@ import { io } from "$lib/realtime";
 
 <div on:click={friendClicked } id="friend-cap" class="onefriend m-4 p-4 text-black relative cursor-pointer">
 	<div class="pl-4 overflow-hidden">
-		{name} <div class="pastille {connected === true ? 'connected' : 'disconnected'} "></div>
+		{name}
+		
+		{#if status == Status.Connected}
+			<div class="pastille connected"></div>
+		{:else if status == Status.AFK}
+			<div class="pastille Afk"></div>
+		{:else}
+			<div class="pastille disconnected"></div>
+{/if}
+		
 	</div>
 </div>
 <div  id="popup" class="inline text-black relative  optionFriend cursor-pointer">

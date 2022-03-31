@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
     "",
+    "\\log",
+    "\\modules",
     "\\src",
     "\\src\\routes"
   ],

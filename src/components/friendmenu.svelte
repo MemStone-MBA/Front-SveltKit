@@ -3,6 +3,7 @@
     import FriendCard from './friendCard.svelte';
     import { user } from '../routes/auth.js';
     import { io } from "$lib/realtime";
+    import {Status} from "../lib/Status.js"
     let friends =  []
 
     var open = false
@@ -30,16 +31,43 @@
         checkUser(_=>{
 
             io.emit("friends-user",{ jwt: $user.jwt, userId: $user.id}, ((res)=>{
-            if(res.status) {
-                return
-            }
-            console.log(res)
-            res?.forEach(friend =>{
-                friends.push({name:friend.username, connected:true, friendId:friend.id})
-                friends = friends
-            })
+                if(res.status) {
+                    return
+                }
+                res?.forEach(friend =>{
+               
+                    let friendData = {name:friend.username, status:Status.Disconnected ,friendId:friend.id}
+                    io.emit("friend-connexion",({ 'userId':$user.id, 'userFriendId' : friend.id }), (res) => {
+
+                        if(res.status == Status.Connected){
+                            friendData.status = Status.Connected
+                        }
+
+                        friends.push(friendData)
+                        friends = friends
+                        //console.log("friends : ",friends)
+                    })
+                })
+
+                io.on("friend-connexion-status", ((userData)=>{
+
+                    let userFriendId = userData?.userFriendId;
+                    let userStatus = userData?.status;
+
+                    
+                    friends.map(friend => {
+                        if(friend.friendId == userFriendId){
+                            friend.status = userStatus
+                            friends = friends
+                        }
+                    })
+
+
+                }))
             }))
         })
+
+        
     
     }
 
@@ -60,7 +88,7 @@
     </h1>
     <div class="listfriend m-6">
         {#each friends as friend}
-            <FriendCard bind:name={friend.name} bind:connected={friend.connected} bind:friendId={friend.friendId} ></FriendCard>
+            <FriendCard bind:name={friend.name} bind:status={friend.status}  bind:friendId={friend.friendId} ></FriendCard>
         {/each}
     </div>
     <div class="closeFriendMenu buttonDetail" on:click={()=>{ToggleMenu()}}>
