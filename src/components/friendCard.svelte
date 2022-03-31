@@ -174,8 +174,12 @@ import { Status } from "$lib/Status";
 			background: green;
 	}
 
+	.Afk{
+			background: orangered;
+	}
+
 	.disconnected{
-      background: red;
+      background: gray;
 	}
 
 </style>

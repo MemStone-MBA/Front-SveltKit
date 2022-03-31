@@ -146,7 +146,6 @@ export function MF_Cancel(socket){
 
                         sockets[userId].matchmaking.duelArray[userFriendId].matchmakingStatus = MatchmakingStatus.Cancelled;
                         sockets[userFriendId].matchmaking.duelArray[userId].matchmakingStatus = MatchmakingStatus.Cancelled;
-
                         send_cancel(userId,{matchmakingStatus :  MatchmakingStatus.Cancelled })
                     }
                 }        
