@@ -2,6 +2,13 @@ import { Status, MatchmakingStatus } from "./Status.js";
 import { sockets } from "../socket.js";
 
 
+export function MF_Initialize(socket) {
+    socket.matchmaking = { 'duelArray': [] }
+    return socket
+}
+
+
+
 export function MF_Fight(socket){
 	socket.on('matchmakingFriend-duel', (dataUsers) => {
 

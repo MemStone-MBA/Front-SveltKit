@@ -1,6 +1,5 @@
 import { Server } from 'socket.io';
 import { LogsError } from './log.js'
-import { Status } from './Matchmaking/Status.js';
 import {
 	insertNewCardInventory,
 	getCardById,
@@ -12,15 +11,14 @@ import {
 	saveDeckByUser,
 	getFriendsByUser,
 } from './database.js';
-import { MF_Fight,MF_Cancel } from './Matchmaking/MatchmakingFriend.js';
+import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
+import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
 export let sockets = []
 
 export function SocketServer(server) {
 
 	const io = new Server(server.httpServer);
 	const matchMakingSearch = [];
-	const matchMakingFriend = [];
-
 	io.on('connection', (socket) => {
 		
 
@@ -28,11 +26,12 @@ export function SocketServer(server) {
 		socket.on('login', (data) => {
 			login(data.mail, data.password, (res) => {
 				if (res.id != null) {
-					socket.matchmaking = { 'duelArray': [] }
-					socket.friends = []
-					socket.userId = res.id;
-					socket.username = res.username
+
+					socket = MF_Initialize(socket)
+					socket = CF_Initialize(socket,res)
+					
 					sockets[res.id] = socket;
+
 					console.log("connected : ", socket.username)
 				}
 				socket.emit("login-res", res)
@@ -120,66 +119,17 @@ export function SocketServer(server) {
 			}
 		})
 
-		socket.on('friend-connexion', (dataUsers, callback) => {
-
-
-			let userId = dataUsers?.userId
-			let userFriendId = dataUsers?.userFriendId
-
-			if (userId == null || typeof userId !== 'string') {
-				console.error("Missing userId or wrong type : ", userId)
-				return;
-			}
-
-
-			if (userFriendId == null || typeof userFriendId !== 'string') {
-				console.error("Missing userFriendId or wrong type : ", userFriendId)
-				return;
-			}
-
-			if (typeof callback !== 'function') {
-				console.error("Missing user-connected callback")
-				return;
-			}
-
-
-			if (sockets[userFriendId] != null) {
-
-				sockets[userId].friends[userFriendId] = {
-					status: Status.Connected
-				}
-
-				callback({ status: Status.Connected })
-				sockets[userFriendId].emit('friend-connexion-status', ({ userFriendId: userId, status:  Status.Connected }))
-			} else {
-
-				sockets[userId].friends[userFriendId] = {
-					status: Status.Disconnected
-				}
-
-
-				callback({ status:  Status.Disconnected })
-            }
-
-
-
-
-		})
-
-		socket.on('disconnect', function () {
-			console.log("disconnect : ", socket.username)
-			for (let id in socket?.friends) {
-				if (id != null)
-					sockets[id].emit('friend-connexion-status', ({ userFriendId: socket.userId, status: Status.Disconnected }))
-            }
-
-		});
+		
 
 		
 
 		MF_Fight(socket)
 		MF_Cancel(socket)
-		
+
+		CF_Connected(socket)
+		CF_Disconnected(socket)
+
+
 		socket.on('matchmakingLeave', (user) => {
 			for (let i = 0; i < matchMakingSearch.length; i++) {
 				if (matchMakingSearch[i].id == user?.id) {
