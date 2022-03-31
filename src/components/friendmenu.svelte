@@ -45,7 +45,7 @@
 
                         friends.push(friendData)
                         friends = friends
-                        //console.log("friends : ",friends)
+                        console.log("friends : ",friends)
                     })
                 })
 
@@ -53,12 +53,13 @@
 
                     let userFriendId = userData?.userFriendId;
                     let userStatus = userData?.status;
-
+                    let userMatchmakingStatus = userData?.matchmakingStatus;
                     
                     friends.map(friend => {
                         if(friend.friendId == userFriendId){
-                            friend.status = userStatus
-                            friends = friends
+                            friend.matchmakingStatus = userMatchmakingStatus;
+                            friend.status = userStatus;
+                            friends = friends;
                         }
                     })
 
@@ -88,7 +89,7 @@
     </h1>
     <div class="listfriend m-6">
         {#each friends as friend}
-            <FriendCard bind:name={friend.name} bind:status={friend.status}  bind:friendId={friend.friendId} ></FriendCard>
+            <FriendCard bind:name={friend.name} bind:status={friend.status} bind:matchmakingStatus={friend.matchmakingStatus}  bind:friendId={friend.friendId} ></FriendCard>
         {/each}
     </div>
     <div class="closeFriendMenu buttonDetail" on:click={()=>{ToggleMenu()}}>

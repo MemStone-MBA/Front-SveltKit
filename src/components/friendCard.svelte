@@ -6,17 +6,17 @@ import { io } from "$lib/realtime";
 import { Status } from "$lib/Status";
 
 	export let name
+	export let matchmakingStatus
 	export let status
 	export let friendId
 
 	let popup;
-	let friendCap;
 	let friendContainer;
 	onMount(() => {
 
 		console.log({
 			name,
-			status,
+			matchmakingStatus,
 			friendId
 
 		})
@@ -31,17 +31,17 @@ import { Status } from "$lib/Status";
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
-			status = res.status
+			matchmakingStatus = res.matchmakingStatus
 			console.log(res)
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
-			status = res.status
+			matchmakingStatus = res.matchmakingStatus
 			console.log(res)
 		})
 
 		io.on("matchmakingFriend-cancel",(res)=>{
-			status = res.status
+			matchmakingStatus = res.matchmakingStatus
 			console.log(res)
 		})
     })

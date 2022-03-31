@@ -32,6 +32,11 @@ export function CF_Connected(socket) {
 					sockets[userId].friends[userFriendId] = {
 						status: Status.Connected
 					}
+
+					sockets[userFriendId].friends[userId] = {
+						status: Status.Connected
+					}
+
 					callback({ status: Status.Connected })
 					send_status(userFriendId, { userFriendId: userId, status: Status.Connected })
 

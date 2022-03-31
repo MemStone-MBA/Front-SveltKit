@@ -30,7 +30,11 @@ export function MF_Fight(socket){
 
             let friendStatus = sockets[userId].friends[userFriendId].status;
             if (friendStatus == Status.Disconnected) {
-                send_duel(userId, { friendStatus })
+
+                setUserStatus(userId,userFriendId ,friendStatus )
+                setUserStatus(userFriendId, userId ,Status.Connected )
+
+                send_duel(userId, { 'status' : Status.Connected ,'matchmakingStatus': MatchmakingStatus.Cancelled  })
                 return;
             }
 
@@ -38,47 +42,39 @@ export function MF_Fight(socket){
 
                 if (sockets[userId].matchmaking.duelArray[userFriendId] == null) {
 
-                    sockets[userId].matchmaking.duelArray[userFriendId] = {
+                    setUserStatus(userId,userFriendId ,Status.Connected , MatchmakingStatus.IsWaiting)
 
-                        'status': MatchmakingStatus.IsWaiting
-                    }
-
-                    send_duel(userId, { status: MatchmakingStatus.IsWaiting })
+                    send_duel(userId, { 'status' : friendStatus, 'matchmakingStatus': MatchmakingStatus.IsWaiting })
 
                 } else {
 
-                    switch (sockets[userId].matchmaking.duelArray[userFriendId].status) {
+                    switch (sockets[userId].matchmaking.duelArray[userFriendId].matchmakingStatus) {
                         case MatchmakingStatus.IsWaited:
 
-                            sockets[userId].matchmaking.duelArray[userFriendId] = {
-                                'status': MatchmakingStatus.InMatch
-                            }
+                            setUserStatus(userId,userFriendId ,Status.Connected , MatchmakingStatus.InMatch)
+                            setUserStatus(userFriendId, userId , friendStatus ,  MatchmakingStatus.InMatch )
 
-                            sockets[userFriendId].matchmaking.duelArray[userId] = {
-                                'status': MatchmakingStatus.InMatch
-                            }
 
-                            send_fight(userId, userFriendId, { status: MatchmakingStatus.InMatch, userId, userFriendId })
+                            send_fight(userId, userFriendId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.InMatch, userId, userFriendId })
                             return;
                             break;
                         case MatchmakingStatus.IsWaiting:
-                            send_duel(userId, { status: MatchmakingStatus.IsWaiting })
+                            send_duel(userId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.IsWaiting })
                             break;
                         case MatchmakingStatus.Cancelled:
 
-                            sockets[userId].matchmaking.duelArray[userFriendId] = {
-                                'status': MatchmakingStatus.IsWaiting
-                            }
+                            setUserStatus(userId,userFriendId ,Status.Connected , MatchmakingStatus.IsWaiting)
+                      
 
-                            send_duel(userId, { status: MatchmakingStatus.IsWaiting })
+                            send_duel(userId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.IsWaiting })
 
                             break;
                         case MatchmakingStatus.InMatch:
-                            send_duel(userId, { status: MatchmakingStatus.InMatch })
+                            send_duel(userId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.InMatch })
                             //console.log("Already fighting")
                             break;
                         default:
-                            console.error(`userFriendId status of socket : ${userId} is null or wrong Type`)
+                            console.error(`userFriendId matchmakingStatus of socket : ${userId} is null or wrong Type`)
                             break;
                     }
                 }
@@ -86,45 +82,41 @@ export function MF_Fight(socket){
 
                 if (sockets[userFriendId].matchmaking.duelArray[userId] == null) {
 
-                    sockets[userFriendId].matchmaking.duelArray[userId] = {
-                        'status': MatchmakingStatus.IsWaited
-                    }
+                  
 
-                    send_duel(userFriendId, { status: MatchmakingStatus.IsWaited })
+                    setUserStatus(userFriendId ,userId ,friendStatus , MatchmakingStatus.IsWaited)
+
+                    send_duel(userFriendId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.IsWaited })
 
                 } else {
 
-                    switch (sockets[userFriendId].matchmaking.duelArray[userId].status) {
+                    switch (sockets[userFriendId].matchmaking.duelArray[userId].matchmakingStatus) {
                         case MatchmakingStatus.IsWaited:
 
-                            send_duel(userFriendId, { status: MatchmakingStatus.IsWaited })
+                            send_duel(userFriendId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.IsWaited })
                             break;
                         case MatchmakingStatus.IsWaiting:
 
-                            sockets[userFriendId].matchmaking.duelArray[userId] = {
-                                'status': MatchmakingStatus.InMatch
-                            }
 
-                            sockets[userId].matchmaking.duelArray[userFriendId] = {
-                                'status': MatchmakingStatus.InMatch
-                            }
+                            setUserStatus(userId,userFriendId ,Status.Connected , MatchmakingStatus.InMatch)
+                            setUserStatus(userFriendId, userId , friendStatus ,  MatchmakingStatus.InMatch )
 
-                            send_fight(userFriendId, userId, { status: MatchmakingStatus.InMatch, userId, userFriendId })
+
+                            send_fight(userFriendId, userId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.InMatch, userId, userFriendId })
                             return;
                             break;
                         case MatchmakingStatus.Cancelled:
 
-                            sockets[userFriendId].matchmaking.duelArray[userId] = {
-                                'status': MatchmakingStatus.IsWaited
-                            }
-                            send_duel(userFriendId, { status: MatchmakingStatus.IsWaited })
+
+                            setUserStatus(userFriendId, userId , friendStatus ,  MatchmakingStatus.IsWaited )
+                            send_duel(userFriendId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.IsWaited })
 
                             break;
                         case MatchmakingStatus.InMatch:
-                            send_duel(userFriendId, { status: MatchmakingStatus.InMatch })
+                            send_duel(userFriendId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.InMatch })
                             break;
                         default:
-                            console.error(`userId status of socket : ${userFriendId} is null or wrong Type`)
+                            console.error(`userId matchmakingStatus of socket : ${userFriendId} is null or wrong Type`)
                             break;
                     }
                 }
@@ -145,23 +137,20 @@ export function MF_Cancel(socket){
         let userId = dataUsers?.userId
         let userFriendId = dataUsers?.userFriendId
 
-        checkUser(userId,userFriendId,_=>{
+        checkUser(userId,_=>{
         
-            if (sockets[userId].matchmaking.duelArray[userFriendId] != null) {
+            checkUser(userFriendId,_=>{
+                if (sockets[userId].matchmaking.duelArray[userFriendId] != null) {
 
-                if(sockets[userId].matchmaking.duelArray[userFriendId].status == MatchmakingStatus.IsWaiting){
+                    if(sockets[userId].matchmaking.duelArray[userFriendId].matchmakingStatus == MatchmakingStatus.IsWaiting){
 
-                    sockets[userId].matchmaking.duelArray[userFriendId] = {
-                        'status': MatchmakingStatus.Cancelled
+                        sockets[userId].matchmaking.duelArray[userFriendId].matchmakingStatus = MatchmakingStatus.Cancelled;
+                        sockets[userFriendId].matchmaking.duelArray[userId].matchmakingStatus = MatchmakingStatus.Cancelled;
+
+                        send_cancel(userId,{matchmakingStatus :  MatchmakingStatus.Cancelled })
                     }
-
-                    sockets[userFriendId].matchmaking.duelArray[userId] = {
-                        'status': MatchmakingStatus.Cancelled
-                    }
-                    send_cancel(userId,{status :  MatchmakingStatus.Cancelled })
-                }
-            }        
-
+                }        
+            })
         })
     })
 
@@ -189,6 +178,24 @@ function checkUser(userId, callback){
     if(typeof callback === 'function'){
         callback();
     } 
+}
+
+function setUserStatus(userId, userFriendId, status, matchmakingStatus = MatchmakingStatus.Cancelled){
+    checkUser(userId,_=>{
+
+        if(typeof status === 'string'){
+
+            if(typeof matchmakingStatus === 'string'){
+
+                sockets[userId].matchmaking.duelArray[userFriendId] = {
+                    'status': status,
+                    'matchmakingStatus':matchmakingStatus
+                }
+            }
+
+        }
+
+    })
 }
 
 
