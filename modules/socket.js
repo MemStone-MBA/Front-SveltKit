@@ -123,12 +123,13 @@ export function SocketServer(server) {
 
 		
 
-		MF_Fight(socket)
-		MF_Cancel(socket)
+	
 
 		CF_Connected(socket)
 		CF_Disconnected(socket)
 
+		MF_Fight(socket)
+		MF_Cancel(socket)
 
 		socket.on('matchmakingLeave', (user) => {
 			for (let i = 0; i < matchMakingSearch.length; i++) {

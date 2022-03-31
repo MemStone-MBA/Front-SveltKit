@@ -32,14 +32,17 @@ import { Status } from "$lib/Status";
 
 		io.on("matchmakingFriend-duel",(res)=>{
 			status = res.status
+			console.log(res)
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
 			status = res.status
+			console.log(res)
 		})
 
 		io.on("matchmakingFriend-cancel",(res)=>{
 			status = res.status
+			console.log(res)
 		})
     })
 	function friendClicked(){

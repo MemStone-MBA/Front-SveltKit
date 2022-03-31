@@ -17,31 +17,34 @@ export function CF_Connected(socket) {
 		let userId = dataUsers?.userId
 		let userFriendId = dataUsers?.userFriendId
 
-		checkUsers(userId, userFriendId, _ => {
+		checkUser(userId, _ => {
 
+		
 			if (typeof callback !== 'function') {
 				console.error("Missing user-connected callback")
 				return;
 			}
 
 
-			if (sockets[userFriendId] != null) {
+			checkUser(userFriendId, _ => {
 
-				sockets[userId].friends[userFriendId] = {
-					status: Status.Connected
-				}
+				if (sockets[userFriendId] != null) {
+					sockets[userId].friends[userFriendId] = {
+						status: Status.Connected
+					}
+					callback({ status: Status.Connected })
+					send_status(userFriendId, { userFriendId: userId, status: Status.Connected })
 
-				callback({ status: Status.Connected })
-				send_status(userFriendId, { userFriendId: userId, status: Status.Connected })
-			} else {
+				} else {
+					sockets[userId].friends[userFriendId] = {
+						status: Status.Disconnected
+					}
+					callback({ status: Status.Disconnected })
+                }
 
-				sockets[userId].friends[userFriendId] = {
-					status: Status.Disconnected
-				}
+			})
 
 
-				callback({ status: Status.Disconnected })
-			}
         })
 
 	})
@@ -52,8 +55,21 @@ export function CF_Disconnected(socket) {
 	socket.on('disconnect', function () {
 		console.log("disconnect : ", socket.username)
 		for (let id in socket?.friends) {
-			if (id != null)
-				send_status(id, { userFriendId: socket.userId, status: Status.Disconnected })
+			if (id != null) {
+				
+
+				checkUser(id, _ => {
+
+
+					sockets[id].friends[socket.userId].status = Status.Disconnected
+					send_status(id, { userFriendId: socket.userId, status: Status.Disconnected })
+
+				})
+
+				
+				
+            }
+				
 		}
 
 	});
@@ -61,18 +77,13 @@ export function CF_Disconnected(socket) {
 
 
 
-function checkUsers(userId,userFriendId, callback){
+function checkUser(userId, callback){
 
 	if (userId == null || typeof userId !== 'string') {
 		console.error("Missing userId or wrong type : ", userId)
 		return;
 	}
 
-
-	if (userFriendId == null || typeof userFriendId !== 'string') {
-		console.error("Missing userFriendId or wrong type : ", userFriendId)
-		return;
-	}
 
     if(typeof callback === 'function'){
         callback();
