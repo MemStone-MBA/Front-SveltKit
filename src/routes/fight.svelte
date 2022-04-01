@@ -57,7 +57,7 @@
             <div class="EnemyInfo flex-1 flex flex-col">
                 <div class="titleRightContainer">
                     { 
-                        $dataMatch.selectedUser.username 
+                        $dataMatch.selectedUser.id.slice(-5)
                     }
                 </div>
                 <div class="flex-1 flex flex-row">
@@ -87,7 +87,7 @@
             <div class="MyInfo h-full flex-1 flex flex-col">
                 <div class="titleRightContainer">
                     { 
-                        $dataMatch.actualUser.username 
+                        $dataMatch.actualUser.id.slice(-5)
                     }
                 </div>
                 <div class="flex-1 flex flex-row">

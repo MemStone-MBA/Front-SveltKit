@@ -1,9 +1,10 @@
 
 <script>
 import { onMount } from "svelte";
-import { user } from "../routes/auth";
+import { user,dataMatch } from "../routes/auth";
 import { io } from "$lib/realtime";
-import { Status } from "$lib/Status";
+import { goto } from '$app/navigation';
+import { Status, MatchmakingStatus } from "$lib/Status";
 
 	export let name
 	export let matchmakingStatus
@@ -11,6 +12,7 @@ import { Status } from "$lib/Status";
 	export let friendId
 
 	let popup;
+	let friendCap;
 	let friendContainer;
 	onMount(() => {
 
@@ -23,7 +25,9 @@ import { Status } from "$lib/Status";
 
 		popup = document.querySelector("#popup")
 		friendContainer = document.querySelector("#friend-container")
+		friendCap = document.querySelector("#friend-cap")
 		
+
 		popup.addEventListener("mouseleave",e=>{
 	
 			 popup.classList.remove("optionFriend-open")
@@ -31,20 +35,91 @@ import { Status } from "$lib/Status";
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
+			console.log(res)
+			checkStatus(res.status,_=>{
+
+				checkMatchmakingStatus(res.matchmakingStatus,_=>{
+					console.log(res.matchmakingStatus);
+					switch (res.matchmakingStatus) {
+
+						
+
+                        case MatchmakingStatus.IsWaited:
+
+
+                            break;
+                        case MatchmakingStatus.IsWaiting:
+
+							friendCap.classList.add("card-IsWaiting")
+						
+                            break;
+                        case MatchmakingStatus.Cancelled:
+							friendCap.classList.remove("card-IsWaiting")
+							
+                            break;
+                        case MatchmakingStatus.InMatch:
+							
+
+                            break;
+                        default:
+                            console.error(`matchmakingStatus : ${res.matchmakingStatus} is null or wrong Type`)
+                            break;
+                    }
+				})
+				
+			})
+
 			matchmakingStatus = res.matchmakingStatus
 			console.log(res)
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
-			matchmakingStatus = res.matchmakingStatus
+
+			friendCap.classList.remove("card-IsWaiting")
+
+			let actualUser = res.actualUser ;
+			let selectedUser = res.selectedUser;
+
+			$dataMatch = {actualUser, selectedUser}
+			goto('/fight')
+
 			console.log(res)
 		})
 
-		io.on("matchmakingFriend-cancel",(res)=>{
-			matchmakingStatus = res.matchmakingStatus
-			console.log(res)
-		})
+	
     })
+
+	function checkStatus(status,callback){
+
+		if(status == null ||  typeof status !== 'string' ){
+			console.error("missing status checkStatus in firendCard.svelte")
+			return;
+		}
+
+		if(status != Status.Connected){
+			console.error("User is not connected")
+			return;
+		}
+
+		if(callback != null &&  typeof callback === 'function'){
+			callback();
+		}
+
+	}
+
+		function checkMatchmakingStatus(matchmakingStatus,callback){
+
+		if(matchmakingStatus == null ||  typeof matchmakingStatus !== 'string' ){
+			console.error("missing matchmakingStatus checkStatus in firendCard.svelte")
+			return;
+		}
+		
+		if(callback != null &&  typeof callback === 'function'){
+			callback();
+		}
+
+	}
+
 	function friendClicked(){
 		let pos = findPopupCoords()
 		console.log(pos);
@@ -109,11 +184,15 @@ import { Status } from "$lib/Status";
 
 </script>
 
+
+
+
 <div on:click={friendClicked } id="friend-cap" class="onefriend m-4 p-4 text-black relative cursor-pointer">
 	<div class="pl-4 overflow-hidden">
 		{name}
 		
 		{#if status == Status.Connected}
+			
 			<div class="pastille connected"></div>
 		{:else if status == Status.AFK}
 			<div class="pastille Afk"></div>

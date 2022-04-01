@@ -89,6 +89,53 @@ html{
     height: 80%;
 }
 
+.card-IsWaiting{
+
+
+}
+
+.card-IsWaiting {
+    box-shadow: 0 6px 6px rgb(0 0 0 / 29%);
+    height: 56px;
+    line-height: 56px;
+    padding: 0 25px;
+    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+    background: #F6D540;
+    border-top-right-radius: 32px;
+}
+
+    .card-IsWaiting:before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0;
+        width: 100%;
+   /*     top: 50%;
+        transform: translateY(-50%);*/
+        height: 100%;
+        border-radius: 5px;
+        background: #fff;
+        opacity: .4;
+        transform-origin: 100% 100%;
+        transition: all .6s cubic-bezier(.53,.21,0,1);
+        will-change: transform;
+        animation: 2s cubic-bezier(.53,.21,0,1) 1s infinite running slidein
+    }
+
+
+@keyframes slidein {
+    from {
+        margin-left: -100%;
+    }
+
+    to {
+        margin-left: 100%;
+    }
+}
+
+
 .MMR{
     height: 100%;
     background: #656565;

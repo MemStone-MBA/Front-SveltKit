@@ -66,8 +66,14 @@ export function CF_Disconnected(socket) {
 				checkUser(id, _ => {
 
 
-					sockets[id].friends[socket.userId].status = Status.Disconnected
-					send_status(id, { userFriendId: socket.userId, status: Status.Disconnected })
+					
+					if (sockets[id] != null) {
+
+						sockets[id].friends[socket.userId].status = Status.Disconnected
+						send_status(id, { userFriendId: socket.userId, status: Status.Disconnected })
+					}
+
+					
 
 				})
 

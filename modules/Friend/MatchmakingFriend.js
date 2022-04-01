@@ -55,7 +55,20 @@ export function MF_Fight(socket){
                             setUserStatus(userFriendId, userId , friendStatus ,  MatchmakingStatus.InMatch )
 
 
-                            send_fight(userId, userFriendId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.InMatch, userId, userFriendId })
+                            send_fight(userFriendId, userId, {
+
+                                'actualUser': {
+                                    'id': userId,
+                                    'status': Status.Connected,
+                                    'matchmakingStatus': MatchmakingStatus.InMatch
+                                },
+                                'selectedUser': {
+                                    'id': userFriendId,
+                                    'status': friendStatus,
+                                    'matchmakingStatus': MatchmakingStatus.InMatch
+                                }
+                            })
+
                             return;
                             break;
                         case MatchmakingStatus.IsWaiting:
@@ -102,7 +115,19 @@ export function MF_Fight(socket){
                             setUserStatus(userFriendId, userId , friendStatus ,  MatchmakingStatus.InMatch )
 
 
-                            send_fight(userFriendId, userId, {'status' : friendStatus, matchmakingStatus: MatchmakingStatus.InMatch, userId, userFriendId })
+                            send_fight(userFriendId, userId, {
+
+                                'selectedUser': {
+                                    'id': userId,
+                                    'status': Status.Connected,
+                                    'matchmakingStatus': MatchmakingStatus.InMatch
+                                },
+                                'actualUser': {
+                                    'id': userFriendId,
+                                    'status': friendStatus,
+                                    'matchmakingStatus': MatchmakingStatus.InMatch
+                                }
+                            })
                             return;
                             break;
                         case MatchmakingStatus.Cancelled:
@@ -146,7 +171,7 @@ export function MF_Cancel(socket){
 
                         sockets[userId].matchmaking.duelArray[userFriendId].matchmakingStatus = MatchmakingStatus.Cancelled;
                         sockets[userFriendId].matchmaking.duelArray[userId].matchmakingStatus = MatchmakingStatus.Cancelled;
-                        send_cancel(userId,{matchmakingStatus :  MatchmakingStatus.Cancelled })
+                        send_duel(userId, { status: Status.Connected, matchmakingStatus: MatchmakingStatus.Cancelled })
                     }
                 }        
             })
@@ -211,7 +236,3 @@ function send_fight(_id1,_id2,data){
     sockets[_id2].emit('matchmakingFriend-fight',(data))
 }
 
-function send_cancel(_id,data){
-    //console.log(sockets[_id].matchmaking)
-    sockets[_id].emit('matchmakingFriend-cancel',(data))
-}

@@ -69,13 +69,13 @@
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-col ">
         <div class='content-center w-1/4 mx-auto mt-6'>
-            <img src='static/assets/memstone_logo.png' class='img-contain'>
+            <img alt="Memstone Logo" src='static/assets/memstone_logo.png' class='img-contain'>
         </div>
         <div class="flex flex-1 flex-col flexBetween">
             <div class="m-4 ml-12 flex flex-row">
                 <div class="flex flex-col justify-end buttonDetail">
                     <div class="profilImage" on:click={logOut}>
-                        <img src="static/assets/avatar.svg" alt="" class="profil">
+                        <img alt="Avatar" src="static/assets/avatar.svg" class="profil">
                     </div>
                 </div>  
                 <div class="flex flex-col ml-8 boxName justify-end">

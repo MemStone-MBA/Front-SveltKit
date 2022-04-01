@@ -3,8 +3,12 @@
     "",
     "\\log",
     "\\modules",
+    "\\modules\\Friend",
     "\\src",
+    "\\src\\components",
+    "\\src\\lib",
     "\\src\\routes"
   ],
+  "SelectedNode": "\\modules\\Friend\\ConnexionFriend.js",
   "PreviewInSolutionExplorer": false
 }
