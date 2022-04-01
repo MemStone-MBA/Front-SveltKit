@@ -14,6 +14,8 @@
     var cards = []
     //User Deck
     var deck;
+    var cardsInDeck = 0;
+    const MAX_CARDS = 10;
 
     //Cards showing
     var mouseClicked;
@@ -199,7 +201,8 @@
 
 
     function refreshCards(){
-      cards = cards
+      cards = cards;
+      cardsInDeck = cards.filter((card) => card.inDeck == true).length;
     }
 
     function bindCards(){
@@ -241,7 +244,6 @@
           }
 
           deck = res[0] || [];
-          //console.log(deck)
           if( deck?.listCards != null && deck?.listCards.length > 0 ){
             let myDeckCardsId = deck?.listCards?.map(card => { return card.id})
             cards.filter(function(card) {
@@ -266,6 +268,10 @@
 
       function saveDeck() {
 
+        if(cardsInDeck!=MAX_CARDS) {
+          return
+        }
+
         let cardsSaved = []
         cards.map(card =>{
 
@@ -285,15 +291,17 @@
       }
 
       function HandleAddCard(card) {
-        card.inDeck = true;
-        document.querySelector("." + card.name)?.classList.add("disableElement")
-        refreshCards()
+        if(cardsInDeck < MAX_CARDS) {
+          card.inDeck = true;
+          document.querySelector("." + naturalize(card.name))?.classList.add("disableElement")
+          refreshCards()
+        }
       }
 
       function HandleDeleteCard(card) {
 
         card.inDeck = false;
-        document.querySelector("." + card.name)?.classList.remove("disableElement")
+        document.querySelector("." + naturalize(card.name))?.classList.remove("disableElement")
         refreshCards()
       }
 
@@ -301,6 +309,9 @@
         goto('/')
       }
 
+      function naturalize(str) {
+        return str.trim().split(" ").join("_")
+      }
 
 
 </script>
@@ -321,7 +332,7 @@
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-row ">
        <div class="colorbackfriend w-1/4 mr-10 flex flex-col">
-            <div class="text-center titleCollection m-2">Deck</div>
+            <div class="text-center titleCollection m-2">Deck ({cardsInDeck} / {MAX_CARDS})</div>
             <div class="gray_bg_custom flex-1 overflow-y-scroll">
 
               {#each cards as card}
@@ -350,9 +361,9 @@
                   <div>
                   {#if card.owned == true}
                     {#if card.inDeck == true}
-                      <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name} disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
+                      <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 { naturalize(card.name) } disableElement" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleDeleteCard(card)}}>
                     {:else}
-                      <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 {card.name}" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
+                      <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 { naturalize(card.name) }" on:mouseup={()=> MouseUp()} on:mousedown={()=> MouseDown("http://51.210.104.99:8001/getImage/"+card.path)} on:click={()=>{HandleAddCard(card)}}>
                     {/if}
                   {:else}
                     <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="p-2 not-owned" >
@@ -363,7 +374,7 @@
 
             </div>
             <div class="flex justify-center">
-                <div on:click={saveDeck} class="buttonSave buttonDetail p-4 m-6">Sauvegarder</div>
+                <div on:click={saveDeck} disabled={Boolean(cardsInDeck!=MAX_CARDS)} class="buttonSave buttonDetail p-4 m-6">Sauvegarder</div>
             </div>
        </div>
     </div>
