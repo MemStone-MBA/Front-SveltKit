@@ -5,6 +5,7 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import Loader from '../components/loader.svelte';
+    import FriendPopup from '../components/friendPopup.svelte';
     let friendActive;
 
 
@@ -65,7 +66,7 @@
 <Loader></Loader>
 
 
-
+<FriendPopup></FriendPopup>
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-col ">
         <div class='content-center w-1/4 mx-auto mt-6'>

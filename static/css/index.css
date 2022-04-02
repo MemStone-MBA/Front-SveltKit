@@ -89,10 +89,7 @@ html{
     height: 80%;
 }
 
-.card-IsWaiting{
 
-
-}
 
 .card-IsWaiting {
     box-shadow: 0 6px 6px rgb(0 0 0 / 29%);
@@ -101,7 +98,6 @@ html{
     padding: 0 25px;
     overflow: hidden;
     text-decoration: none;
-    cursor: pointer;
     background: #F6D540;
     border-top-right-radius: 32px;
 }
