@@ -6,8 +6,6 @@
     import { goto } from '$app/navigation';
     import Loader from '../components/loader.svelte';
     import FriendPopup from '../components/friendPopup.svelte';
-    let friendActive;
-
 
 
     var userName = $user ? $user.username : "no user"
@@ -25,16 +23,12 @@
         var mask = document.querySelector('.mask .full')
         var circleFill = document.querySelectorAll('.circle .fill')
 
-       
-        
         if(mask !== null)
-            // @ts-ignore
             mask.style = "transform: rotate("+circleDeg+"deg)"
 
         circleFill.forEach((element) => {
             
             if(element !== null)
-                // @ts-ignore
                 element.style = "transform: rotate("+circleDeg+"deg)"
         })
     });
@@ -66,7 +60,7 @@
 <Loader></Loader>
 
 
-<FriendPopup></FriendPopup>
+<FriendPopup ></FriendPopup>
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-col ">
         <div class='content-center w-1/4 mx-auto mt-6'>
