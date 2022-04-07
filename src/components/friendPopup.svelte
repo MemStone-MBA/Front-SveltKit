@@ -1,51 +1,30 @@
 <script context="module" lang="ts">
-
 	// 	returns an object for the modal specified by `id`, which contains the API functions (`open` and `close` )
-	export let accept;
 
-	export function deny(callback){
-		if (typeof callback === 'function'){
-
-			callback()
-		}
-
-	}
-	export function changeAccept(func){
-		if (typeof func === 'function'){
-
-			acceptFunc = func;
-		}
-
+	let popupText = "";
+	export const setPopupText = (text) => {
+		popupText = text;
 	}
 
-	export let acceptFunc = ()=>{};
-	export let show;
-	export let hide;
-
+	
 </script>
 
 <script>
-
+    
 	import { onMount } from "svelte";
-
-
-
 	let popup;
 	onMount(() => {
 		popup = document.querySelector(".popupFriend")
-
-
+		show();
 	})
 
-
-
-	 show =  () => {
+	export function show() {
 		popup.classList.remove("popup-hide")
 	}
-	hide =  () => {
+
+	export function hide(){
 		popup.classList.add("popup-hide")
 	}
-
 </script>
 
 
@@ -54,14 +33,14 @@
 	<div class='w-3/5 flex items-center content-center p-4'>
 		<p>
 
-			Text de poup
+			{popupText}
 
 		</p>
 	</div>
-	<div on:click={acceptFunc()} class='uppercase w-1/5 text-center cursor-pointer popupButton popupButton1 m-4'>
+	<div  class='uppercase w-1/5 text-center cursor-pointer popupButton popupButton1 m-4'>
 		accept
 	</div>
-	<div on:click={deny()} class='delay-500 uppercase w-1/5 text-center cursor-pointer popupButton popupButton2 m-4'>
+	<div  class='delay-500 uppercase w-1/5 text-center cursor-pointer popupButton popupButton2 m-4'>
 		deny
 	</div>
 
@@ -69,19 +48,15 @@
 </div>
 
 <style>
-
 	.popupFriend{
       font-family: barlow-eb;
       background: rgba(246,213,64,0.9);
 			border-bottom-left-radius: 5px;
 			border-bottom-right-radius: 5px;
 	}
-
 	.popup-hide{
 			transform: translateY(-100%);
 	}
-
-
   .popupButton {
       box-shadow: 0 6px 6px rgb(0 0 0 / 29%);
       height: 36px;
@@ -92,13 +67,11 @@
 			position: relative;
       background: #F6D540;
   }
-
   .popupButton1:before{
   }
   .popupButton2:before{
       animation-delay: 0.5s !important;
   }
-
   .popupButton:before {
       content: '';
       display: block;
@@ -115,19 +88,13 @@
       transition: all .6s cubic-bezier(.53,.21,0,1);
       will-change: transform;
       animation: 2s cubic-bezier(.53,.21,0,1)  infinite running slidein;
-
   }
-
-
   @keyframes slidein {
       from {
           margin-left: -100%;
       }
-
       to {
           margin-left: 100%;
       }
   }
-
-
 </style>

@@ -5,7 +5,7 @@ import { user,dataMatch } from "../routes/auth";
 import { io } from "$lib/realtime";
 import { goto } from '$app/navigation';
 import { Status, MatchmakingStatus } from "$lib/Status";
-import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './friendPopup.svelte';
+import friendPopup, { setPopupText} from './friendPopup.svelte';
 
 	export let name
 	export let matchmakingStatus
@@ -24,18 +24,9 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 			friendId
 
 		})
-		show();
+		setPopupText("yeahhhh")
 
-		changeAccept(() => {
-			console.log("accept")
-		})
-
-
-
-		deny(_=>{
-			console.log("deny")
-		})
-
+	
 		popup = document.querySelector("#popup")
 		friendContainer = document.querySelector("#friend-container")
 		friendCap = document.querySelector("#friend-cap")
