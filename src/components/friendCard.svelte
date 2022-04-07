@@ -19,14 +19,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	let friendContainer;
 	onMount(() => {
 
-		console.log({
-			name,
-			matchmakingStatus,
-			friendId
-
-		})
-
-
+	
 		popup = document.querySelector("#popup")
 		friendContainer = document.querySelector("#friend-container")
 		friendCap = document.querySelector("#friend-cap")
@@ -39,11 +32,11 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
-			console.log(res)
+			//console.log(res)
 			checkStatus(res.status,_=>{
 
 				checkMatchmakingStatus(res.matchmakingStatus,_=>{
-					console.log(res.matchmakingStatus);
+					//console.log(res.matchmakingStatus);
 					switch (res.matchmakingStatus) {
 
 						
@@ -92,7 +85,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 			})
 
 			matchmakingStatus = res.matchmakingStatus
-			console.log(res)
+			//console.log(res)
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
@@ -105,7 +98,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 			$dataMatch = {actualUser, selectedUser}
 			goto('/fight')
 
-			console.log(res)
+			//console.log(res)
 		})
 
 	
@@ -144,7 +137,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 
 	function friendClicked(){
 		let pos = findPopupCoords()
-		console.log(pos);
+		//console.log(pos);
 		
 		if(popup!= null){
 			popup.style.transform = "translate("+pos.x+"px,"+pos.y+"px)";
