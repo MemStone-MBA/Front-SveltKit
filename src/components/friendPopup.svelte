@@ -1,28 +1,46 @@
+
 <script context="module" lang="ts">
-	// 	returns an object for the modal specified by `id`, which contains the API functions (`open` and `close` )
-
-	let popupText = "";
-	export const setPopupText = (text) => {
-		popupText = text;
-	}
-
-	
+	export let show;
+	export let hide;
 </script>
-
 <script>
     
 	import { onMount } from "svelte";
+	import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
+
+
 	let popup;
 	onMount(() => {
 		popup = document.querySelector(".popupFriend")
-		show();
-	})
 
-	export function show() {
+	})
+	let popupText = "";
+	let popupAccept = ()=>{};
+	let popupDeny = ()=>{};
+
+
+
+	 popupTextWritable.subscribe(value => {
+		popupText = value;
+	}) 
+
+	 popupAcceptWritable.subscribe(value => {
+		popupAccept = value;
+	}) 
+
+
+	 popupDenyWritable.subscribe(value => {
+		popupDeny = value;
+	}) 
+
+
+
+	show = () => {
 		popup.classList.remove("popup-hide")
 	}
 
-	export function hide(){
+	
+    hide = () => {
 		popup.classList.add("popup-hide")
 	}
 </script>
@@ -37,10 +55,10 @@
 
 		</p>
 	</div>
-	<div  class='uppercase w-1/5 text-center cursor-pointer popupButton popupButton1 m-4'>
+	<div on:click={popupAccept()} class='uppercase w-1/5 text-center cursor-pointer popupButton popupButton1 m-4'>
 		accept
 	</div>
-	<div  class='delay-500 uppercase w-1/5 text-center cursor-pointer popupButton popupButton2 m-4'>
+	<div on:click={popupDeny()} class='delay-500 uppercase w-1/5 text-center cursor-pointer popupButton popupButton2 m-4'>
 		deny
 	</div>
 
@@ -53,6 +71,7 @@
       background: rgba(246,213,64,0.9);
 			border-bottom-left-radius: 5px;
 			border-bottom-right-radius: 5px;
+			transition: all ease 0.5s;
 	}
 	.popup-hide{
 			transform: translateY(-100%);

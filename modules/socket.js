@@ -27,6 +27,9 @@ export function SocketServer(server) {
 			login(data.mail, data.password, (res) => {
 				if (res.id != null) {
 
+					if(sockets[res.id] != undefined)
+						sockets[res.id].emit("login-err",(""))
+
 					socket = MF_Initialize(socket)
 					socket = CF_Initialize(socket,res)
 					

@@ -1,5 +1,25 @@
 <script>
 	import Nav from '../components/nav.svelte';
+    import {user} from './auth.js';
+    import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
+    import { io } from "$lib/realtime";
+
+    onMount(() => {
+
+        io.on("login-err",(data)=>{
+            logOut();
+        })
+
+    })
+
+    function logOut() {
+        $user = null
+        window.localStorage.clear();
+        goto("/login")
+    }
+    
+
 </script>
 <link rel='stylesheet' href='static/css/style.css'>
 
