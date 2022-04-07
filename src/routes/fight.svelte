@@ -1,6 +1,15 @@
 <script>
     import Loader from "../components/loader.svelte";
     import { user, dataMatch } from './auth';
+    import { onMount } from 'svelte';
+    import { io } from "$lib/realtime";
+
+    onMount(() => {
+
+
+    })
+
+
 </script>
 
 <link rel='stylesheet' href='static/css/fight.css'>
