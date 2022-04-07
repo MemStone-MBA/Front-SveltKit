@@ -5,7 +5,8 @@ import { user,dataMatch } from "../routes/auth";
 import { io } from "$lib/realtime";
 import { goto } from '$app/navigation';
 import { Status, MatchmakingStatus } from "$lib/Status";
-import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './friendPopup.svelte';
+import FriendPopup ,{  show , hide }  from "./friendPopup.svelte";
+import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
 
 	export let name
 	export let matchmakingStatus
@@ -24,17 +25,7 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 			friendId
 
 		})
-		show();
 
-		changeAccept(() => {
-			console.log("accept")
-		})
-
-
-
-		deny(_=>{
-			console.log("deny")
-		})
 
 		popup = document.querySelector("#popup")
 		friendContainer = document.querySelector("#friend-container")
@@ -58,6 +49,24 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 						
 
                         case MatchmakingStatus.IsWaited:
+							show();
+							popupTextWritable.update(popup => popup= `${name} is waiting you for a duel !`)
+							popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+
+								checkUser(_=>{
+									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId }) )
+								})
+
+								
+							
+							})
+
+							popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+								checkUser(_=>{
+									hide();
+									io.emit('matchmakingFriend-cancel', ({userId:friendId , userFriendId: $user.id}) )
+								})
+							})
 
 
                             break;
