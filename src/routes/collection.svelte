@@ -15,7 +15,7 @@
     //User Deck
     var deck;
     var cardsInDeck = 0;
-    const MAX_CARDS = 10;
+    const MAX_CARDS = 5;
 
     //Cards showing
     var mouseClicked;

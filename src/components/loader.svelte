@@ -1,9 +1,18 @@
+<script context="module">
+
+
+    export let wait = false ;
+    export function setWait(value) {
+        wait = value;
+    }
+</script>
+
 <script>
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { user, isLog } from '../routes/auth';
 
-	export let wait = false;
+	
 
     var display = true
 
@@ -14,6 +23,8 @@
             display = false
         }
     })
+
+
 
 </script>
 

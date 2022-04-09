@@ -4,7 +4,7 @@
     import { user } from './auth.js'
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-    import Loader from '../components/loader.svelte';
+    import Loader,{ setWait }from '../components/loader.svelte';
     import FriendPopup from '../components/friendPopup.svelte';
 
 
@@ -18,8 +18,10 @@
 
     var circleDeg = Math.round(180 * ratio)
 
-    onMount(() => {
+  
 
+    onMount(() => {
+       
         var mask = document.querySelector('.mask .full')
         var circleFill = document.querySelectorAll('.circle .fill')
 
@@ -31,6 +33,8 @@
             if(element !== null)
                 element.style = "transform: rotate("+circleDeg+"deg)"
         })
+
+
     });
 
     function goToCollection() {

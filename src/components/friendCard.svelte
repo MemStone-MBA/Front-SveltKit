@@ -5,7 +5,8 @@ import { user,dataMatch } from "../routes/auth";
 import { io } from "$lib/realtime";
 import { goto } from '$app/navigation';
 import { Status, MatchmakingStatus } from "$lib/Status";
-import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './friendPopup.svelte';
+import FriendPopup ,{  show , hide }  from "./friendPopup.svelte";
+import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
 
 	export let name
 	export let matchmakingStatus
@@ -18,24 +19,7 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 	let friendContainer;
 	onMount(() => {
 
-		console.log({
-			name,
-			matchmakingStatus,
-			friendId
-
-		})
-		show();
-
-		changeAccept(() => {
-			console.log("accept")
-		})
-
-
-
-		deny(_=>{
-			console.log("deny")
-		})
-
+	
 		popup = document.querySelector("#popup")
 		friendContainer = document.querySelector("#friend-container")
 		friendCap = document.querySelector("#friend-cap")
@@ -48,16 +32,34 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
-			console.log(res)
+			//console.log(res)
 			checkStatus(res.status,_=>{
 
 				checkMatchmakingStatus(res.matchmakingStatus,_=>{
-					console.log(res.matchmakingStatus);
+					//console.log(res.matchmakingStatus);
 					switch (res.matchmakingStatus) {
 
 						
 
                         case MatchmakingStatus.IsWaited:
+							show();
+							popupTextWritable.update(popup => popup= `${name} is waiting you for a duel !`)
+							popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+
+								checkUser(_=>{
+									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId }) )
+								})
+
+								
+							
+							})
+
+							popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+								checkUser(_=>{
+									hide();
+									io.emit('matchmakingFriend-cancel', ({userId:friendId , userFriendId: $user.id}) )
+								})
+							})
 
 
                             break;
@@ -83,7 +85,7 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 			})
 
 			matchmakingStatus = res.matchmakingStatus
-			console.log(res)
+			//console.log(res)
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
@@ -96,7 +98,7 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 			$dataMatch = {actualUser, selectedUser}
 			goto('/fight')
 
-			console.log(res)
+			//console.log(res)
 		})
 
 	
@@ -135,7 +137,7 @@ import friendPopup, {accept, acceptFunc,deny, show,hide, changeAccept} from './f
 
 	function friendClicked(){
 		let pos = findPopupCoords()
-		console.log(pos);
+		//console.log(pos);
 		
 		if(popup!= null){
 			popup.style.transform = "translate("+pos.x+"px,"+pos.y+"px)";

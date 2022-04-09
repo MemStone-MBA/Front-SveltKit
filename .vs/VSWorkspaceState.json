@@ -7,8 +7,10 @@
     "\\src",
     "\\src\\components",
     "\\src\\lib",
-    "\\src\\routes"
+    "\\src\\routes",
+    "\\static",
+    "\\static\\css"
   ],
-  "SelectedNode": "\\modules\\Friend\\ConnexionFriend.js",
+  "SelectedNode": "\\src\\routes\\fight.svelte",
   "PreviewInSolutionExplorer": false
 }

@@ -45,7 +45,7 @@
 
                         friends.push(friendData)
                         friends = friends
-                        console.log("friends : ",friends)
+                        //console.log("friends : ",friends)
                     })
                 })
 
