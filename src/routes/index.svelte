@@ -9,8 +9,13 @@
 
 
     var userName = $user ? $user.username : "no user"
-    var userLevel = $user ? $user.level : 25
+    var userRawLevel = $user ? $user.Level : 0.00
+    var userLevel = userRawLevel ? parseInt(userRawLevel) : 0
+    var userExp = 0;
+    if(userRawLevel.toString().split('.').length > 1)
+        userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
     var userMMR = $user ? $user.mmr : 1080
+    var userIcon = $user ? $user.Icon : "avatar.svg"
 
     var ratio = $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5
 
@@ -74,7 +79,7 @@
             <div class="m-4 ml-12 flex flex-row">
                 <div class="flex flex-col justify-end buttonDetail">
                     <div class="profilImage" on:click={logOut}>
-                        <img alt="Avatar" src="static/assets/avatar.svg" class="profil">
+                        <img alt="Avatar" src="static/assets/{userIcon}" class="profil">
                     </div>
                 </div>  
                 <div class="flex flex-col ml-8 boxName justify-end">
@@ -87,7 +92,7 @@
                         </div>
                     </div>
                     <div class="bigExp">
-                        <div class="littleExp">
+                        <div class="littleExp" style="width:{userExp}%">
     
                         </div>
                     </div>
