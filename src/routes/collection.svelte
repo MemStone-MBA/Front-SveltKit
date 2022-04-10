@@ -331,7 +331,7 @@
 
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-row ">
-       <div class="colorbackfriend w-1/4 mr-10 flex flex-col">
+       <div class="fixedBack colorbackfriend w-1/4 mr-10 flex flex-col">
             <div class="text-center titleCollection m-2">Deck ({cardsInDeck} / {MAX_CARDS})</div>
             <div class="gray_bg_custom flex-1 overflow-y-scroll">
 
@@ -352,7 +352,7 @@
             </div>
        </div>
 
-       <div class="colorbackfriend flex-1 flex flex-col">
+       <div class="fixedBack colorbackfriend flex-1 flex flex-col">
             <div class="text-center titleCollection m-2">Cards ( {cardsOwned} / {cards.length} )</div>
             <div class="gray_bg_custom flex-1 overflow-y-scroll flex flex-wrap justify-center">
                 

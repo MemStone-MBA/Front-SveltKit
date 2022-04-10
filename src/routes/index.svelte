@@ -72,9 +72,9 @@
 <FriendPopup ></FriendPopup>
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-col ">
-        <div class='content-center w-1/4 mx-auto mt-6'>
+        <!-- <div class='content-center w-1/4 mx-auto mt-6'>
             <img alt="Memstone Logo" src='static/assets/memstone_logo.png' class='img-contain'>
-        </div>
+        </div> -->
         <div class="flex flex-1 flex-col flexBetween">
             <div class="m-4 ml-12 flex flex-row">
                 <div class="flex flex-col justify-end buttonDetail">
