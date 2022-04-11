@@ -1,40 +1,30 @@
-# create-svelte
+![](https://i.imgur.com/l4LVxgo.png)
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-## Creating a project
+### First Step:
+- Clone this repos:
+    -    Front : https://github.com/MemStone-MBA/Front-SveltKit
+    -    Back : https://github.com/MemStone-MBA/Back-Strapi
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Back end configuration
+Strapi server is running with a mongoDB database.
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
+- Instal dependencies
+`npm install`
+- Build strapi server
+`strapi build`
+- Start strapi server
+`strapi start`
 
-# create a new project in my-app
-npm init svelte@next my-app
-```
+Make sure to create admin credentials in [localhost:1337/admin](http://localhost:1337/admin)
 
-> Note: the `@next` is temporary
+### Front end configuration
+Front end use svelte.JS framework.
 
-## Developing
+- Instal dependencies
+`npm install`
+- Start server
+`npm run dev`
+- Create .env with .env.example
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment.
+Access to server with [localhost:3000](http://localhost:3000
