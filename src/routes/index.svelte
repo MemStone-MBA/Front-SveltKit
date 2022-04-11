@@ -64,6 +64,10 @@
         goto("/matchmaking")
     }
 
+    function goToCases() {
+        goto("/cases")
+    }
+
     function logOut() {
         $user = null
         window.localStorage.clear();
@@ -110,7 +114,7 @@
                     <div class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_settings.svg" alt="" class="itemmenu">
                     </div>
-                    <div class="divmenu flex buttonDetail">
+                    <div on:click={goToCases} class="divmenu flex buttonDetail">
                         <img src="static/assets/icon_pack.svg" alt="" class="itemmenu">
                     </div>
                     <div on:click={goToShop} class="divmenu flex buttonDetail">
