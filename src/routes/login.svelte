@@ -14,6 +14,8 @@ import {ConnexionStatus } from '$lib/Status';
 	var bad_credentials = false;
 	var credentialsMessage = "";
 	onMount(() => {
+
+
 		setLoader(false)
 		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
 		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";

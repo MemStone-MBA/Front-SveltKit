@@ -20,7 +20,7 @@ var TIME_LEFT = ""
 var COINS = 0
 
 function getStoreCards(){
-    io.emit("getUserCases", {jwt:$user.jwt}, ((res) => {
+    io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
         if(res.status) {
             return
         }

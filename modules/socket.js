@@ -11,7 +11,7 @@ import {
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
-	buyCoins
+	buyCoins, getUserCases
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -157,18 +157,11 @@ export function SocketServer(server) {
 		})
 
 		socket.on('getUserCases', (data, cb) => {
-			// getUserCases(data.user).then((res) => {
-			// 	cb(res)
-			// })
+			 getUserCases(data).then((res) => {
+			 	cb(res)
+			 })
 		})
 
-
-		/**
-		 * {
-		 * 		ts: 1345567658,
-		 * 		cards: [card, card, card]
-		 * }
-		 */
 		var TODAY_CARD = {}
 
 		socket.on('todayCard', (data, cb) =>{

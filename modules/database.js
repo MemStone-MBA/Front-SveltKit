@@ -154,6 +154,21 @@ export const getFriendsByUser = async function(jwt, userId) {
     return response
 }
 
+export const getUserCases = async function(data) {
+    console.log(data)
+    let conf = await process;
+    var response = axios.get(  conf.env.URL+'users-cases/user/' +data.userId, {
+        headers: { "Authorization": "Bearer " + data.jwt, handler : "users-cases.findUserCase"},
+    }).then((res) => {
+        console.log(res)
+        return res.data
+    }).catch(err => {
+        LogsError(err);
+    })
+
+    return response
+}
+
 
 export const saveDeckByUser = async function(jwt, deck) {
     let conf = await process;
