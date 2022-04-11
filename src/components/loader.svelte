@@ -1,18 +1,16 @@
-<script context="module">
-
-
-    export let wait = false ;
-    export function setWait(value) {
-        wait = value;
-    }
-</script>
 
 <script>
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
-    import { user, isLog } from '../routes/auth';
+    import { user, isLog, loaderStatusWritable } from '../routes/auth';
 
-	
+    let wait = false;
+    loaderStatusWritable.subscribe(value => {
+        //console.log(value)
+        wait = value;
+    })
+
+
 
     var display = true
 
@@ -22,13 +20,15 @@
         } else {
             display = false
         }
+
+
     })
 
 
 
 </script>
 
-{#if wait || display}
+{#if wait && display}
 <!-- {#if display} -->
 <section class="pageLoader">
     <div class="lds-ripple">

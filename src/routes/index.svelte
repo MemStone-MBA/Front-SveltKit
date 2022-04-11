@@ -1,10 +1,10 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
 	  import Friend from '../components/friendmenu.svelte';
-    import { user } from './auth.js'
+    import { loaderStatusWritable, user } from './auth.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
-    import Loader,{ setWait }from '../components/loader.svelte';
+
     import FriendPopup from '../components/friendPopup.svelte';
 
 
@@ -23,10 +23,14 @@
 
     var circleDeg = Math.round(180 * ratio)
 
-  
+    function setLoader(loaderVal){
+        loaderStatusWritable.update(value =>  value = loaderVal)
+    }
 
     onMount(() => {
-       
+
+
+
         var mask = document.querySelector('.mask .full')
         var circleFill = document.querySelectorAll('.circle .fill')
 
@@ -38,6 +42,8 @@
             if(element !== null)
                 element.style = "transform: rotate("+circleDeg+"deg)"
         })
+
+        setLoader(false)
 
 
     });
@@ -61,12 +67,13 @@
     function logOut() {
         $user = null
         window.localStorage.clear();
+        setLoader(true)
         goto("/login")
     }
 
 </script>
 
-<Loader></Loader>
+
 
 
 <FriendPopup ></FriendPopup>

@@ -5,6 +5,8 @@
     import { onMount } from 'svelte';
     import { io } from "$lib/realtime";
 	import {connexionStatusWritable} from './auth.js';
+	import Loader from '../components/loader.svelte';
+
 	import { ConnexionStatus } from '$lib/Status.js';
 	onMount(() => {
 
@@ -28,7 +30,7 @@
 </script>
 <link rel='stylesheet' href='static/css/style.css'>
 
-
+<Loader></Loader>
 <!--<Nav/>-->
 <!-- Slot représente le reste du code chragé par la page -->
 <slot></slot>

@@ -7,6 +7,9 @@ export const dataMatch = writable({});
 
 export const connexionStatusWritable = writable(ConnexionStatus.Error)
 
+export const loaderStatusWritable = writable(false)
+
+
 export const isLog = function(user) {
     if(user != null) {
         return true

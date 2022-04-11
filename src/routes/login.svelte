@@ -5,7 +5,8 @@
 	import { user } from './auth.js'
 	import { goto } from '$app/navigation';
 import {ConnexionStatus } from '$lib/Status';
-	import { connexionStatusWritable } from './auth.js';
+	import { connexionStatusWritable, loaderStatusWritable } from './auth.js';
+
 
 	var mail = ""
 	var password = ""
@@ -13,14 +14,11 @@ import {ConnexionStatus } from '$lib/Status';
 	var bad_credentials = false;
 	var credentialsMessage = "";
 	onMount(() => {
-
+		setLoader(false)
 		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
 		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";
-		
 		if (mail != "" && password != "")
 			Login();
-
-
 
 
 		/**
@@ -62,23 +60,32 @@ import {ConnexionStatus } from '$lib/Status';
 		})
 	})
 
+	function setLoader(loaderVal){
+		loaderStatusWritable.update(value =>  value = loaderVal)
+	}
+
 	function showErrors (value){
 		console.log("value : ",value)
+
 		credentialsMessage = value;
 		switch (value){
 			case ConnexionStatus.ErrorIds:
 				bad_credentials = true;
+				setLoader(false)
 				break;
 			case ConnexionStatus.Replace:
 				bad_credentials = true;
+				setLoader(false)
 				break;
 			case ConnexionStatus.Connected:
 				bad_credentials = false;
 				break;
 			case ConnexionStatus.Connecting:
+
 				bad_credentials = false;
 				break;
 			default:
+				setLoader(false)
 				bad_credentials = false;
 				break;
 		}
@@ -88,8 +95,9 @@ import {ConnexionStatus } from '$lib/Status';
 	 * Can be username or mail
 	 */
 	function Login() {
-		console.log(mail)
-		console.log(password)
+		setLoader(true)
+		connexionStatusWritable.update(value => value = ConnexionStatus.Connecting)
+
 		io.emit("login", {mail,password})
 	}
 
