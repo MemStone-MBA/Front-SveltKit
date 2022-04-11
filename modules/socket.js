@@ -156,6 +156,12 @@ export function SocketServer(server) {
 			})
 		})
 
+		socket.on('getUserCases', (data, cb) => {
+			// getUserCases(data.user).then((res) => {
+			// 	cb(res)
+			// })
+		})
+
 
 		/**
 		 * {

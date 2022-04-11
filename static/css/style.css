@@ -141,3 +141,8 @@ body{
 .friend-open{
     transform: translateX(0%) !important;
 }
+
+.iconPack {
+    height: 20vh;
+    filter: invert(1);
+}
