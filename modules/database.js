@@ -187,4 +187,17 @@ export const insertNewCardInventory = async function(jwt, userId, cardId) {
     return response
 }
 
+export const buyCoins = async function(user, amount) {
+    let conf = await process;
 
+    var newAmount = user.coins + amount
+
+    var response = axios.put(  conf.env.URL+'users/' +user.id, {'coins': newAmount},{
+        headers: { "Authorization": "Bearer " + user.jwt, handler : "deck.update"},
+    }).then((res) => {
+        return res.data
+    }).catch(err => {
+        LogsError(err);
+    })
+    return response
+}
