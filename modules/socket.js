@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
 import { LogsError } from './log.js'
+import {ConnexionStatus} from './Friend/Status.js';
 import {
 	insertNewCardInventory,
 	getCardById,
@@ -25,19 +26,34 @@ export function SocketServer(server) {
 
 		socket.on('login', (data) => {
 			login(data.mail, data.password, (res) => {
-				if (res.id != null) {
 
-					if(sockets[res.id] != undefined)
-						sockets[res.id].emit("login-err",(""))
+				res.status = res.status ? res.status : res.response.status;
+				switch (res.status){
+					case 400:
+						socket.emit("login-res",({'status': ConnexionStatus.ErrorIds}))
+						break;
+					case 200:
 
-					socket = MF_Initialize(socket)
-					socket = CF_Initialize(socket,res)
-					
-					sockets[res.id] = socket;
 
-					console.log("connected : ", socket.username)
+						if(sockets[res.data.id] != undefined){
+							console.log("already connected")
+							sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
+
+						}
+
+						socket = MF_Initialize(socket)
+						socket = CF_Initialize(socket,res.data)
+
+						console.log("connected : ", socket.username)
+
+						sockets[res.data.id] = socket;
+						socket.emit("login-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
+						break;
+					default:
+						socket.emit("login-res",({'status':ConnexionStatus.Error}))
+						break;
 				}
-				socket.emit("login-res", res)
+
 			})
 		})
 

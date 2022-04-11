@@ -4,12 +4,17 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { io } from "$lib/realtime";
-
-    onMount(() => {
+	import {connexionStatusWritable} from './auth.js';
+	import { ConnexionStatus } from '$lib/Status.js';
+	onMount(() => {
 
         io.on("login-err",(data)=>{
-            logOut();
+					if (data.status == ConnexionStatus.Replace){
+						connexionStatusWritable.update(value => value = ConnexionStatus.Replace )
+						logOut();
+					}
         })
+
 
     })
 

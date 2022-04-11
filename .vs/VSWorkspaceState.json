@@ -7,10 +7,8 @@
     "\\src",
     "\\src\\components",
     "\\src\\lib",
-    "\\src\\routes",
-    "\\static",
-    "\\static\\css"
+    "\\src\\routes"
   ],
-  "SelectedNode": "\\src\\routes\\fight.svelte",
+  "SelectedNode": "\\src\\routes\\register.svelte",
   "PreviewInSolutionExplorer": false
 }

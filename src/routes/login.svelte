@@ -4,12 +4,14 @@
 	import { onMount } from "svelte";
 	import { user } from './auth.js'
 	import { goto } from '$app/navigation';
+import {ConnexionStatus } from '$lib/Status';
+	import { connexionStatusWritable } from './auth.js';
 
 	var mail = ""
 	var password = ""
 
 	var bad_credentials = false;
-
+	var credentialsMessage = "";
 	onMount(() => {
 
 		let saveUsername = localStorage.getItem('username')
@@ -19,30 +21,71 @@
 			mail = saveUsername
 			password = savePassword
 
+
 			Login()
+
+			//showErrors($connexionStatusWritable)
+		}
+
+
+		function showErrors (value){
+			console.log("value : ",value)
+			credentialsMessage = value;
+			switch (value){
+				case ConnexionStatus.ErrorIds:
+					bad_credentials = true;
+					break;
+				case ConnexionStatus.Replace:
+					bad_credentials = true;
+					break;
+				case ConnexionStatus.Connected:
+					bad_credentials = false;
+					break;
+				case ConnexionStatus.Connecting:
+					bad_credentials = false;
+					break;
+				default:
+					bad_credentials = false;
+					break;
+			}
 		}
 
 		/**
 		 * Server response for login
 		*/
+		connexionStatusWritable.subscribe(value => {
+			showErrors(value)
+		})
+
+
+
 		io.on("login-res", (res) => {
-			$user = res;
-			console.log(res)
-			if(res == null) {
-				console.log(res)
-				bad_credentials = true
-				resetInput()
-			} else {
 
-
-				localStorage.setItem('username', mail)
-				localStorage.setItem('password', password)
-
-				bad_credentials = false
-				resetInput()
-
-				goto("/")
+			if (res.status == undefined){
+				connexionStatusWritable.update(value => value = ConnexionStatus.Error)
+			}else {
+				connexionStatusWritable.update(value => value = res.status)
 			}
+
+
+			if (res.status == ConnexionStatus.Connected){
+				$user =  res.response;
+				if(res == null) {
+					bad_credentials = true
+					resetInput()
+				} else {
+
+
+					localStorage.setItem('username', mail)
+					localStorage.setItem('password', password)
+
+					bad_credentials = false
+					resetInput()
+
+					goto("/")
+				}
+			}
+
 		})
 	})
 
@@ -81,7 +124,7 @@
 		<a href="/register" class="flex justify-center mt-5 text-white text-center w-full">Créer un compte</a>
 
 		{#if bad_credentials == true}
-			<p class="mt-5 text-rose-600 text-center">Identifiant ou mot de passe incorrect</p>
+			<p class="mt-5 text-rose-600 text-center">{credentialsMessage}</p>
 		{/if}
 	</div>
 </div>

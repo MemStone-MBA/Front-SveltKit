@@ -33,7 +33,13 @@ const configs = {
 					}),
 				}),
 				
-			]
+			],
+
+			server: {
+				fs: {
+					allow: ['..'],
+				},
+			},
 		}
 	}
 };

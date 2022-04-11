@@ -30,7 +30,7 @@ export async function login(mail, password, cb) {
          * Auth not OK
          */
         LogsError(error);
-        cb(null)
+        cb(error)
     });
 }
 
@@ -44,13 +44,13 @@ export async function register(username, mail, password, cb) {
       /**
        * Register OK
        */
-    me(response.data.jwt, cb)
+    me( response.data.jwt, cb)
   }).catch(error => {
     /**
      * Email already used / password not enought strong
      */
       LogsError(error);
-    cb(null)
+    cb(error)
   });
  
 }
@@ -81,10 +81,10 @@ function me(jwt, cb) {
       config
     ).then((res) => {
         res.data.jwt = jwt
-        cb(res.data)
+        cb(res)
     }).catch((error) => {
         LogsError(error);
-        cb(null)
+        cb(error)
     });
 }
 
