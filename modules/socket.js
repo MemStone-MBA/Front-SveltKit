@@ -10,6 +10,7 @@ import {
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
+	buyCoins
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -20,12 +21,9 @@ export function SocketServer(server) {
 	const io = new Server(server.httpServer);
 	const matchMakingSearch = [];
 	io.on('connection', (socket) => {
-		
-
-
 		socket.on('login', (data) => {
 			login(data.mail, data.password, (res) => {
-				if (res.id != null) {
+				if (res && res.id != null) {
 
 					if(sockets[res.id] != undefined)
 						sockets[res.id].emit("login-err",(""))
@@ -122,12 +120,6 @@ export function SocketServer(server) {
 			}
 		})
 
-		
-
-		
-
-	
-
 		CF_Connected(socket)
 		CF_Disconnected(socket)
 
@@ -141,8 +133,73 @@ export function SocketServer(server) {
 				}
 			}
 		})
+
+		socket.on('buyCoins', (data, cb) => {
+			buyCoins(data.user, data.amount).then((res) => {
+				cb(res)
+			})
+		})
+
+
+		/**
+		 * {
+		 * 		ts: 1345567658,
+		 * 		cards: [card, card, card]
+		 * }
+		 */
+		var TODAY_CARD = {}
+
+		socket.on('todayCard', (data, cb) =>{
+			let dateNow = Date.now()
+
+			if(TODAY_CARD.ts == undefined || isOld(dateNow, TODAY_CARD)) {
+
+				getAllCards(data.jwt).then((res) => {
+					var CARDS_ID = []
+					var CARDS = []
+
+					for(var i = 0; i < 3; i++){
+						var random = Math.floor(Math.random() * res.length)
+						if(CARDS_ID.includes(res[random]._id)){
+							i--
+							continue
+						}
+						CARDS_ID.push(res[random]._id)
+					}
+
+					var promises = []
+
+					for(let id of CARDS_ID){
+						promises.push(
+							getCardById(data.jwt, id).then((res) => {
+								if(res.status) {
+									return
+								}
+								CARDS.push(res)
+								CARDS = CARDS
+							})
+						)
+					}
+
+					Promise.all(promises).then(() => {
+						TODAY_CARD = {
+							ts: dateNow + 86400000,
+							cards: CARDS
+						}
+						cb(TODAY_CARD)
+					})
+				})
+			} else {
+				cb(TODAY_CARD) 
+			}
+		})
+		
+		function isOld(now, array) {
+			let ts = array.ts
+			if(now - ts > 86400000) {
+				return true
+			}
+			return false
+		}
 	});
-
-
-
 }

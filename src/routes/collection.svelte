@@ -184,8 +184,6 @@
       window.addEventListener("load", init, false);
     }
 
-
-
     function checkUser(callback){
      
       if($user != null && typeof $user === 'object' ){
@@ -198,7 +196,6 @@
         console.error("Missing User")
       }
     }
-
 
     function refreshCards(){
       cards = cards;
@@ -266,52 +263,52 @@
       })
     }
 
-      function saveDeck() {
+    function saveDeck() {
 
-        if(cardsInDeck!=MAX_CARDS) {
+      if(cardsInDeck!=MAX_CARDS) {
+        return
+      }
+
+      let cardsSaved = []
+      cards.map(card =>{
+
+        if (card.owned && card.inDeck){
+          cardsSaved.push(card)
+        }
+      });
+      deck.listCards = cardsSaved
+      console.table(deck.listCards)
+
+      io.emit("deck-save", { jwt: $user.jwt, deck: deck }, ((res) => {
+        if (res.status) {
           return
         }
+        bindDeck()
+      }))
+    }
 
-        let cardsSaved = []
-        cards.map(card =>{
-
-          if (card.owned && card.inDeck){
-            cardsSaved.push(card)
-          }
-        });
-        deck.listCards = cardsSaved
-        console.table(deck.listCards)
-
-        io.emit("deck-save", { jwt: $user.jwt, deck: deck }, ((res) => {
-          if (res.status) {
-            return
-          }
-          bindDeck()
-        }))
-      }
-
-      function HandleAddCard(card) {
-        if(cardsInDeck < MAX_CARDS) {
-          card.inDeck = true;
-          document.querySelector("." + naturalize(card.name))?.classList.add("disableElement")
-          refreshCards()
-        }
-      }
-
-      function HandleDeleteCard(card) {
-
-        card.inDeck = false;
-        document.querySelector("." + naturalize(card.name))?.classList.remove("disableElement")
+    function HandleAddCard(card) {
+      if(cardsInDeck < MAX_CARDS) {
+        card.inDeck = true;
+        document.querySelector("." + naturalize(card.name))?.classList.add("disableElement")
         refreshCards()
       }
+    }
 
-      function goToMenu() {
-        goto('/')
-      }
+    function HandleDeleteCard(card) {
 
-      function naturalize(str) {
-        return str.trim().split(" ").join("_")
-      }
+      card.inDeck = false;
+      document.querySelector("." + naturalize(card.name))?.classList.remove("disableElement")
+      refreshCards()
+    }
+
+    function goToMenu() {
+      goto('/')
+    }
+
+    function naturalize(str) {
+      return str.trim().split(" ").join("_")
+    }
 
 
 </script>
