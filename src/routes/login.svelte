@@ -14,41 +14,14 @@ import {ConnexionStatus } from '$lib/Status';
 	var credentialsMessage = "";
 	onMount(() => {
 
-		let saveUsername = localStorage.getItem('username')
-		let savePassword = localStorage.getItem('password')
+		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
+		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";
 		
-		if(savePassword && saveUsername) {
-			mail = saveUsername
-			password = savePassword
+		if (mail != "" && password != "")
+			Login();
 
 
-			Login()
 
-			//showErrors($connexionStatusWritable)
-		}
-
-
-		function showErrors (value){
-			console.log("value : ",value)
-			credentialsMessage = value;
-			switch (value){
-				case ConnexionStatus.ErrorIds:
-					bad_credentials = true;
-					break;
-				case ConnexionStatus.Replace:
-					bad_credentials = true;
-					break;
-				case ConnexionStatus.Connected:
-					bad_credentials = false;
-					break;
-				case ConnexionStatus.Connecting:
-					bad_credentials = false;
-					break;
-				default:
-					bad_credentials = false;
-					break;
-			}
-		}
 
 		/**
 		 * Server response for login
@@ -88,6 +61,28 @@ import {ConnexionStatus } from '$lib/Status';
 
 		})
 	})
+
+	function showErrors (value){
+		console.log("value : ",value)
+		credentialsMessage = value;
+		switch (value){
+			case ConnexionStatus.ErrorIds:
+				bad_credentials = true;
+				break;
+			case ConnexionStatus.Replace:
+				bad_credentials = true;
+				break;
+			case ConnexionStatus.Connected:
+				bad_credentials = false;
+				break;
+			case ConnexionStatus.Connecting:
+				bad_credentials = false;
+				break;
+			default:
+				bad_credentials = false;
+				break;
+		}
+	}
 
 	/**
 	 * Can be username or mail
