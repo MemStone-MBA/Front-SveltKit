@@ -12,8 +12,14 @@ onMount(() => {
     }
     COINS = $user.coins
     userCasesWritable.subscribe(data => console.log(data))
+    getUserCases();
 
 
+
+
+})
+
+function getUserCases(){
     io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
         if(res.status != 200) {
             return
@@ -21,9 +27,26 @@ onMount(() => {
         userCasesWritable.set(res);
 
     }))
+}
+
+function openUserCases(baseCase){
+
+    if (baseCase.count > 0){
 
 
-})
+        io.emit("openUserCase", {jwt:$user.jwt,userId:$user.id,cards:baseCase.cards, case:baseCase.userCases.shift()}, ((res,cardId) => {
+
+            if(res.status != 200) {
+                return
+            }
+            userCasesWritable.set(res);
+            console.log(cardId)
+
+        }))
+    }
+
+
+}
 
 var CARDS_ID = []
 var CARDS = []
@@ -48,7 +71,9 @@ function goToMenu() {
 
             {#each $userCasesWritable.cases as baseCase}
 
-                <div class="min-w-fit flex-1 p-1 flex flex-col">
+
+
+                <div class="min-w-fit flex-1 p-1 flex flex-col" on:click={openUserCases(baseCase)}>
                     <div class="price mt-2 mb-4">
                         <div class="textprice">{baseCase.name}</div>
                     </div>

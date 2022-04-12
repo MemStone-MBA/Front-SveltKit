@@ -47,3 +47,32 @@ export function removeProps(data,props){
 	return data
 
 }
+
+export function draw(chest, cb) {
+	let total = 0
+	let cards = []
+
+	for(let element in chest) {
+
+		cards.push({
+			id:element,
+			min:total,
+			max:total+(chest[element] - 1)
+		})
+		total++;
+	}
+
+	let randomDraw = randomNb(0, total + 1)
+
+	for (let card of cards){
+		if (randomDraw >= card.min && randomDraw <= card.max){
+			cb(card.id)
+		}
+	}
+
+
+}
+
+export function randomNb(min, max) {
+	return Math.floor(Math.random() * (max - min)) + min;
+}

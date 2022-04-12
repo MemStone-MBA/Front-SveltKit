@@ -15,7 +15,8 @@ import {
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
-import { getUserCases } from './Cases/Users-Cases.js';
+import { addUserCase, deleteUserCase, getUserCases } from './Cases/Users-Cases.js';
+import { draw } from './Utils.js';
 export let sockets = []
 
 export function SocketServer(server) {
@@ -163,6 +164,69 @@ export function SocketServer(server) {
 			 		cb(res)
 			 })
 		})
+
+		socket.on('openUserCase', (data, cb) => {
+
+			draw(data.cards, (cardId)=>{
+
+				getCardsByUser(data.jwt,data.userId).then((userCards)=>{
+
+					let newCard = true
+					userCards.forEach(userCard=>{
+						if (userCard.idCard == cardId){
+								newCard = false;
+						}
+					})
+
+					if (newCard){
+						//Earn money
+					}else {
+						insertNewCardInventory(data.jwt, data.userId, cardId, ((res) => {
+							console.log("new card in inventory")
+						}))
+					}
+
+					deleteUserCase(data.jwt, data.case.id).then((res) => {
+						getUserCases(data).then((res) => {
+
+							cb(res, cardId)
+						})
+
+					})
+					console.log("userCard",userCards)
+				})
+			})
+
+
+
+
+
+
+
+		})
+
+		socket.on('buyUserCase', (data, cb) => {
+
+			let offre = {
+				price: data.price || 1000,
+				number:data.number || 3
+			}
+
+			let addUserCasesPromise = [];
+			for (let i = parseInt(offre.number)??0; i>0; i-- ){
+				addUserCasesPromise.push(
+				addUserCase(data.jwt,data.caseId,data.userId))
+			}
+
+			Promise.all(addUserCasesPromise).then(result => {
+
+				console.log(result)
+				cb(result)
+			})
+
+
+		})
+
 
 		socket.on("updateUserPlayground", (data) => {
 			sockets[data.id][data.modifyId].playGround = data.playGround

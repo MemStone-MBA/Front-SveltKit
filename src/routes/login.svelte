@@ -20,7 +20,8 @@ import {ConnexionStatus } from '$lib/Status';
 		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
 		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";
 
-	
+		mail = 'admin'
+		password = 'admin1234'
 	/*	if (oldValue == undefined && mail != "" && password != ""){
 			Logout()
 			resetInput()

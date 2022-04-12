@@ -4,7 +4,7 @@
 import { goto } from "$app/navigation";
 import { io } from "$lib/realtime";
 import { onMount } from "svelte";
-import { user } from './auth'
+import { user, userCasesWritable } from './auth';
 
 onMount(() => {
     if (user == null) {
@@ -65,6 +65,30 @@ function buyCoins(amount){
 function goToMenu() {
     goto('/')
 }
+
+function buyUserCases(){
+
+    let offre = {
+        price:1000,
+        caseId:'6255710996241152307ed6f1',
+        number:4
+    }
+
+        console.log("buy")
+
+        io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
+
+
+            console.log(res)
+            if(res.status != 200) {
+                return
+            }
+
+            console.log(res)
+        }))
+
+}
+
 </script>
 
 <div class="backgroundsize colorbackmenu flex flex-row">
@@ -90,7 +114,7 @@ function goToMenu() {
             Packs
         </div>
         <div class="flex flex-row w-full h-1/2 mt-8 h-auto">
-            <div class="flex-1">
+            <div class="flex-1" on:click={buyUserCases}>
                 <img src='static/assets/icon_pack.svg' class='journeyPack'>
                 <div class="price mt-2">
                     <div class="flex flex-col">
@@ -106,7 +130,7 @@ function goToMenu() {
                     </div>
                 </div>
             </div>
-            <div class="flex-1">
+            <div class="flex-1" on:click={buyUserCases}>
                 <img src='static/assets/icon_pack.svg' class='journeyPack'>
                 <div class="price mt-2">
                     <div class="flex flex-col">
