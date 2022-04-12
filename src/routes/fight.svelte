@@ -4,8 +4,8 @@
     import { onMount } from 'svelte';
     import { io } from "$lib/realtime";
 
-    onMount(() => {
 
+    onMount(() => {
 
     })
 
