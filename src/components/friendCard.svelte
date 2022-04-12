@@ -47,7 +47,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 							popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
 
 								checkUser(_=>{
-									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId }) )
+									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId, jwt:$user.jwt }) )
 								})
 
 								
@@ -95,7 +95,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 			let actualUser = res.actualUser ;
 			let selectedUser = res.selectedUser;
 
-			$dataMatch = {actualUser, selectedUser}
+			$dataMatch = res
 			goto('/fight')
 
 			//console.log(res)
@@ -163,7 +163,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	function fightClicked(){
 		popup.classList.remove("optionFriend-open")
 		checkUser(_=>{
-			io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId }) )
+			io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId , jwt:$user.jwt}) )
 		})
 
 		

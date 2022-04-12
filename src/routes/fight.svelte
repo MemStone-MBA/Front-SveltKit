@@ -1,12 +1,23 @@
 <script>
+// @ts-nocheck
+
     import Loader from "../components/loader.svelte";
     import { user, dataMatch } from './auth';
     import { onMount } from 'svelte';
     import { io } from "$lib/realtime";
+import { Layers } from "three";
+
+    var game = {}
+    var actualUser = {}
+    var enemyUser = {}
 
     onMount(() => {
-
-
+        game = $dataMatch.game
+        actualUser = $dataMatch.game[$user.id]
+        let enemyUserArray = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
+        enemyUser = enemyUserArray[0][1]
+        console.log(actualUser)
+        console.log(enemyUser)
     })
 
 
@@ -63,10 +74,13 @@
     </div>
     <div class="flex-1 rightContainer m-1">
         <div class="flex flex-col h-full">
+            <!-- 
+                ENNEMY
+            -->
             <div class="EnemyInfo flex-1 flex flex-col">
                 <div class="titleRightContainer">
                     { 
-                        $dataMatch.selectedUser.id.slice(-5)
+                        enemyUser.user?.username || ""
                     }
                 </div>
                 <div class="flex-1 flex flex-row">
@@ -93,10 +107,13 @@
                     </div>
                 </div>
             </div>
+            <!-- 
+                USER
+            -->
             <div class="MyInfo h-full flex-1 flex flex-col">
                 <div class="titleRightContainer">
                     { 
-                        $dataMatch.actualUser.id.slice(-5)
+                        actualUser.user?.username || ""
                     }
                 </div>
                 <div class="flex-1 flex flex-row">
