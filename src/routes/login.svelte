@@ -10,23 +10,38 @@ import {ConnexionStatus } from '$lib/Status';
 
 	var mail = ""
 	var password = ""
-
+	let oldValue
 	var bad_credentials = false;
 	var credentialsMessage = "";
 	onMount(() => {
 
 
-		setLoader(false)
+
 		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
 		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";
-		if (mail != "" && password != "")
+	/*	if (oldValue == undefined && mail != "" && password != ""){
+			Logout()
+			resetInput()
+			setLoader(false)
+			connexionStatusWritable.update(value => value = undefined)
+		}*/
+
+
+		if (mail != "" && password != ""){
+
 			Login();
+		}
+
 
 
 		/**
 		 * Server response for login
 		*/
+
 		connexionStatusWritable.subscribe(value => {
+
+			oldValue = value
+
 			showErrors(value)
 		})
 
@@ -37,15 +52,18 @@ import {ConnexionStatus } from '$lib/Status';
 			if (res.status == undefined){
 				connexionStatusWritable.update(value => value = ConnexionStatus.Error)
 			}else {
-				connexionStatusWritable.update(value => value = res.status)
+
+					connexionStatusWritable.update(value => value = res.status)
 			}
 
 
 			if (res.status == ConnexionStatus.Connected){
 				$user =  res.response;
+
 				if(res == null) {
 					bad_credentials = true
 					resetInput()
+
 				} else {
 
 
