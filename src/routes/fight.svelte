@@ -21,9 +21,6 @@
         actualUser = actualUser
         enemyUser = enemyUser
 
-        console.log(actualUser)
-        console.log(enemyUser)
-
         //generatePlayGround(".EnemyTrail", "e", enemyUser.playGround)
         generatePlayGround(".MyTrail", "m", actualUser.playGround, true)
     })
@@ -39,10 +36,8 @@
     function buildEnemyPlayground(playground) {
         let htmlPG = document.querySelector('.EnemyTrail')
         htmlPG.innerHTML = ""
-        console.log(playground)
         for (let i = 0; i < playground.length; i++) {
 
-            
             let div = document.createElement('div')
             div.classList.add('trail')
 
@@ -71,18 +66,31 @@
                 actualFrame.card = selectedCard
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ selectedCard.path
-                selectedFrame.appendChild(img)
-                selectedCard = null
-                selectedFrame = null
+                img.classList.add('boardCard')
+                img.classList.add(`CARD_FIGHT_${selectedCard.id}`)
+                img.id = selectedCard.id
 
-                console.log($dataMatch)
+                img.addEventListener('click', () => {
+                    selectOneCard(`.CARD_FIGHT_${img.id}`, ".boardCard", "selectedFightCard")
+                    attack()
+                })
+
+                selectedFrame.appendChild(img)
+
                 io.emit('updateUserPlayground', {
                     id: game.id,
                     modifyId: actualUser.user.id,
                     playGround: actualUser.playGround
                 })
+
+                selectedCard = null
+                selectedFrame = null
             }
         }
+    }
+
+    function attack() {
+
     }
 
     function generatePlayGround(className, attr, array, event) {
@@ -94,9 +102,7 @@
             div.setAttribute('data-id', attr + "_" + i)
 
             if(event) {
-                // selectedFrame = div
                 div.addEventListener('click', () => {
-                    console.log(div)
                     selectedFrame = div
                     checkPose()
                 })
@@ -112,8 +118,21 @@
     })
 
     function setSelectedCard(el) {
-        console.log(el)
+        selectOneCard(`.CARD_${el.id}`, ".MyCard", "selectedCard")
         selectedCard = el
+    }
+
+    function selectOneCard(cardName, allCards, className) {
+        let card = document.querySelector(cardName)
+        let cards = document.querySelectorAll(allCards)
+
+        for(let c of cards) {
+            c.classList.remove(className)
+        }
+
+        console.log(card)
+        console.log(cardName)
+        card.classList.add(className)
     }
 
 </script>

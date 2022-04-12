@@ -64,6 +64,22 @@
 
 .trail {
     width: 100%;
+    transition: 0.09s all ease-in-out;
+}
+
+.selectedCard {
+    -webkit-box-shadow: 0px 0px 11px 6px #FFE920; 
+    box-shadow: 0px 0px 11px 6px #FFE920;
+}
+
+.selectedFightCard {
+    -webkit-box-shadow: 0px 0px 11px 6px #63ff20; 
+    box-shadow: 0px 0px 11px 6px #63ff20;
+}
+
+.selectedAgroCard {
+    -webkit-box-shadow: 0px 0px 11px 6px #ff2020; 
+    box-shadow: 0px 0px 11px 6px #ff2020;
 }
 
 .dragme {
@@ -73,13 +89,8 @@
     cursor: move;
 }
 
-#draggable {
-    background-color: #ccc;
-    border: 1px solid #000;
-}
-
 .trail:hover {
-    background-color: #575757;
+    background-color: #999999;
 }
 
 .undertray {

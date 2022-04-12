@@ -268,6 +268,7 @@ function send_fight(_id1,_id2,data,jwt){
         var id = `GAME_${user1.id}_${user2.id}`
 
         var GAME = {
+            "killFeed" : [],
             "id": id,
             "maxMana": MAX_MANA,
             "time_round": TIME_ROUND,
