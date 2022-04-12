@@ -1,5 +1,6 @@
 import { Status, MatchmakingStatus } from "./Status.js";
 import { sockets } from "../socket.js";
+import { getDeckByUser, getUserById } from "../database.js";
 
 
 export function MF_Initialize(socket) {
@@ -8,16 +9,12 @@ export function MF_Initialize(socket) {
 }
 
 
-
 export function MF_Fight(socket){
 	socket.on('matchmakingFriend-duel', (dataUsers) => {
 
         let userId = dataUsers?.userId
-        let userFriendId = dataUsers?.userFriendId
-
-
-        
-
+        let userFriendId = dataUsers?.userFriendId 
+        let jwt = dataUsers?.jwt   
 
         checkUser(userId, _ => {
 
@@ -56,7 +53,7 @@ export function MF_Fight(socket){
 
 
                             send_fight(userFriendId, userId, {
-
+                            
                                 'actualUser': {
                                     'id': userId,
                                     'status': Status.Connected,
@@ -67,7 +64,7 @@ export function MF_Fight(socket){
                                     'status': friendStatus,
                                     'matchmakingStatus': MatchmakingStatus.InMatch
                                 }
-                            })
+                            },jwt)
 
                             return;
                             break;
@@ -116,7 +113,7 @@ export function MF_Fight(socket){
 
 
                             send_fight(userFriendId, userId, {
-
+                                
                                 'selectedUser': {
                                     'id': userId,
                                     'status': Status.Connected,
@@ -127,7 +124,7 @@ export function MF_Fight(socket){
                                     'status': friendStatus,
                                     'matchmakingStatus': MatchmakingStatus.InMatch
                                 }
-                            })
+                            },jwt)
                             return;
                             break;
                         case MatchmakingStatus.Cancelled:
@@ -229,10 +226,74 @@ function send_duel(_id,data){
     sockets[_id].emit('matchmakingFriend-duel',(data))
 }
 
-function send_fight(_id1,_id2,data){
-    //console.log(sockets[_id1].matchmaking)
-    //console.log(sockets[_id2].matchmaking)
-    sockets[_id1].emit('matchmakingFriend-fight',(data))
-    sockets[_id2].emit('matchmakingFriend-fight',(data))
+function send_fight(_id1,_id2,data,jwt){
+    let user1 = {}
+    let user2 = {}
+    let deck_user1 = {}
+    let deck_user2 = {}
+
+    let promises = []
+
+    promises.push(
+        getUserById(jwt, _id1).then((res) => {
+            user1 = res
+        })
+    )
+
+    promises.push(
+        getUserById(jwt, _id2).then((res) => {
+            user2 = res
+        })
+    )
+
+    promises.push(
+        getDeckByUser(jwt, _id1).then((res) => {
+            deck_user1 = res
+        })
+    )
+
+    promises.push(
+        getDeckByUser(jwt, _id2).then((res) => {
+            deck_user2 = res
+        })
+    )
+
+    Promise.all(promises).then((res) => {
+        var LIFE = 20
+        var MANA = 0
+        var MANA_REGEN = 0
+        var TIME_ROUND = 25 
+        var MAX_MANA = 10
+
+        var GAME = {
+            "maxMana": MAX_MANA,
+            "time_round": TIME_ROUND,
+            "turn": user1.id,
+            [user1.id]: {
+                user: user1,
+                deck: deck_user1,
+                life: LIFE,
+                mana: MANA,
+                manaRegen: MANA_REGEN,
+            },
+            [user2.id]: {
+                user: user2,
+                deck: deck_user2,
+                life: LIFE,
+                mana: MANA,
+                manaRegen: MANA_REGEN,
+            },
+            changeTurn : () => {
+                this.turn = this.turn == user1.id ? user2.id : user1.id;
+            }
+        }
+
+        sockets["GAME_" + user1.id + "_" + user2.id] = GAME
+
+        data.game = GAME;
+        sockets[_id1].emit('matchmakingFriend-fight',(data))
+        sockets[_id2].emit('matchmakingFriend-fight',(data))
+    })
+    
 }
 
