@@ -12,6 +12,9 @@
     var actualUser = {}
     var enemyUser = {}
 
+    var PLAY_ACTUAL = []
+    var PLAY_ENNEMY = []
+
     onMount(() => {
         game = $dataMatch.game
         actualUser = $dataMatch.game[$user.id]
@@ -24,26 +27,65 @@
         console.log(actualUser)
         console.log(enemyUser)
 
-        generatePlayGround(".EnemyTrail")
-        generatePlayGround(".MyTrail")
+        generatePlayGround(".EnemyTrail", "e", PLAY_ENNEMY)
+        generatePlayGround(".MyTrail", "m", PLAY_ACTUAL, true)
     })
 
-    var PLAY_ACTUAL = []
-    var PLAY_ENNEMY = []
+    var selectedCard = null
+    var selectedFrame = null
 
-    function generatePlayGround(className) {
+    function checkPose() {
+        if(selectedCard && selectedFrame) {
+
+            let dataId = selectedFrame.getAttribute('data-id')
+
+            let actualFrame = PLAY_ACTUAL.find(frame => frame.id == dataId)
+
+            console.log(actualFrame)
+
+            if(actualFrame.empty) {
+                document.querySelector('.CARD_' + selectedCard.id).remove()
+                actualFrame.empty = false
+                let img = document.createElement("img")
+                img.src = "http://51.210.104.99:8001/getImage/"+ selectedCard.path
+                img.classList.add("selectedCard")
+                selectedFrame.appendChild(img)
+                selectedCard = null
+                selectedFrame = null
+            }
+        }
+    }
+
+    function generatePlayGround(className, attr, array, event) {
         let container = document.querySelector(className)
 
         for(let i = 0; i<6; i++) {
             let div = document.createElement('div')
             div.classList.add('trail')
+            div.setAttribute('data-id', attr + "_" + i)
+
+            if(event) {
+                // selectedFrame = div
+                div.addEventListener('click', () => {
+                    console.log(div)
+                    selectedFrame = div
+                    checkPose()
+                })
+            }
+
             container.appendChild(div)
+            array.push({id: attr + "_" + i, div: div, empty: true})
         }
     }
     afterUpdate(() => {
         document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5 + "%"
         document.querySelector('.MyHpBar').style.height = actualUser.life * 5 + "%"
     })
+
+    function setSelectedCard(el) {
+        console.log(el)
+        selectedCard = el
+    }
 
 </script>
 
@@ -77,7 +119,14 @@
             <div class="MyHand p-4 pl-12 pr-16 flex flex-row">
                 {#if actualUser.deck != undefined}
                     {#each actualUser.deck[0].listCards as card}
-                        <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="MyCard mr-4">
+                        <img 
+                            alt="{card.path}" 
+                            src="http://51.210.104.99:8001/getImage/{card.path}" 
+                            class="MyCard mr-4 CARD_{card.id}"
+                            on:click={() =>{
+                                setSelectedCard(card)
+                            }}
+                        >
                     {/each}
                 {/if}
             </div>
