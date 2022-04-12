@@ -3,9 +3,10 @@
 
     import Loader from "../components/loader.svelte";
     import { user, dataMatch } from './auth';
-    import { onMount } from 'svelte';
+    import { afterUpdate, onMount } from 'svelte';
     import { io } from "$lib/realtime";
     import { Layers } from "three";
+
 
     var game = {}
     var actualUser = {}
@@ -39,6 +40,11 @@
             container.appendChild(div)
         }
     }
+    afterUpdate(() => {
+        Document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5
+        Document.querySelector('.MyHpBar').style.height = actualUser.life * 5
+    })
+
 
 </script>
 
@@ -106,7 +112,9 @@
                         <div class="MaxHp">
                             <div class="EnemyHpBar">
                                 <div class="EnemyHpTxt">
-                                    30
+                                    { 
+                                        enemyUser.user?.life || ""
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -139,7 +147,9 @@
                         <div class="MaxHp">
                             <div class="MyHpBar">
                                 <div class="MyHpTxt">
-                                    30
+                                    { 
+                                        actualUser.user?.life || ""
+                                    }
                                 </div>
                             </div>
                         </div>
