@@ -83,7 +83,7 @@
     box-shadow: 0px 0px 11px 6px #63ff20;
 }
 
-.selectedAgroCard {
+.selectedAgroCard:hover {
     -webkit-box-shadow: 0px 0px 11px 6px #ff2020; 
     box-shadow: 0px 0px 11px 6px #ff2020;
 }

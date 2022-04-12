@@ -45,6 +45,17 @@
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ playground[i].card.path
                 img.classList.add('CardTrail')
+                img.id = playground[i].card.id
+                img.classList.add(`CARD_AGRO_${playground[i].card.id}`)
+                img.classList.add('boardCard')
+                img.classList.add('selectedAgroCard')
+
+                img.addEventListener('click', () => {
+                    //selectOneCard(`.CARD_AGRO_${img.id}`, ".boardCard", "selectedAgroCard")
+                    selectedAgro = playground[i].card
+                    attack()
+                })
+
                 div.appendChild(img)
             }
             
@@ -54,6 +65,14 @@
 
     var selectedCard = null
     var selectedFrame = null
+
+    var selectedFight = null
+    var selectedAgro = null
+
+    function attack() {
+        console.log(selectedFight)
+        console.log(selectedAgro)
+    }
 
     function checkPose() {
         if(selectedCard && selectedFrame) {
@@ -71,9 +90,11 @@
                 img.classList.add(`CARD_FIGHT_${selectedCard.id}`)
                 img.id = selectedCard.id
 
+                let copy = selectedCard.valueOf()
+
                 img.addEventListener('click', () => {
                     selectOneCard(`.CARD_FIGHT_${img.id}`, ".boardCard", "selectedFightCard")
-                    attack()
+                    selectedFight = copy
                 })
 
                 img.classList.add('CardTrail')
@@ -99,10 +120,6 @@
                 selectedFrame = null
             }
         }
-    }
-
-    function attack() {
-
     }
 
     function generatePlayGround(className, attr, array, event) {
@@ -141,9 +158,6 @@
         for(let c of cards) {
             c.classList.remove(className)
         }
-
-        console.log(card)
-        console.log(cardName)
         card.classList.add(className)
     }
 
