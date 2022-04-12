@@ -45,7 +45,15 @@
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ playground[i].card.path
                 img.classList.add('CardTrail')
+                let HpMaxCard = document.createElement("div")
+                HpMaxCard.classList.add('MaxHpCard')
+                let HpCard = document.createElement("div")
+                HpCard.classList.add('HpCard')
+
                 div.appendChild(img)
+                HpMaxCard.appendChild(HpCard)
+                div.appendChild(HpMaxCard)
+                
             }
             
             htmlPG.appendChild(div)
@@ -81,6 +89,17 @@
                 HpMaxCard.classList.add('MaxHpCard')
                 let HpCard = document.createElement("div")
                 HpCard.classList.add('HpCard')
+
+                
+
+              //   if (document.querySelector('.Hp_' + playGround[i].card.Id) == null){
+              //       HpCard.className = '.Hp_' + playGround[i].card.Id
+                //     HpCard.style.width = '100%'
+               //  }else{
+                   //  playGround[i].card.actualLife = 
+                   //  document.querySelector('.Hp_' + playGround[i].card.Id ).style.width = playground[i].card.Life
+                   
+                //}
                 
                 selectedFrame.appendChild(img)
                 HpMaxCard.appendChild(HpCard)
