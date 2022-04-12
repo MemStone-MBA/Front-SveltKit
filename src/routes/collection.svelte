@@ -50,12 +50,12 @@
         let actualCount = mouseCount;
           setTimeout(function(){
             if (mouseClicked == true && cardShowed == false && actualCount == mouseCount)
-              resolve();
+              resolve(true);
             else
-              reject()
+              resolve(false);
           },1000)
       });
-      promise.then(res => {ShowCard(cardpath)})
+      promise.then(res => {if(res == true) ShowCard(cardpath)});
     }
 
     function MouseUp(){
