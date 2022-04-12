@@ -59,6 +59,15 @@
 .MyTrail {
     width: 100%;
     height: 50%;
+    display: flex;
+}
+
+.trail {
+    width: 100%;
+}
+
+.trail:hover {
+    background-color: #575757;
 }
 
 .undertray {

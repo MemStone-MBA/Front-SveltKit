@@ -5,7 +5,7 @@
     import { user, dataMatch } from './auth';
     import { onMount } from 'svelte';
     import { io } from "$lib/realtime";
-import { Layers } from "three";
+    import { Layers } from "three";
 
     var game = {}
     var actualUser = {}
@@ -16,10 +16,29 @@ import { Layers } from "three";
         actualUser = $dataMatch.game[$user.id]
         let enemyUserArray = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
         enemyUser = enemyUserArray[0][1]
+
+        actualUser = actualUser
+        enemyUser = enemyUser
+
         console.log(actualUser)
         console.log(enemyUser)
+
+        generatePlayGround(".EnemyTrail")
+        generatePlayGround(".MyTrail")
     })
 
+    var PLAY_ACTUAL = []
+    var PLAY_ENNEMY = []
+
+    function generatePlayGround(className) {
+        let container = document.querySelector(className)
+
+        for(let i = 0; i<6; i++) {
+            let div = document.createElement('div')
+            div.classList.add('trail')
+            container.appendChild(div)
+        }
+    }
 
 </script>
 
@@ -30,45 +49,32 @@ import { Layers } from "three";
 <div class="flex flex-row backgroundsize">
     <div class="flex flex-col  w-5/6">
         <div class="flex flex-row EnemyDeck mb-1">
-            <div class="pioche">
-                <img src="static/assets/card_back.png" alt="" class="cardPioche">
-            </div>
             <div class="EnemyHand p-4 pl-12 pr-16 flex flex-row">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
-                <img src="static/assets/card_back.png" alt="" class="EnemyCard">
+                {#if actualUser.deck != undefined}
+                    {#each actualUser.deck[0].listCards as card}
+                        <img src="static/assets/card_back.png" alt="" class="EnemyCard mr-4">
+                    {/each}
+                {/if}
             </div>
-
         </div>
         <div class="tray ">
             <div class="undertray flex flex-col">
-                <div class="EnemyTrail flex flex-row">
-                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
-                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+                <div class="EnemyTrail">
+
                 </div>
-                <div class="MyTrail flex flex-row">
-                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
-                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
-                    <img src="static/assets/card_front.png" alt="" class="CardTrail">
+
+                <div class="MyTrail">
+
                 </div>
             </div>
         </div>
         <div class="flex flex-row MyDeck mt-1">
-            <div class="pioche">
-                <img src="static/assets/card_back.png" alt="" class="cardPioche">
-            </div>
             <div class="MyHand p-4 pl-12 pr-16 flex flex-row">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
-                <img src="static/assets/card_front.png" alt="" class="MyCard mr-4">
+                {#if actualUser.deck != undefined}
+                    {#each actualUser.deck[0].listCards as card}
+                        <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class="MyCard mr-4">
+                    {/each}
+                {/if}
             </div>
         </div>
     </div>
