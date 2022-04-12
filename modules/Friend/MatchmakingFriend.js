@@ -265,16 +265,21 @@ function send_fight(_id1,_id2,data,jwt){
         var TIME_ROUND = 25 
         var MAX_MANA = 10
 
+        var id = `GAME_${user1.id}_${user2.id}`
+
         var GAME = {
+            "id": id,
             "maxMana": MAX_MANA,
             "time_round": TIME_ROUND,
             "turn": user1.id,
+            "listIds": [user1.id, user2.id],
             [user1.id]: {
                 user: user1,
                 deck: deck_user1,
                 life: LIFE,
                 mana: MANA,
                 manaRegen: MANA_REGEN,
+                playGround: []
             },
             [user2.id]: {
                 user: user2,
@@ -282,13 +287,14 @@ function send_fight(_id1,_id2,data,jwt){
                 life: LIFE,
                 mana: MANA,
                 manaRegen: MANA_REGEN,
+                playGround: []
             },
             changeTurn : () => {
                 this.turn = this.turn == user1.id ? user2.id : user1.id;
             }
         }
 
-        sockets["GAME_" + user1.id + "_" + user2.id] = GAME
+        sockets[id] = GAME
 
         data.game = GAME;
         sockets[_id1].emit('matchmakingFriend-fight',(data))

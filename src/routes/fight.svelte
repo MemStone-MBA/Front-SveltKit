@@ -12,9 +12,6 @@
     var actualUser = {}
     var enemyUser = {}
 
-    var PLAY_ACTUAL = []
-    var PLAY_ENNEMY = []
-
     onMount(() => {
         game = $dataMatch.game
         actualUser = $dataMatch.game[$user.id]
@@ -27,9 +24,37 @@
         console.log(actualUser)
         console.log(enemyUser)
 
-        generatePlayGround(".EnemyTrail", "e", PLAY_ENNEMY)
-        generatePlayGround(".MyTrail", "m", PLAY_ACTUAL, true)
+        //generatePlayGround(".EnemyTrail", "e", enemyUser.playGround)
+        generatePlayGround(".MyTrail", "m", actualUser.playGround, true)
     })
+
+    io.on('updateUserPlayground', game => {
+        let enemyUserArray2 = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
+        let newPlayground = enemyUserArray2[0][1].playGround
+
+        if(newPlayground && newPlayground != [])
+            buildEnemyPlayground(newPlayground)
+    })
+
+    function buildEnemyPlayground(playground) {
+        let htmlPG = document.querySelector('.EnemyTrail')
+        htmlPG.innerHTML = ""
+        console.log(playground)
+        for (let i = 0; i < playground.length; i++) {
+
+            
+            let div = document.createElement('div')
+            div.classList.add('trail')
+
+            if(playground[i].card) {
+                let img = document.createElement("img")
+                img.src = "http://51.210.104.99:8001/getImage/"+ playground[i].card.path
+                div.appendChild(img)
+            }
+            
+            htmlPG.appendChild(div)
+        }
+    }
 
     var selectedCard = null
     var selectedFrame = null
@@ -38,20 +63,24 @@
         if(selectedCard && selectedFrame) {
 
             let dataId = selectedFrame.getAttribute('data-id')
-
-            let actualFrame = PLAY_ACTUAL.find(frame => frame.id == dataId)
-
-            console.log(actualFrame)
+            let actualFrame = actualUser.playGround.find(frame => frame.id == dataId)
 
             if(actualFrame.empty) {
                 document.querySelector('.CARD_' + selectedCard.id).remove()
                 actualFrame.empty = false
+                actualFrame.card = selectedCard
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ selectedCard.path
-                img.classList.add("selectedCard")
                 selectedFrame.appendChild(img)
                 selectedCard = null
                 selectedFrame = null
+
+                console.log($dataMatch)
+                io.emit('updateUserPlayground', {
+                    id: game.id,
+                    modifyId: actualUser.user.id,
+                    playGround: actualUser.playGround
+                })
             }
         }
     }

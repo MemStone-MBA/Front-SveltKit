@@ -162,6 +162,15 @@ export function SocketServer(server) {
 			 })
 		})
 
+		socket.on("updateUserPlayground", (data) => {
+			sockets[data.id][data.modifyId].playGround = data.playGround
+			let game = sockets[data.id]
+
+			for(let id of game.listIds) {
+				sockets[id].emit('updateUserPlayground', game)
+			}
+		})
+
 		var TODAY_CARD = {}
 
 		socket.on('todayCard', (data, cb) =>{
