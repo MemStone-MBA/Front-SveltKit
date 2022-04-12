@@ -14,6 +14,7 @@
 
     onMount(() => {
         game = $dataMatch.game
+        console.log(game)
         actualUser = $dataMatch.game[$user.id]
         let enemyUserArray = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
         enemyUser = enemyUserArray[0][1]
@@ -52,7 +53,7 @@
 
                 img.addEventListener('click', () => {
                     //selectOneCard(`.CARD_AGRO_${img.id}`, ".boardCard", "selectedAgroCard")
-                    selectedAgro = playground[i].card
+                    selectedAgro = playground[i].card.id
                     console.log(playground)
                     attack()
                 })
@@ -60,7 +61,7 @@
                 HpMaxCard.classList.add('MaxHpCard')
                 let HpCard = document.createElement("div")
                 HpCard.classList.add('HpCard')
-                HpMaxCard.classList.add('HP_' + enemyUser.user.id + "_" +playground[i].card.Id)
+                HpCard.classList.add('HP_' + enemyUser.user.id + "_" +playground[i].card.id)
 
                 let newHP = playground[i].card.life * 100 / playground[i].card.maxLife + "%"
 
@@ -82,35 +83,38 @@
     var selectedAgro = null
 
     function attack() {
-        var damage = selectedFight.damage 
-        var newLife = selectedAgro.life - damage
+        // var damage = selectedFight.damage 
+        // var newLife = selectedAgro.life - damage
+        console.log(game)
+        console.log(game.getCardInPlayground(actualUser.user.id, selectedFight))
+        console.log(game.getCardInPlayground(enemyUser.user.id, selectedAgro))
 
-        if(newLife <= 0) {
-            enemyDamageUser(newLife)
-            destroyCard(selectedAgro)
-        } else {
-            changeLife(selectedAgro, newLife)
-        }
+        // if(newLife <= 0) {
+        //     enemyDamageUser(newLife)
+        //     destroyCard(selectedAgro)
+        // } else {
+        //     changeLife(selectedAgro, newLife)
+        // }
 
-        let cardsF = document.querySelectorAll('selectedFightCard')
-        for(let c of cardsF) {
-            c.classList.remove('selectedFightCard')
-        }
+        // let cardsF = document.querySelectorAll('.selectedFightCard')
+        // for(let c of cardsF) {
+        //     c.classList.remove('selectedFightCard')
+        // }
 
-        let cardsA = document.querySelectorAll('selectedAgroCard')
-        for(let c of cardsA) {
-            c.classList.remove('selectedAgroCard')
-        }
+        // let cardsA = document.querySelectorAll('.selectedAgroCard')
+        // for(let c of cardsA) {
+        //     c.classList.remove('selectedAgroCard')
+        // }
 
-        selectedAgro = null
-        selectedFight = null
+        // selectedAgro = null
+        // selectedFight = null
     }
 
     io.on('updateLife', (data) => {
-        console.log(data)
-        buildEnemyPlayground(data[enemyUser.user.id].playGround)
-        // let HpCard = document.querySelector(`.HpCard_${card.id}`)
-        // HpCard.style.width = `${newLife}%`
+        // game = data.game
+        // let cardToUpdate = document.querySelector('.HP_' + data.idUser + "_" + data.card.id)
+        // let newHP = data.card.life * 100 / data.card.maxLife + "%"
+        // cardToUpdate.style.width = newHP
     })
 
     function changeLife(card, newLife) {
@@ -145,7 +149,7 @@
 
                 img.addEventListener('click', () => {
                     selectOneCard(`.CARD_FIGHT_${img.id}`, ".boardCard", "selectedFightCard")
-                    selectedFight = copy
+                    selectedFight = copy.id
                 })
 
                 img.classList.add('CardTrail')
@@ -154,7 +158,7 @@
                 HpMaxCard.classList.add('MaxHpCard')
                 let HpCard = document.createElement("div")
                 HpCard.classList.add('HpCard')
-                HpMaxCard.classList.add('HP_' + actualUser.user.id + "_" + selectedCard.id)
+                HpCard.classList.add('HP_' + actualUser.user.id + "_" + selectedCard.id)
                 actualFrame.card.maxLife = actualFrame.card.life
                 
                 selectedFrame.appendChild(img)

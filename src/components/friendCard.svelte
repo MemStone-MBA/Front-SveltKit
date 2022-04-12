@@ -90,6 +90,8 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 
 		io.on("matchmakingFriend-fight",(res)=>{
 
+			console.log(res)
+
 			friendCap.classList.remove("card-IsWaiting")
 
 			let actualUser = res.actualUser ;

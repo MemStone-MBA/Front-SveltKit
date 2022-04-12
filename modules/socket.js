@@ -182,7 +182,7 @@ export function SocketServer(server) {
 			let game = sockets[data.game.id]
 
 			for(let id of game.listIds) {
-				sockets[id].emit('updateLife', game)
+				sockets[id].emit('updateLife', {game: game, idUser: data.idUser, card: cardPG[0][1].card})
 			}
 		})
 

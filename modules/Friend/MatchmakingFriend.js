@@ -292,12 +292,18 @@ function send_fight(_id1,_id2,data,jwt){
             },
             changeTurn : () => {
                 this.turn = this.turn == user1.id ? user2.id : user1.id;
+            },
+            getCardInPlayground : (idUser, idCard) => {
+                return Object.entries(this[idUSer].playGround).filter((col) => { return col[1].card && col[1].card.id == idCard })
             }
         }
 
         sockets[id] = GAME
 
         data.game = GAME;
+
+        console.log(data.game)
+
         sockets[_id1].emit('matchmakingFriend-fight',(data))
         sockets[_id2].emit('matchmakingFriend-fight',(data))
     })
