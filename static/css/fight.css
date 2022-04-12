@@ -88,12 +88,12 @@
 }
 
 .CardTrail {
-    width: 10%;
-    height: 80%;
+    width: auto;
+    height: 100%;
+    padding: 10%;
     display: flex;
     margin-left: auto;
     margin-right: auto;
-    padding-top: 1%;
 }
 
 .titleRightContainer {
@@ -165,4 +165,28 @@
     Color: White;
     font-family: barlow-eb;
     font-size: 48px;
+}
+
+.MaxHpCard {
+    background: #C4C4C4;
+    height: 20px;
+    width: 80%;
+    border-radius: 12px;
+    position: relative;
+    margin-top: -10%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+
+.HpCard {
+    background: #DA272A;
+    height: 100%;
+    width: 100%;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 10;
+    left: 0;
 }

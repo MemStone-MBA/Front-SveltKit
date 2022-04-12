@@ -49,6 +49,7 @@
             if(playground[i].card) {
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ playground[i].card.path
+                img.classList.add('CardTrail')
                 div.appendChild(img)
             }
             
@@ -71,7 +72,16 @@
                 actualFrame.card = selectedCard
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ selectedCard.path
+                img.classList.add('CardTrail')
+                let HpMaxCard = document.createElement("div")
+                HpMaxCard.classList.add('MaxHpCard')
+                let HpCard = document.createElement("div")
+                HpCard.classList.add('HpCard')
+                
                 selectedFrame.appendChild(img)
+                HpMaxCard.appendChild(HpCard)
+                selectedFrame.appendChild(HpMaxCard)
+                
                 selectedCard = null
                 selectedFrame = null
 
