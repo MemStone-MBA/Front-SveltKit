@@ -263,8 +263,10 @@ function send_fight(_id1,_id2,data,jwt){
         var MANA = 0
         var MANA_REGEN = 0
         var TIME_ROUND = 25 
+        var MAX_MANA = 10
 
         var GAME = {
+            "maxMana": MAX_MANA,
             "time_round": TIME_ROUND,
             "turn": user1.id,
             [user1.id]: {

@@ -41,10 +41,9 @@
         }
     }
     afterUpdate(() => {
-        Document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5
-        Document.querySelector('.MyHpBar').style.height = actualUser.life * 5
+        document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5 + "%"
+        document.querySelector('.MyHpBar').style.height = actualUser.life * 5 + "%"
     })
-
 
 </script>
 
@@ -113,7 +112,7 @@
                             <div class="EnemyHpBar">
                                 <div class="EnemyHpTxt">
                                     { 
-                                        enemyUser.user?.life || ""
+                                        enemyUser.life || ""
                                     }
                                 </div>
                             </div>
@@ -148,7 +147,7 @@
                             <div class="MyHpBar">
                                 <div class="MyHpTxt">
                                     { 
-                                        actualUser.user?.life || ""
+                                        actualUser.life || ""
                                     }
                                 </div>
                             </div>
