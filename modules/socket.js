@@ -11,10 +11,11 @@ import {
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
-	buyCoins, getUserCases
+	buyCoins,
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
+import { getUserCases } from './Cases/Users-Cases.js';
 export let sockets = []
 
 export function SocketServer(server) {
@@ -159,9 +160,7 @@ export function SocketServer(server) {
 		socket.on('getUserCases', (data, cb) => {
 			 getUserCases(data).then((res) => {
 
-
-				 console.log(res)
-			 //	cb(res)
+			 		cb(res)
 			 })
 		})
 

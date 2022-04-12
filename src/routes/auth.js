@@ -9,6 +9,7 @@ export const connexionStatusWritable = writable(ConnexionStatus.Error)
 
 export const loaderStatusWritable = writable(false)
 
+export const userCasesWritable = writable({status:400,cases:[],count:0})
 
 export const isLog = function(user) {
     if(user != null) {
