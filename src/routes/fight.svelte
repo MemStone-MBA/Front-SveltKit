@@ -1,12 +1,31 @@
 <script>
+// @ts-nocheck
+
     import Loader from "../components/loader.svelte";
     import { user, dataMatch } from './auth';
-    import { onMount } from 'svelte';
+    import { afterUpdate, onMount } from 'svelte';
     import { io } from "$lib/realtime";
+import { Layers } from "three";
 
+
+    var game = {}
+    var actualUser = {}
+    var enemyUser = {}
 
     onMount(() => {
+        game = $dataMatch.game
+        actualUser = $dataMatch.game[$user.id]
+        let enemyUserArray = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
+        enemyUser = enemyUserArray[0][1]
+        console.log(actualUser)
+        console.log(enemyUser)
+    })
 
+    afterUpdate(() => {
+        Document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5
+        Document.querySelector('.MyHpBar').style.height = actualUser.life * 5
+        Document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5
+        Document.querySelector('.MyHpBar').style.height = actualUser.life * 5
     })
 
 
@@ -63,10 +82,13 @@
     </div>
     <div class="flex-1 rightContainer m-1">
         <div class="flex flex-col h-full">
+            <!-- 
+                ENNEMY
+            -->
             <div class="EnemyInfo flex-1 flex flex-col">
                 <div class="titleRightContainer">
                     { 
-                        $dataMatch.selectedUser.id.slice(-5)
+                        enemyUser.user?.username || ""
                     }
                 </div>
                 <div class="flex-1 flex flex-row">
@@ -86,17 +108,22 @@
                         <div class="MaxHp">
                             <div class="EnemyHpBar">
                                 <div class="EnemyHpTxt">
-                                    30
+                                    { 
+                                        enemyUser.user?.life || ""
+                                    }
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- 
+                USER
+            -->
             <div class="MyInfo h-full flex-1 flex flex-col">
                 <div class="titleRightContainer">
                     { 
-                        $dataMatch.actualUser.id.slice(-5)
+                        actualUser.user?.username || ""
                     }
                 </div>
                 <div class="flex-1 flex flex-row">
@@ -116,7 +143,9 @@
                         <div class="MaxHp">
                             <div class="MyHpBar">
                                 <div class="MyHpTxt">
-                                    30
+                                    { 
+                                        actualUser.user?.life || ""
+                                    }
                                 </div>
                             </div>
                         </div>

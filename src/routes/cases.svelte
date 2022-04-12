@@ -24,7 +24,7 @@ function getStoreCards(){
         if(res.status) {
             return
         }
-
+        console.log(res.data)
     }))
 }
 
