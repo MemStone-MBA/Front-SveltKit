@@ -145,16 +145,14 @@
                 </div>
                 <div class="flex-1 flex flex-row">
                     <div class="EnemyEnergy flex flex-col">
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
+                        {#each Array(game.maxMana) as _, row}
+                            {#if row < 10 - enemyUser.mana}
+                                <div class="EnergyEmpty"></div>
+                            {:else}
+                                <div class="EnergyFull"></div>
+                                
+                            {/if}
+                        {/each}
                     </div>
                     <div class="EnemyHp">
                         <div class="MaxHp">
@@ -180,16 +178,14 @@
                 </div>
                 <div class="flex-1 flex flex-row">
                     <div class="MyEnergy flex flex-col">
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyEmpty"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
-                        <div class="EnergyFull"></div>
+                        {#each Array(game.maxMana) as _, row}
+                            {#if row < 10 - actualUser.mana}
+                                <div class="EnergyEmpty"></div>
+                            {:else}
+                                <div class="EnergyFull"></div>
+                                
+                            {/if}
+                        {/each}
                     </div>
                     <div class="MyHp">
                         <div class="MaxHp">
