@@ -96,7 +96,7 @@ function buyUserCases(id){
         <div class="title_journeyCard mt-8">
             Carte à la une {TIME_LEFT}
         </div>
-        <div class="flex flex-row w-full h-1/2 mt-8 h-auto">
+        <div class="flex flex-row w-full pb-20 mt-8 h-auto">
 
             {#each CARDS as card}
                 <div class="flex-1">
@@ -113,23 +113,8 @@ function buyUserCases(id){
         <div class="title_journeyPack">
             Packs
         </div>
-        <div class="flex flex-row w-full h-1/2 mt-8 h-auto">
-            <div class="flex-1" on:click={ ()=>{ buyUserCases('62541db6d7dacb45b0928654')}}>
-                <img src='static/assets/icon_pack.svg' class='journeyPack'>
-                <div class="price mt-2">
-                    <div class="flex flex-col">
-                        <div class="textprice">
-                        Pack 10 cartes
-                        </div>
-                        <div class="price">
-                            <div class="textprice">
-                             4000
-                            </div>
-                            <img src='static/assets/coin.svg' class='coin mt-1'>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flex flex-row w-full  mt-8 h-auto">
+
             <div class="flex-1" on:click={()=>{ buyUserCases('6255710996241152307ed6f1')}}>
                 <img src='static/assets/icon_pack.svg' class='journeyPack'>
                 <div class="price mt-2">

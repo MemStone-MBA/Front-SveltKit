@@ -17,6 +17,7 @@ import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
 import { addUserCase, deleteUserCase, getUserCases } from './Cases/Users-Cases.js';
 import { draw } from './Utils.js';
+import { offer } from '../src/components/offerDetail.svelte';
 export let sockets = []
 
 export function SocketServer(server) {
@@ -211,10 +212,18 @@ export function SocketServer(server) {
 
 		socket.on('buyUserCase', (data, cb) => {
 
-			let offre = {
-				price: data.price || 1000,
-				number:data.number || 3
+		 let offer = {}
+
+			if (data.offer == undefined || offer.cases == null ||  !Array.isArray(offer.cases)){
+				cb({status:400})
+				return;
+			}else {
+				offer.cases = data.offer.cases
+				offer.price = data.offer.price
 			}
+
+
+
 
 			let addUserCasesPromise = [];
 			for (let i = parseInt(offre.number)??0; i>0; i-- ){
