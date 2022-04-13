@@ -64,12 +64,12 @@ export function draw(chest, cb) {
 
 	let randomDraw = randomNb(0, total + 1)
 
-	console.log("randomDraw : ",randomDraw)
-	console.log("cards : ",cards)
+	// console.log("randomDraw : ",randomDraw)
+	// console.log("cards : ",cards)
 
 	for (let card of cards){
 		if (randomDraw >= card.min && randomDraw <= card.max){
-			console.log("drawed")
+			// console.log("drawed")
 			cb(card.id)
 			return;
 		}

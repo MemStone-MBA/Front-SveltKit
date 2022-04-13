@@ -17,6 +17,7 @@ import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
 import { addUserCase, deleteUserCase, getUserCases } from './Cases/Users-Cases.js';
 import { draw } from './Utils.js';
+import { getOffers } from './Offers/Offers.js';
 export let sockets = []
 
 export function SocketServer(server) {
@@ -158,6 +159,15 @@ export function SocketServer(server) {
 			})
 		})
 
+
+		socket.on('getOffers', (data, cb) => {
+			getOffers(data).then((res) => {
+
+					cb(res)
+			})
+	   })
+
+
 		socket.on('getUserCases', (data, cb) => {
 			 getUserCases(data).then((res) => {
 
@@ -211,31 +221,46 @@ export function SocketServer(server) {
 
 		socket.on('buyUserCase', (data, cb) => {
 
-		 let offer = {}
+		 let offer = {status:400, count:0 }
 
-			if (data.offer == undefined || offer.cases == null ||  !Array.isArray(offer.cases)){
-				cb({status:400})
+			if (data.offer == undefined || data.offer.cases == null ||  !Array.isArray(data.offer.cases)){
+				cb(offer)
 				return;
 			}else {
-				offer.cases = data.offer.cases
-				offer.price = data.offer.price
+				offer = {...offer, ...data.offer}
 			}
+
 
 
 
 
 			let addUserCasesPromise = [];
-			for (let i = parseInt(offre.number)??0; i>0; i-- ){
-				addUserCasesPromise.push(
-				addUserCase(data.jwt,data.caseId,data.userId))
+
+			if(offer.cases.length > 0){
+
+				offer.cases.forEach(caseData =>{
+					
+					if(caseData.count > 0 && typeof caseData.id === 'string'){
+
+						for(let i = caseData.count ; i > 0; i--){
+							addUserCasesPromise.push(
+								addUserCase(data.jwt,caseData.id,data.userId)
+							)
+						}
+
+					}
+
+				})
+				
+				Promise.all(addUserCasesPromise).then(result => {
+	
+					console.log(result)
+					cb(result)
+				})
+	
 			}
 
-			Promise.all(addUserCasesPromise).then(result => {
-
-				console.log(result)
-				cb(result)
-			})
-
+			
 
 		})
 
