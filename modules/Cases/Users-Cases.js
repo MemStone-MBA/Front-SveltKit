@@ -134,6 +134,7 @@ export const deleteUserCase = async function(jwt, caseId) {
 	}
 
 	res.status = res.status ? res.status : res.response.status;
+	result.status = res.status;
 	switch (res.status){
 		case 400:
 
@@ -142,6 +143,7 @@ export const deleteUserCase = async function(jwt, caseId) {
 			LogsError(res)
 			break;
 		case 200:
+			result = { ...removeProps(res.data,['createdAt','updatedAt','_id','__v','_id']), ...result}
 
 			break;
 		default:

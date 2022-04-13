@@ -66,25 +66,25 @@ function goToMenu() {
     goto('/')
 }
 
-function buyUserCases(){
+function buyUserCases(id){
 
     let offre = {
         price:1000,
-        caseId:'6255710996241152307ed6f1',
+        caseId:id,
         number:4
     }
 
-        console.log("buy")
-
         io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
 
+            if (Array.isArray(res)){
+                res?.forEach(boxPurchased=>{
+                    if(res.status != 200) {
+                        return
+                    }
+                })
 
-            console.log(res)
-            if(res.status != 200) {
-                return
             }
-
-            console.log(res)
+            console.log(`${res.length} box purchased`)
         }))
 
 }
@@ -114,7 +114,7 @@ function buyUserCases(){
             Packs
         </div>
         <div class="flex flex-row w-full h-1/2 mt-8 h-auto">
-            <div class="flex-1" on:click={buyUserCases}>
+            <div class="flex-1" on:click={ ()=>{ buyUserCases('62541db6d7dacb45b0928654')}}>
                 <img src='static/assets/icon_pack.svg' class='journeyPack'>
                 <div class="price mt-2">
                     <div class="flex flex-col">
@@ -130,7 +130,7 @@ function buyUserCases(){
                     </div>
                 </div>
             </div>
-            <div class="flex-1" on:click={buyUserCases}>
+            <div class="flex-1" on:click={()=>{ buyUserCases('6255710996241152307ed6f1')}}>
                 <img src='static/assets/icon_pack.svg' class='journeyPack'>
                 <div class="price mt-2">
                     <div class="flex flex-col">

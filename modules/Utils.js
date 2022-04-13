@@ -59,14 +59,19 @@ export function draw(chest, cb) {
 			min:total,
 			max:total+(chest[element] - 1)
 		})
-		total++;
+	 	total += parseInt(chest[element]);
 	}
 
 	let randomDraw = randomNb(0, total + 1)
 
+	console.log("randomDraw : ",randomDraw)
+	console.log("cards : ",cards)
+
 	for (let card of cards){
 		if (randomDraw >= card.min && randomDraw <= card.max){
+			console.log("drawed")
 			cb(card.id)
+			return;
 		}
 	}
 

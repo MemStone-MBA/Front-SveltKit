@@ -11,6 +11,9 @@ export const loaderStatusWritable = writable(false)
 
 export const userCasesWritable = writable({status:400,cases:[],count:0})
 
+export const userCardObtained = writable(null)
+
+
 export const isLog = function(user) {
     if(user != null) {
         return true

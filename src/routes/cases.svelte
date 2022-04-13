@@ -4,20 +4,22 @@
 import { goto } from "$app/navigation";
 import { io } from "$lib/realtime";
 import { onMount } from "svelte";
-import { user, userCasesWritable } from './auth';
+import { user, userCardObtained, userCasesWritable } from './auth';
+import { onDestroy } from 'svelte/internal';
 
 onMount(() => {
     if (user == null) {
         goto("/login");
     }
     COINS = $user.coins
-    userCasesWritable.subscribe(data => console.log(data))
+
     getUserCases();
 
 
 
-
 })
+
+onDestroy(userCasesWritable.subscribe(data => console.log(data)));
 
 function getUserCases(){
     io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
@@ -40,8 +42,8 @@ function openUserCases(baseCase){
                 return
             }
             userCasesWritable.set(res);
-            console.log(cardId)
-
+            userCardObtained.set(cardId)
+            goto("/opening")
         }))
     }
 

@@ -167,6 +167,7 @@ export function SocketServer(server) {
 
 		socket.on('openUserCase', (data, cb) => {
 
+
 			draw(data.cards, (cardId)=>{
 
 				getCardsByUser(data.jwt,data.userId).then((userCards)=>{
@@ -178,22 +179,25 @@ export function SocketServer(server) {
 						}
 					})
 
+
 					if (newCard){
-						//Earn money
+						insertNewCardInventory(data.jwt, data.userId, cardId).then(res=>{
+							console.log("Carte ajouté !")
+						})
+
 					}else {
-						insertNewCardInventory(data.jwt, data.userId, cardId, ((res) => {
-							console.log("new card in inventory")
-						}))
+						//Earn money
 					}
 
-					deleteUserCase(data.jwt, data.case.id).then((res) => {
-						getUserCases(data).then((res) => {
+					deleteUserCase(data.jwt, data.case.id).then((delteRes) => {
 
-							cb(res, cardId)
+						getUserCases(data).then((userCases) => {
+
+							cb(userCases, cardId)
 						})
 
 					})
-					console.log("userCard",userCards)
+
 				})
 			})
 
