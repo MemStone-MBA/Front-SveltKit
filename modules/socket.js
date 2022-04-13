@@ -17,7 +17,6 @@ import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
 import { addUserCase, deleteUserCase, getUserCases } from './Cases/Users-Cases.js';
 import { draw } from './Utils.js';
-import { offer } from '../src/components/offerDetail.svelte';
 export let sockets = []
 
 export function SocketServer(server) {

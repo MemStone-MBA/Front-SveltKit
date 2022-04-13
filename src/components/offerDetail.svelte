@@ -32,7 +32,7 @@
 
 			if (Array.isArray(res)){
 				res?.forEach(boxPurchased=>{
-					if(res.status != 200) {
+					if(boxPurchased.status != 200) {
 						return
 					}
 				})
