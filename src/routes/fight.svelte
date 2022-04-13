@@ -21,9 +21,6 @@
         actualUser = actualUser
         enemyUser = enemyUser
 
-        console.log(actualUser)
-        console.log(enemyUser)
-
         //generatePlayGround(".EnemyTrail", "e", enemyUser.playGround)
         generatePlayGround(".MyTrail", "m", actualUser.playGround, true)
     })
@@ -39,10 +36,8 @@
     function buildEnemyPlayground(playground) {
         let htmlPG = document.querySelector('.EnemyTrail')
         htmlPG.innerHTML = ""
-        console.log(playground)
         for (let i = 0; i < playground.length; i++) {
 
-            
             let div = document.createElement('div')
             div.classList.add('trail')
 
@@ -50,7 +45,30 @@
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ playground[i].card.path
                 img.classList.add('CardTrail')
+                img.id = playground[i].card.id
+                img.classList.add(`CARD_AGRO_${playground[i].card.id}`)
+                img.classList.add('boardCard')
+                img.classList.add('selectedAgroCard')
+
+                img.addEventListener('click', () => {
+                    //selectOneCard(`.CARD_AGRO_${img.id}`, ".boardCard", "selectedAgroCard")
+                    selectedAgro = playground[i].card
+                    console.log(playground)
+                    attack()
+                })
+                let HpMaxCard = document.createElement("div")
+                HpMaxCard.classList.add('MaxHpCard')
+                let HpCard = document.createElement("div")
+                HpCard.classList.add('HpCard')
+                HpMaxCard.classList.add('HP_' + enemyUser.user.id + "_" +playground[i].card.Id)
+
+                let newHP = playground[i].card.life * 100 / playground[i].card.maxLife + "%"
+
+                HpCard.style.width = newHP
+
                 div.appendChild(img)
+                HpMaxCard.appendChild(HpCard)
+                div.appendChild(HpMaxCard)
             }
             
             htmlPG.appendChild(div)
@@ -59,6 +77,53 @@
 
     var selectedCard = null
     var selectedFrame = null
+
+    var selectedFight = null
+    var selectedAgro = null
+
+    function attack() {
+        var damage = selectedFight.damage 
+        var newLife = selectedAgro.life - damage
+
+        if(newLife <= 0) {
+            enemyDamageUser(newLife)
+            destroyCard(selectedAgro)
+        } else {
+            changeLife(selectedAgro, newLife)
+        }
+
+        let cardsF = document.querySelectorAll('selectedFightCard')
+        for(let c of cardsF) {
+            c.classList.remove('selectedFightCard')
+        }
+
+        let cardsA = document.querySelectorAll('selectedAgroCard')
+        for(let c of cardsA) {
+            c.classList.remove('selectedAgroCard')
+        }
+
+        selectedAgro = null
+        selectedFight = null
+    }
+
+    io.on('updateLife', (data) => {
+        console.log(data)
+        buildEnemyPlayground(data[enemyUser.user.id].playGround)
+        // let HpCard = document.querySelector(`.HpCard_${card.id}`)
+        // HpCard.style.width = `${newLife}%`
+    })
+
+    function changeLife(card, newLife) {
+        io.emit('changeCardLife', {game: game, idUser: enemyUser.user.id, card: card, newLife: newLife})
+    }
+
+    function enemyDamageUser(damage) {
+        io.emit('sendDamageUser', {game: game, damage: damage * -1})
+    }
+
+    function destroyCard(card) {
+        io.emit('sendDamageUser', {game: game, card: card})
+    }
 
     function checkPose() {
         if(selectedCard && selectedFrame) {
@@ -72,11 +137,25 @@
                 actualFrame.card = selectedCard
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ selectedCard.path
+                img.classList.add('boardCard')
+                img.classList.add(`CARD_FIGHT_${selectedCard.id}`)
+                img.id = selectedCard.id
+
+                let copy = selectedCard.valueOf()
+
+                img.addEventListener('click', () => {
+                    selectOneCard(`.CARD_FIGHT_${img.id}`, ".boardCard", "selectedFightCard")
+                    selectedFight = copy
+                })
+
                 img.classList.add('CardTrail')
+
                 let HpMaxCard = document.createElement("div")
                 HpMaxCard.classList.add('MaxHpCard')
                 let HpCard = document.createElement("div")
                 HpCard.classList.add('HpCard')
+                HpMaxCard.classList.add('HP_' + actualUser.user.id + "_" + selectedCard.id)
+                actualFrame.card.maxLife = actualFrame.card.life
                 
                 selectedFrame.appendChild(img)
                 HpMaxCard.appendChild(HpCard)
@@ -85,12 +164,14 @@
                 selectedCard = null
                 selectedFrame = null
 
-                console.log($dataMatch)
                 io.emit('updateUserPlayground', {
                     id: game.id,
                     modifyId: actualUser.user.id,
                     playGround: actualUser.playGround
                 })
+
+                selectedCard = null
+                selectedFrame = null
             }
         }
     }
@@ -104,9 +185,7 @@
             div.setAttribute('data-id', attr + "_" + i)
 
             if(event) {
-                // selectedFrame = div
                 div.addEventListener('click', () => {
-                    console.log(div)
                     selectedFrame = div
                     checkPose()
                 })
@@ -122,8 +201,18 @@
     })
 
     function setSelectedCard(el) {
-        console.log(el)
+        selectOneCard(`.CARD_${el.id}`, ".MyCard", "selectedCard")
         selectedCard = el
+    }
+
+    function selectOneCard(cardName, allCards, className) {
+        let card = document.querySelector(cardName)
+        let cards = document.querySelectorAll(allCards)
+
+        for(let c of cards) {
+            c.classList.remove(className)
+        }
+        card.classList.add(className)
     }
 
 </script>

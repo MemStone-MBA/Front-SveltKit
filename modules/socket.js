@@ -237,6 +237,19 @@ export function SocketServer(server) {
 			}
 		})
 
+		socket.on('changeCardLife', (data) => {
+			let pg = sockets[data.game.id][data.idUser].playGround
+
+			var cardPG = Object.entries(pg).filter((col) => { return col[1].card && col[1].card.id == data.card.id })
+			cardPG[0][1].card.life = data.newLife
+
+			let game = sockets[data.game.id]
+
+			for(let id of game.listIds) {
+				sockets[id].emit('updateLife', game)
+			}
+		})
+
 		var TODAY_CARD = {}
 
 		socket.on('todayCard', (data, cb) =>{
