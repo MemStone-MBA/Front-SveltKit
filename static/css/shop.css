@@ -29,6 +29,16 @@
     justify-content: center;
 }
 
+.textDesc {
+    font-family: barlow-eb;
+    font-weight: 600;
+    font-size: 2vw;
+    line-height: 43px;
+    align-items: center;
+    text-align: center;
+    color: #DBDBDB;
+}
+
 .textprice {
     font-family: barlow-eb;
     font-weight: 700;

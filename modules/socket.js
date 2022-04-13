@@ -212,11 +212,6 @@ export function SocketServer(server) {
 			})
 
 
-
-
-
-
-
 		})
 
 		socket.on('buyUserCase', (data, cb) => {
@@ -254,7 +249,6 @@ export function SocketServer(server) {
 				
 				Promise.all(addUserCasesPromise).then(result => {
 	
-					console.log(result)
 					cb(result)
 				})
 	

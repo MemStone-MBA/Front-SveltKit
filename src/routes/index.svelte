@@ -5,7 +5,6 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
 
-    import FriendPopup from '../components/friendPopup.svelte';
 
 
     var userName = $user ? $user.username : "no user"
@@ -80,7 +79,7 @@
 
 
 
-<FriendPopup ></FriendPopup>
+
 <div class="flex flex-row backgroundsize">
     <div class="colorbackmenu w-full flex flex-col ">
         <!-- <div class='content-center w-1/4 mx-auto mt-6'>

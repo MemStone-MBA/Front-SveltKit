@@ -138,7 +138,7 @@ function buyUserCases(id){
         <div class="title_journeyPack">
             Packs
         </div>
-        <div class="flex flex-row w-full  mt-8 h-auto">
+        <div class="flex flex-row w-full justify-center p-8 mt-8 h-auto">
 
             {#each offers as offer}
                 <OfferDetail bind:offerData={offer} ></OfferDetail>
