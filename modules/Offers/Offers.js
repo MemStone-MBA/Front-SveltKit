@@ -8,8 +8,10 @@ export const getOffers = async function(data) {
 	var res = await axios.get(  conf.env.URL+'offers' , {
 		headers: { "Authorization": "Bearer " + data.jwt, handler : "offers.find"},
 	}).then((res) => {
+		console.log(res)
 		return res
 	}).catch(err => {
+		console.log(err)
 		LogsError(err);
 		return err
 

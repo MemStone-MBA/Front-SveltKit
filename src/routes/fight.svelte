@@ -25,9 +25,80 @@
         generatePlayGround(".MyTrail", "m", actualUser.playGround, true)
     })
 
+    function updatePlayground(idUser, playground) {
+        game[idUser].playGround = playground
+    }
+
+    function updateCardPlayground(idUser, idCard, card) {
+        Object.entries(getUserPlaground(idUser)).filter((col) => { return col[1].card && col[1].card.id == idCard }).map((item) => {
+            getUserPlaground(idUser)[parseInt(item[0])].card = card
+        })
+    }
+
+    function getUserPlaground(idUser) {
+        return game[idUser].playGround
+    }
+
+    function getCardUserPlayground(idUser, idCard) {
+        let arrayOBJ = Object.entries(getUserPlaground(idUser)).filter((col) => { return col[1].card && col[1].card.id == idCard })
+        return arrayOBJ[0][1]
+    }
+
+    function deleteCardPlayground(idUser, idCard) {
+        Object.entries(getUserPlaground(idUser)).filter((col) => { return col[1].card && col[1].card.id == idCard }).map((item) => {
+            delete getUserPlaground(idUser)[parseInt(item[0])].card
+        })
+    }
+
+    function deleteCardFromBoard(idUser, idBoard) {
+        let prefix = idUser == actualUser.user.id ? "m" : "e"
+        let fullPrefix = prefix + "_" + idBoard.split("_")[1]
+        document.querySelector("[data-id='" + fullPrefix + "']").innerHTML = ""
+    }
+
+    function updatePlaygroundUserLife(user) {
+        game[user.user.id].life = user.life
+    }
+
+    function updateLifeUser(user) {
+        let isActualUser = user.user.id == actualUser.user.id ? true : false
+
+        if(isActualUser) {
+            let hpBar = document.querySelector('.MyHpBar')
+
+            let newLife = user.life * 100 / user.maxLife
+            newLife = newLife < 0 ? 0 : newLife
+
+            let newHP = newLife + "%"
+            hpBar.style.height = newHP
+
+            document.querySelector('.MyHpTxt').innerHTML = user.life
+        } else {
+            let hpBar = document.querySelector('.EnemyHpBar')
+
+            let newLife = user.life * 100 / user.maxLife
+            newLife = newLife < 0 ? 0 : newLife
+
+            let newHP = newLife + "%"
+            hpBar.style.height = newHP
+
+            document.querySelector('.EnemyHpTxt').innerHTML = user.life
+        }
+    }
+
+    function myTurn() {
+        if(game.turn == actualUser.user.id) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     io.on('updateUserPlayground', game => {
         let enemyUserArray2 = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
         let newPlayground = enemyUserArray2[0][1].playGround
+
+        updatePlayground(enemyUser.user.id, newPlayground)
 
         if(newPlayground && newPlayground != [])
             buildEnemyPlayground(newPlayground)
@@ -40,6 +111,7 @@
 
             let div = document.createElement('div')
             div.classList.add('trail')
+            div.setAttribute('data-id',  "e_" + i)
 
             if(playground[i].card) {
                 let img = document.createElement("img")
@@ -52,15 +124,14 @@
 
                 img.addEventListener('click', () => {
                     //selectOneCard(`.CARD_AGRO_${img.id}`, ".boardCard", "selectedAgroCard")
-                    selectedAgro = playground[i].card
-                    console.log(playground)
+                    selectedAgro = img.id
                     attack()
                 })
                 let HpMaxCard = document.createElement("div")
                 HpMaxCard.classList.add('MaxHpCard')
                 let HpCard = document.createElement("div")
                 HpCard.classList.add('HpCard')
-                HpMaxCard.classList.add('HP_' + enemyUser.user.id + "_" +playground[i].card.Id)
+                HpCard.classList.add('HP_' + enemyUser.user.id + "_" +playground[i].card.id)
 
                 let newHP = playground[i].card.life * 100 / playground[i].card.maxLife + "%"
 
@@ -82,24 +153,31 @@
     var selectedAgro = null
 
     function attack() {
-        var damage = selectedFight.damage 
-        var newLife = selectedAgro.life - damage
+        if(!myTurn())
+            return
+        
+        if(!selectedFight || !selectedAgro)
+            return
+
+        var fightCard = getCardUserPlayground(actualUser.user.id, selectedFight).card
+        var fightAgro = getCardUserPlayground(enemyUser.user.id, selectedAgro).card
+
+        if(!fightCard || !fightAgro)
+            return
+        
+        var damage = fightCard.damage 
+        var newLife = fightAgro.life - damage
 
         if(newLife <= 0) {
-            enemyDamageUser(newLife)
-            destroyCard(selectedAgro)
+            enemyDamageUser(newLife, enemyUser.user.id)
+            destroyCard(fightAgro, enemyUser.user.id)
         } else {
-            changeLife(selectedAgro, newLife)
+            changeLife(fightAgro, newLife)
         }
 
-        let cardsF = document.querySelectorAll('selectedFightCard')
+        let cardsF = document.querySelectorAll('.selectedFightCard')
         for(let c of cardsF) {
             c.classList.remove('selectedFightCard')
-        }
-
-        let cardsA = document.querySelectorAll('selectedAgroCard')
-        for(let c of cardsA) {
-            c.classList.remove('selectedAgroCard')
         }
 
         selectedAgro = null
@@ -107,25 +185,49 @@
     }
 
     io.on('updateLife', (data) => {
-        console.log(data)
-        buildEnemyPlayground(data[enemyUser.user.id].playGround)
-        // let HpCard = document.querySelector(`.HpCard_${card.id}`)
-        // HpCard.style.width = `${newLife}%`
+        let actualBar = document.querySelector('.HP_' + data.idUser + "_" + data.card.id)
+        let newHP = data.card.life * 100 / data.card.maxLife + "%"
+        actualBar.style.width = newHP
+        updateCardPlayground(data.idUser, data.card.id, data.card)
     })
 
     function changeLife(card, newLife) {
         io.emit('changeCardLife', {game: game, idUser: enemyUser.user.id, card: card, newLife: newLife})
     }
 
-    function enemyDamageUser(damage) {
-        io.emit('sendDamageUser', {game: game, damage: damage * -1})
+    function enemyDamageUser(damage, idUser) {
+        io.emit('sendDamageUser', {game: game, idUser: idUser, damage: damage * -1})
     }
 
-    function destroyCard(card) {
-        io.emit('sendDamageUser', {game: game, card: card})
+    io.on('sendDamageUser', (data) => {
+        updatePlaygroundUserLife(data.user)
+        updateLifeUser(data.user)
+    })
+
+    function destroyCard(card, idUser) {
+        io.emit('destroyCard', {game: game, idUser: idUser, card: card})
     }
+
+    io.on('destroyCard', (data) => {
+        let card = getCardUserPlayground(data.idUser, data.card.id)
+        card.card = null
+        updatePlayground(data.idUser, data.playground)
+        deleteCardPlayground(data.idUser, data.card.id)
+        deleteCardFromBoard(data.idUser, data.idBoard)
+    })
+
+    function changeTurn() {
+        io.emit('changeTurn', {game: game, user1: actualUser.user.id, user2: enemyUser.user.id})
+    }
+
+    io.on('changeTurn', newGame => {
+        game.turn = newGame.turn
+    })
 
     function checkPose() {
+        if(!myTurn())
+            return
+
         if(selectedCard && selectedFrame) {
 
             let dataId = selectedFrame.getAttribute('data-id')
@@ -141,11 +243,9 @@
                 img.classList.add(`CARD_FIGHT_${selectedCard.id}`)
                 img.id = selectedCard.id
 
-                let copy = selectedCard.valueOf()
-
                 img.addEventListener('click', () => {
                     selectOneCard(`.CARD_FIGHT_${img.id}`, ".boardCard", "selectedFightCard")
-                    selectedFight = copy
+                    selectedFight = img.id
                 })
 
                 img.classList.add('CardTrail')
@@ -154,7 +254,7 @@
                 HpMaxCard.classList.add('MaxHpCard')
                 let HpCard = document.createElement("div")
                 HpCard.classList.add('HpCard')
-                HpMaxCard.classList.add('HP_' + actualUser.user.id + "_" + selectedCard.id)
+                HpCard.classList.add('HP_' + actualUser.user.id + "_" + selectedCard.id)
                 actualFrame.card.maxLife = actualFrame.card.life
                 
                 selectedFrame.appendChild(img)
@@ -172,6 +272,8 @@
 
                 selectedCard = null
                 selectedFrame = null
+
+                changeTurn()
             }
         }
     }
@@ -195,10 +297,6 @@
             array.push({id: attr + "_" + i, div: div, empty: true})
         }
     }
-    afterUpdate(() => {
-        document.querySelector('.EnemyHpBar').style.height = enemyUser.life * 5 + "%"
-        document.querySelector('.MyHpBar').style.height = actualUser.life * 5 + "%"
-    })
 
     function setSelectedCard(el) {
         selectOneCard(`.CARD_${el.id}`, ".MyCard", "selectedCard")
@@ -250,9 +348,10 @@
                         <img 
                             alt="{card.path}" 
                             src="http://51.210.104.99:8001/getImage/{card.path}" 
-                            class="MyCard mr-4 CARD_{card.id}"
+                            class="MyCard mr-4 CARD_{card.id} {(game[actualUser.user.id].mana >= card.cost) ? '' : 'noMana'}"
                             on:click={() =>{
-                                setSelectedCard(card)
+                                if(game[actualUser.user.id].mana >= card.cost)
+                                    setSelectedCard(card)
                             }}
                         >
                     {/each}
@@ -267,6 +366,10 @@
             -->
             <div class="EnemyInfo flex-1 flex flex-col">
                 <div class="titleRightContainer">
+                    {#if game.turn && enemyUser.user && game.turn == enemyUser.user.id}
+                        <div class="turnDiv"></div>
+                    {/if}
+
                     { 
                         enemyUser.user?.username || ""
                     }
@@ -300,6 +403,10 @@
             -->
             <div class="MyInfo h-full flex-1 flex flex-col">
                 <div class="titleRightContainer">
+                    {#if game.turn && actualUser.user && game.turn == actualUser.user.id}
+                        <div class="turnDiv"></div>
+                    {/if}
+
                     { 
                         actualUser.user?.username || ""
                     }

@@ -270,14 +270,50 @@ export function SocketServer(server) {
 
 		socket.on('changeCardLife', (data) => {
 			let pg = sockets[data.game.id][data.idUser].playGround
-
 			var cardPG = Object.entries(pg).filter((col) => { return col[1].card && col[1].card.id == data.card.id })
 			cardPG[0][1].card.life = data.newLife
 
 			let game = sockets[data.game.id]
 
 			for(let id of game.listIds) {
-				sockets[id].emit('updateLife', game)
+				sockets[id].emit('updateLife', {game: game, card: cardPG[0][1].card, idUser: data.idUser})
+			}
+		})
+
+		socket.on('destroyCard', (data) => {
+			let pg = sockets[data.game.id][data.idUser].playGround
+			let id = ""
+			Object.entries(pg).filter((col) => { return col[1].card && col[1].card.id == data.card.id }).map((item) => {
+				id = item[1].id
+				delete pg[parseInt(item[0])].card
+				pg[parseInt(item[0])].empty = true
+			})
+
+			let newCard = Object.entries(pg).filter((col) => { return col[1].id == id })[0][1]
+			let game = sockets[data.game.id]
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('destroyCard', {game: game, card: data.card, idUser: data.idUser, idBoard: id, playground: pg})
+			}
+		})
+
+		socket.on('sendDamageUser', (data) => {
+			let user = sockets[data.game.id][data.idUser]
+			user.life = user.life - data.damage
+
+			let game = sockets[data.game.id]
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('sendDamageUser', {game: game, idUser: data.idUser, user: user})
+			}
+		})
+
+		socket.on('changeTurn', (data) => {
+			let game = sockets[data.game.id]
+			game.turn = game.turn == data.user1 ? data.user2 : data.user1;
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('changeTurn', game)
 			}
 		})
 
