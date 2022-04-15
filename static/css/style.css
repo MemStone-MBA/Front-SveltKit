@@ -155,3 +155,25 @@ body{
     box-shadow: -3px -3px 7px  rgba(94, 104, 121, 0.345), 3px 3px 5px rgba(94, 104, 121, 0.145);
     background: rgba(94, 104, 121, 0.145);
 }
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+    scrollbar-width: auto;
+    scrollbar-color: #e7c318 #2e2e2e;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #2e2e2e;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #e7c318;
+    border-radius: 7px;
+    border: 1px solid #2e2e2e;
+}

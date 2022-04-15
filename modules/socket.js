@@ -15,7 +15,7 @@ import {
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
-import { addUserCase, deleteUserCase, getUserCases } from './Cases/Users-Cases.js';
+import { addUserCase, deleteUserCase, getUserCases, UC_buyUC, UC_GetUCs, UC_OpenUc } from './Cases/Users-Cases.js';
 import { draw } from './Utils.js';
 import { getOffers } from './Offers/Offers.js';
 export let sockets = []
@@ -167,97 +167,9 @@ export function SocketServer(server) {
 			})
 	   })
 
-
-		socket.on('getUserCases', (data, cb) => {
-			 getUserCases(data).then((res) => {
-
-			 		cb(res)
-			 })
-		})
-
-		socket.on('openUserCase', (data, cb) => {
-
-
-			draw(data.cards, (cardId)=>{
-
-				getCardsByUser(data.jwt,data.userId).then((userCards)=>{
-
-					let newCard = true
-					userCards.forEach(userCard=>{
-						if (userCard.idCard == cardId){
-								newCard = false;
-						}
-					})
-
-
-					if (newCard){
-						insertNewCardInventory(data.jwt, data.userId, cardId).then(res=>{
-							console.log("Carte ajouté !")
-						})
-
-					}else {
-						//Earn money
-					}
-
-					deleteUserCase(data.jwt, data.case.id).then((delteRes) => {
-
-						getUserCases(data).then((userCases) => {
-
-							cb(userCases, cardId)
-						})
-
-					})
-
-				})
-			})
-
-
-		})
-
-		socket.on('buyUserCase', (data, cb) => {
-
-		 let offer = {status:400, count:0 }
-
-			if (data.offer == undefined || data.offer.cases == null ||  !Array.isArray(data.offer.cases)){
-				cb(offer)
-				return;
-			}else {
-				offer = {...offer, ...data.offer}
-			}
-
-
-
-
-
-			let addUserCasesPromise = [];
-
-			if(offer.cases.length > 0){
-
-				offer.cases.forEach(caseData =>{
-					
-					if(caseData.count > 0 && typeof caseData.id === 'string'){
-
-						for(let i = caseData.count ; i > 0; i--){
-							addUserCasesPromise.push(
-								addUserCase(data.jwt,caseData.id,data.userId)
-							)
-						}
-
-					}
-
-				})
-				
-				Promise.all(addUserCasesPromise).then(result => {
-	
-					cb(result)
-				})
-	
-			}
-
-			
-
-		})
-
+		UC_GetUCs(socket)
+		UC_buyUC(socket)
+		UC_OpenUc(socket)
 
 		socket.on("updateUserPlayground", (data) => {
 			sockets[data.id][data.modifyId].playGround = data.playGround
