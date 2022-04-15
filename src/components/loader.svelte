@@ -2,7 +2,8 @@
 <script>
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
-    import { user, isLog, loaderStatusWritable } from '../routes/auth';
+    import { user, isLog, loaderStatusWritable, userCasesWritable, userCardObtained } from '../routes/auth';
+    import { io } from '$lib/realtime.ts';
 
     let wait = false;
     loaderStatusWritable.subscribe(value => {
@@ -12,17 +13,40 @@
 
 
 
+
+
     var display = true
 
     onMount(() => {
-        if(!isLog($user)) {
-            goto("/login")
-        } else {
-            display = false
+
+
+        if (!location.pathname.includes("/login")){
+
+
+        let jwt =  localStorage.getItem('jwt') ? localStorage.getItem('jwt') : "";
+        io.emit("login-check", {jwt}, ((res) => {
+
+            console.log(res)
+
+            if (res.status != 200){
+
+                $user = null;
+                localStorage.setItem('jwt',"")
+                localStorage.setItem('username', "")
+                localStorage.setItem('password', "")
+                goto("/login")
+
+
+
+            }
+
+            user.set(res.data);
+
+
+        }))
         }
-
-
     })
+
 
 
 

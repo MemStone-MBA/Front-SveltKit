@@ -72,7 +72,7 @@ export async function get(table) {
     }
 }
 
-function me(jwt, cb) {
+export function me(jwt, cb) {
 
     const config = {
         headers: { Authorization: `Bearer ${jwt}` }

@@ -1,34 +1,28 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
 	  import Friend from '../components/friendmenu.svelte';
-    import { loaderStatusWritable, user } from './auth.js';
+    import { loaderStatusWritable, user, userCardObtained, userCasesWritable } from './auth.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
+    import { io } from '$lib/realtime.ts';
+    import { onDestroy } from 'svelte/internal';
 
 
 
-    var userName = $user ? $user.username : "no user"
-    var userRawLevel = $user ? $user.Level : 0.00
-    var userLevel = userRawLevel ? parseInt(userRawLevel) : 0
+    var userName;
+    var userRawLevel;
+    var userLevel
     var userExp = 0;
-    if(userRawLevel.toString().split('.').length > 1)
-        userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
-    var userMMR = $user ? $user.mmr : 1080
-    var userIcon = $user ? $user.Icon : "avatar.svg"
-
-    var ratio = $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5
-
-    ratio = Math.round(ratio * 100) / 100
-
-    var circleDeg = Math.round(180 * ratio)
+    var userMMR
+    var userIcon
+    var ratio
+    var circleDeg
 
     function setLoader(loaderVal){
         loaderStatusWritable.update(value =>  value = loaderVal)
     }
 
     onMount(() => {
-
-
 
         var mask = document.querySelector('.mask .full')
         var circleFill = document.querySelectorAll('.circle .fill')
@@ -37,15 +31,60 @@
             mask.style = "transform: rotate("+circleDeg+"deg)"
 
         circleFill.forEach((element) => {
-            
+
             if(element !== null)
                 element.style = "transform: rotate("+circleDeg+"deg)"
         })
 
+    });
+
+    onDestroy(user.subscribe(value => {
+        //User loaded
+
+        if (value == null)
+            return;
+
+        userName = $user ? $user.username : "no user"
+        userRawLevel = $user ? $user.Level : 0.00
+        userLevel = userRawLevel ? parseInt(userRawLevel) : 0
+        if(userRawLevel.toString().split('.').length > 1)
+            userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
+        userMMR = $user ? $user.mmr : 1080
+        userIcon = $user ? $user.Icon : "avatar.svg"
+        ratio = Math.round( $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5)
+        ratio = Math.round(ratio * 100) / 100
+        circleDeg = Math.round(180 * ratio)
+
+        io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
+            if(res.status != 200) {
+                return
+            }
+            userCasesWritable.set(res);
+
+        }))
+
         setLoader(false)
 
+    }))
 
-    });
+    function openUserCases(baseCase){
+
+        if (baseCase.count > 0){
+
+
+            io.emit("openUserCase", {jwt:$user.jwt,userId:$user.id,cards:baseCase.cards, case:baseCase.userCases.shift()}, ((res,cardId) => {
+
+                if(res.status != 200) {
+                    return
+                }
+                userCasesWritable.set(res);
+                userCardObtained.set(cardId)
+                goto("/opening")
+            }))
+        }
+
+
+    }
 
     function goToCollection() {
         goto("/collection")
@@ -122,24 +161,51 @@
                 </div>
                 <div class="MMR ml-8">
                     <div class="flex flex-row w-full h-full">
-                        <div class="flex flex-col justify-around m-auto">
-                            <div class="flex flex-row justify-center txtpack my-4">
-                                <div class="nbpack mr-2">
-                                    1
+
+                        {#if $userCasesWritable != null && $userCasesWritable.cases[0] != null && $userCasesWritable.cases[0] != undefined }
+
+                            <div class="flex flex-col justify-around m-auto">
+                                <div class="flex flex-row justify-center txtpack my-4">
+                                    <div class="nbpack mr-2">
+                                        1
+                                    </div>
+                                    <div class="pack">
+                                        { $userCasesWritable.cases[0].name }
+                                    </div>
                                 </div>
-                                <div class="pack">
-                                    pack
+                                <div class="flex justify-center my-4">
+                                    <img src="static/assets/icon_pack.svg" alt="" class="packlight">
+                                    <div class="iconpack">
+                                    </div>
+                                </div>
+                                <div on:click={openUserCases( $userCasesWritable.cases[0])} class="buttonOpen my-4 buttonDetail">
+                                    Ouvrir
                                 </div>
                             </div>
-                            <div class="flex justify-center my-4">
-                                <img src="static/assets/icon_pack.svg" alt="" class="packlight">
-                                <div class="iconpack">
+
+                            {:else }
+                            <div class="flex flex-col justify-around m-auto">
+                                <div class="flex flex-row justify-center txtpack my-4">
+                                    <div class="nbpack mr-2">
+                                        0
+                                    </div>
+                                    <div class="pack">
+                                        Case
+                                    </div>
+                                </div>
+                                <div class="flex justify-center my-4">
+                                    <img src="static/assets/icon_pack.svg" alt="" class="packlight">
+                                    <div class="iconpack">
+                                    </div>
+                                </div>
+                                <div  class="buttonOpen disableElement my-4 buttonDetail">
+                                    Ouvrir
                                 </div>
                             </div>
-                            <div on:click={goToOpening} class="buttonOpen my-4 buttonDetail">
-                                Ouvrir
-                            </div>
-                        </div>
+
+                        {/if}
+
+
                         <div class="flex flex-col justify-around m-auto">
                             <div class="txtMMR">
                                 MMR : {userMMR}

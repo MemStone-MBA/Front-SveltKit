@@ -11,7 +11,7 @@ import {
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
-	buyCoins,
+	buyCoins, me
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -57,6 +57,37 @@ export function SocketServer(server) {
 
 			})
 		})
+
+		socket.on('login-check', (data,callback) => {
+
+
+
+			me(data.jwt, (res) => {
+
+				res.status = res.status ? res.status : res.response.status;
+
+				let result = {
+					status:res.status,
+					data:res.data
+				}
+
+				if (result.status == 200){
+
+					
+					socket = MF_Initialize(socket)
+					socket = CF_Initialize(socket,res.data)
+
+					console.log("connected : ", socket.username)
+
+					sockets[res.data.id] = socket;
+				}
+
+
+				callback(result)
+
+			})
+		})
+
 
 		socket.on('register', (data) => {
 			register(data.username, data.mail, data.password, (res) => {

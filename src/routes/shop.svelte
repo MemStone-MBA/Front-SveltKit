@@ -6,16 +6,8 @@ import { io } from "$lib/realtime";
 import OfferDetail from "../components/offerDetail.svelte";
 import { onMount } from "svelte";
 import { user, userCasesWritable } from './auth';
+import { onDestroy } from 'svelte/internal';
 
-onMount(() => {
-    if (user == null) {
-        goto("/login");
-    }
-    COINS = $user.coins
-    getStoreCards()
-    getOffers()
-
-})
 
 var CARDS_ID = []
 var CARDS = []
@@ -38,6 +30,21 @@ var BUY_OPTIONS = [
 ]
 
 let offers = []
+
+onMount(() => {
+
+
+})
+
+onDestroy(user.subscribe(value => {
+    if (value == null) {
+        return;
+    }
+    COINS = $user.coins
+    getStoreCards()
+    getOffers()
+}))
+
 
 
 function getStoreCards(){
@@ -68,7 +75,6 @@ function getOffers(){
 
         offers = res?.offers;
 
-        console.log(offers);
 
     }))
 }

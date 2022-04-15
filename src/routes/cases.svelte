@@ -20,8 +20,6 @@ onMount(() => {
 
 })
 
-onDestroy(userCasesWritable.subscribe(data => console.log(data)));
-
 function getUserCases(){
     io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
         if(res.status != 200) {
