@@ -36,11 +36,13 @@ export function SocketServer(server) {
 					case 200:
 
 
-						if(sockets[res.data.id] != undefined){
+
+						if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
 							console.log("already connected")
 							sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
 
 						}
+
 
 						socket = MF_Initialize(socket)
 						socket = CF_Initialize(socket,res.data)
@@ -48,6 +50,10 @@ export function SocketServer(server) {
 						console.log("connected : ", socket.username)
 
 						sockets[res.data.id] = socket;
+						sockets[res.data.id].tabID = data.tabID
+						console.log(sockets[res.data.id].tabID)
+
+
 						socket.emit("login-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
 						break;
 					default:
@@ -61,6 +67,7 @@ export function SocketServer(server) {
 		socket.on('login-check', (data,callback) => {
 
 
+			console.log(data)
 
 			me(data.jwt, (res) => {
 
@@ -73,13 +80,22 @@ export function SocketServer(server) {
 
 				if (result.status == 200){
 
-					
+
+					if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
+						console.log("already connected")
+						sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
+
+					}
+
+
 					socket = MF_Initialize(socket)
 					socket = CF_Initialize(socket,res.data)
 
 					console.log("connected : ", socket.username)
 
 					sockets[res.data.id] = socket;
+					sockets[res.data.id].tabID = data.tabID
+
 				}
 
 

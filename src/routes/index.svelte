@@ -1,7 +1,14 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
 	  import Friend from '../components/friendmenu.svelte';
-    import { loaderStatusWritable, user, userCardObtained, userCasesWritable } from './auth.js';
+    import {
+        loaderStatusWritable,
+        user,
+        userCardObtained,
+        userCasesWritable,
+        setLoader,
+        isLog
+    } from './auth.js';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { io } from '$lib/realtime.ts';
@@ -18,9 +25,6 @@
     var ratio
     var circleDeg
 
-    function setLoader(loaderVal){
-        loaderStatusWritable.update(value =>  value = loaderVal)
-    }
 
     onMount(() => {
 
@@ -36,36 +40,36 @@
                 element.style = "transform: rotate("+circleDeg+"deg)"
         })
 
+        isLog((done) =>{
+
+            userName = $user ? $user.username : "no user"
+            userRawLevel = $user ? $user.Level : 0.00
+            userLevel = userRawLevel ? parseInt(userRawLevel) : 0
+            if(userRawLevel.toString().split('.').length > 1)
+                userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
+            userMMR = $user ? $user.mmr : 1080
+            userIcon = $user ? $user.Icon : "avatar.svg"
+            ratio = Math.round( $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5)
+            ratio = Math.round(ratio * 100) / 100
+            circleDeg = Math.round(180 * ratio)
+
+            io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
+                if(res.status != 200) {
+                    return
+                }
+                userCasesWritable.set(res);
+
+            }))
+
+            done();
+
+
+        },_=>{
+
+        })
+
     });
 
-    onDestroy(user.subscribe(value => {
-        //User loaded
-
-        if (value == null)
-            return;
-
-        userName = $user ? $user.username : "no user"
-        userRawLevel = $user ? $user.Level : 0.00
-        userLevel = userRawLevel ? parseInt(userRawLevel) : 0
-        if(userRawLevel.toString().split('.').length > 1)
-            userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
-        userMMR = $user ? $user.mmr : 1080
-        userIcon = $user ? $user.Icon : "avatar.svg"
-        ratio = Math.round( $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5)
-        ratio = Math.round(ratio * 100) / 100
-        circleDeg = Math.round(180 * ratio)
-
-        io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
-            if(res.status != 200) {
-                return
-            }
-            userCasesWritable.set(res);
-
-        }))
-
-        setLoader(false)
-
-    }))
 
     function openUserCases(baseCase){
 

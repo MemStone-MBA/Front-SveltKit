@@ -5,7 +5,7 @@ import { goto } from "$app/navigation";
 import { io } from "$lib/realtime";
 import OfferDetail from "../components/offerDetail.svelte";
 import { onMount } from "svelte";
-import { user, userCasesWritable } from './auth';
+import { isLog, user, userCasesWritable } from './auth';
 import { onDestroy } from 'svelte/internal';
 
 
@@ -34,16 +34,19 @@ let offers = []
 onMount(() => {
 
 
+    isLog((done) =>{
+
+        COINS = $user.coins
+        getStoreCards()
+        getOffers()
+        done();
+
+    },_=>{
+
+    })
+
 })
 
-onDestroy(user.subscribe(value => {
-    if (value == null) {
-        return;
-    }
-    COINS = $user.coins
-    getStoreCards()
-    getOffers()
-}))
 
 
 

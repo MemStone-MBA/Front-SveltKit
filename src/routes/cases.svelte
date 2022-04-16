@@ -4,18 +4,22 @@
 import { goto } from "$app/navigation";
 import { io } from "$lib/realtime";
 import { onMount } from "svelte";
-import { user, userCardObtained, userCasesWritable } from './auth';
+import { isLog, user, userCardObtained, userCasesWritable } from './auth';
 import { onDestroy } from 'svelte/internal';
 import  CaseDetail  from '../components/caseDetail.svelte';
 
 onMount(() => {
-    if (user == null) {
-        goto("/login");
-    }
-    COINS = $user.coins
 
-    getUserCases();
+    isLog((done) =>{
+        COINS = $user.coins
 
+        getUserCases();
+
+        done();
+
+    },_=>{
+
+    })
 
 
 })

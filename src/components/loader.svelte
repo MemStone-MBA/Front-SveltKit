@@ -1,58 +1,23 @@
 
 <script>
-    import { goto } from "$app/navigation";
-    import { onMount } from "svelte";
-    import { user, isLog, loaderStatusWritable, userCasesWritable, userCardObtained } from '../routes/auth';
-    import { io } from '$lib/realtime.ts';
+    import {  loaderStatusWritable } from '../routes/auth';
 
-    let wait = false;
+
+
+
+    let wait = true;
+    console.log(wait)
     loaderStatusWritable.subscribe(value => {
         //console.log(value)
         wait = value;
+        console.log(wait)
     })
-
-
-
-
-
-    var display = true
-
-    onMount(() => {
-
-
-        if (!location.pathname.includes("/login")){
-
-
-        let jwt =  localStorage.getItem('jwt') ? localStorage.getItem('jwt') : "";
-        io.emit("login-check", {jwt}, ((res) => {
-
-            console.log(res)
-
-            if (res.status != 200){
-
-                $user = null;
-                localStorage.setItem('jwt',"")
-                localStorage.setItem('username', "")
-                localStorage.setItem('password', "")
-                goto("/login")
-
-
-
-            }
-
-            user.set(res.data);
-
-
-        }))
-        }
-    })
-
 
 
 
 </script>
 
-{#if wait && display}
+{#if wait}
 <!-- {#if display} -->
 <section class="pageLoader">
     <div class="lds-ripple">

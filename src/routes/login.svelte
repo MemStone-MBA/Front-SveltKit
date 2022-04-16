@@ -114,7 +114,9 @@ import {ConnexionStatus } from '$lib/Status';
 		setLoader(true)
 		connexionStatusWritable.update(value => value = ConnexionStatus.Connecting)
 
-		io.emit("login", {mail,password})
+		var tabID = sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = Math.random();
+
+		io.emit("login", {mail,password,tabID})
 	}
 
 	function Logout() {
