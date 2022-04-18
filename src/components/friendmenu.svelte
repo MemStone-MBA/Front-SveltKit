@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import FriendCard from './friendCard.svelte';
-    import { user } from '../routes/auth.js';
+    import { isLog, user } from '../routes/auth.js';
     import { io } from "$lib/realtime";
     import {Status} from "../lib/Status.js"
     let friends =  []
@@ -9,7 +9,18 @@
     var open = false
 
     onMount(() => {
+
+        
+        isLog((done) =>{    
+            
+            
         GetFriends()
+            
+            done();
+        },_=>{
+
+        })
+
     })
 
     function checkUser(callback){

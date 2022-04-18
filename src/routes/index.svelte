@@ -53,7 +53,7 @@
             ratio = Math.round(ratio * 100) / 100
             circleDeg = Math.round(180 * ratio)
 
-            io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
+            io.emit("getUserCases", {jwt:$user?.jwt,userId:$user?.id}, ((res) => {
                 if(res.status != 200) {
                     return
                 }
