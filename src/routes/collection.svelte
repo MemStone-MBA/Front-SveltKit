@@ -4,7 +4,7 @@
 <script >
     import { io } from "$lib/realtime";
     import Loader from '../components/loader.svelte';
-    import { user } from './auth'
+    import { isLog, user } from './auth';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { CanvasTexture,  Mesh,  MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene, WebGLRenderer, Group, Matrix4, Clock } from 'three';
@@ -26,8 +26,17 @@
     var cardsOwned = 0
 
     onMount(() => {
-      bindCards()
-      HideCard()
+
+
+      isLog((done) =>{
+        bindCards()
+        HideCard()
+        done();
+
+      },_=>{
+
+      })
+
     });
 
 

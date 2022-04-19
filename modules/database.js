@@ -1,6 +1,7 @@
 import axios from "axios";
 import { user } from '../src/routes/auth.js';
 import { LogsError } from './log.js'
+import { removeProps } from './Utils.js';
 
 const parseJSON = (resp) => (resp.json ? resp.json() : resp);
 
@@ -71,7 +72,7 @@ export async function get(table) {
     }
 }
 
-function me(jwt, cb) {
+export function me(jwt, cb) {
 
     const config = {
         headers: { Authorization: `Bearer ${jwt}` }
@@ -185,18 +186,49 @@ export const saveDeckByUser = async function(jwt, deck) {
 export const insertNewCardInventory = async function(jwt, userId, cardId) {
     let conf = await process;
 
-    var response = axios.post(  conf.env.URL+'inventory/', {
+    var res = await axios.post(  conf.env.URL+'inventory/', {
         'idUser':userId,
         'idCard': cardId
     },{
         headers: { "Authorization": "Bearer " + jwt, handler : "deck.update"},
     }).then((res) => {
-        //console.log(res)
-        return res.data
+        return res
     }).catch(err => {
         LogsError(err);
+        return err;
     })
-    return response
+
+
+    if(res== undefined){
+        LogsError(new Error("res is undefined, .env might send wrong url or does not exist"))
+        return ;
+    }
+
+    let result = {
+        status:400,
+        data:[]
+    }
+
+    res.status = res.status ? res.status : res.response.status;
+    result.status = res.status;
+    switch (res.status){
+        case 400:
+
+            break;
+        case 403:
+            LogsError(res)
+            break;
+        case 200:
+            result = { ...removeProps(res.data,['createdAt','updatedAt','_id','__v','_id']), ...result}
+
+            break;
+        default:
+            LogsError(res)
+            break
+    }
+
+
+    return result
 }
 
 export const buyCoins = async function(user, amount) {

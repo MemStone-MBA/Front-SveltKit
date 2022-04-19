@@ -1,7 +1,7 @@
 <link rel='stylesheet' href='static/css/index.css'>
 <script>
     import Loader from '../components/loader.svelte';
-    import { user } from './auth'
+    import { user, userCardObtained } from './auth';
     import { goto } from '$app/navigation';
     import { onDestroy, onMount } from 'svelte';
     import { io } from "$lib/realtime";
@@ -9,6 +9,8 @@
     import { OrbitControls } from '@three-ts/orbit-controls';
 
     var CHEST = {}
+
+
 
     var drawCardController = true;
     var drawCardPath;
@@ -141,68 +143,30 @@
 
     onMount(() => {
 
-      io.emit("cards", {jwt:$user.jwt}, ((res) => {
-        if(res.status) {
-          return
-        }
-        res?.forEach(card => {
-          CHEST[card.id] = card.drop_rate*100;
-        })
+      let idCard;
+      if ($userCardObtained == null)
+        goto("/")
 
-        draw(CHEST, ((cardID) => {
+      idCard = $userCardObtained;
+      userCardObtained.set(null);
 
-          console.log(cardID)
-
-          io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: cardID}, ((res) => {
-            drawCardPath = res.path
-            drawCardController = false
-            ShowCard("http://51.210.104.99:8001/getImage/"+res.path)
-            dismissCard()
-          }))
-
-          io.emit('drawNewCard', {jwt:$user.jwt, userId: $user.id, cardId: cardID})
-        }))
+      io.emit('getCardById', {jwt:$user.jwt, userId: $user.id, cardId: idCard}, ((res) => {
+        drawCardPath = res.path
+        drawCardController = false
+        console.log(res.path)
+        ShowCard("http://51.210.104.99:8001/getImage/"+res.path)
+        dismissCard()
       }))
 
 
     })
 
-    function draw(chest, cb) {
-        let total = 0
-
-        for(let element in chest) {
-            total += chest[element]
-        }
-
-        let randomDraw = randomNb(1, total + 1)
-
-        for(let element in chest) {
-            total += chest[element]
-        }
-
-        var arrayChestKey = Object.keys(chest)
-        var arrayChestValue = Object.values(chest)
-        var chestLength = arrayChestKey.length
-
-        var min = 0
-
-        for(let i = 0; i < chestLength; i++) {
-
-            if(min < randomDraw && randomDraw <= (min + arrayChestValue[i])) {
-                cb(arrayChestKey[i])
-                break
-            }
-            min = min + arrayChestValue[i]
-        }
-    }
 
     function goToMenu() {
+
         goto('/')
     }
 
-    function randomNb(min, max) {
-	    return Math.floor(Math.random() * (max - min)) + min;
-    }
 
     var toDisplay, toMenu;
 

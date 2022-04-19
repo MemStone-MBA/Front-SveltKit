@@ -260,7 +260,7 @@ function send_fight(_id1,_id2,data,jwt){
 
     Promise.all(promises).then((res) => {
         var LIFE = 20
-        var MANA = 0
+        var MANA = 1
         var MANA_REGEN = 0
         var TIME_ROUND = 25 
         var MAX_MANA = 10
@@ -275,6 +275,7 @@ function send_fight(_id1,_id2,data,jwt){
             "turn": user1.id,
             "listIds": [user1.id, user2.id],
             [user1.id]: {
+                maxLife: LIFE,
                 user: user1,
                 deck: deck_user1,
                 life: LIFE,
@@ -283,6 +284,7 @@ function send_fight(_id1,_id2,data,jwt){
                 playGround: []
             },
             [user2.id]: {
+                maxLife: LIFE,
                 user: user2,
                 deck: deck_user2,
                 life: LIFE,

@@ -3,16 +3,11 @@
 <script>
 import { goto } from "$app/navigation";
 import { io } from "$lib/realtime";
+import OfferDetail from "../components/offerDetail.svelte";
 import { onMount } from "svelte";
-import { user } from './auth'
+import { isLog, user, userCasesWritable } from './auth';
+import { onDestroy } from 'svelte/internal';
 
-onMount(() => {
-    if (user == null) {
-        goto("/login");
-    }
-    COINS = $user.coins
-    getStoreCards()
-})
 
 var CARDS_ID = []
 var CARDS = []
@@ -34,6 +29,27 @@ var BUY_OPTIONS = [
     }
 ]
 
+let offers = []
+
+onMount(() => {
+
+
+    isLog((done) =>{
+
+        COINS = $user.coins
+        getStoreCards()
+        getOffers()
+        done();
+
+    },_=>{
+
+    })
+
+})
+
+
+
+
 function getStoreCards(){
     io.emit("todayCard", {jwt:$user.jwt}, ((res) => {
         if(res.status) {
@@ -51,6 +67,24 @@ function getStoreCards(){
     }))
 }
 
+
+function getOffers(){
+    io.emit("getOffers", {jwt:$user.jwt}, ((res) => {
+      
+
+       if(res.status != 200)
+        return;
+
+
+        offers = res?.offers;
+
+
+    }))
+}
+
+
+
+
 function buyCoins(amount){
     io.emit("buyCoins", {user:$user, amount:amount}, ((res) => {
         if(res.status) {
@@ -65,6 +99,30 @@ function buyCoins(amount){
 function goToMenu() {
     goto('/')
 }
+
+function buyUserCases(id){
+
+    let offre = {
+        price:1000,
+        caseId:id,
+        number:4
+    }
+
+        io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
+
+            if (Array.isArray(res)){
+                res?.forEach(boxPurchased=>{
+                    if(boxPurchased.status != 200) {
+                        return
+                    }
+                })
+
+            }
+            console.log(`${res.length} box purchased`)
+        }))
+
+}
+
 </script>
 
 <div class="backgroundsize colorbackmenu flex flex-row">
@@ -72,7 +130,7 @@ function goToMenu() {
         <div class="title_journeyCard mt-8">
             Carte à la une {TIME_LEFT}
         </div>
-        <div class="flex flex-row w-full h-1/2 mt-8 h-auto">
+        <div class="flex flex-row w-full pb-20 mt-8 h-auto">
 
             {#each CARDS as card}
                 <div class="flex-1">
@@ -89,55 +147,12 @@ function goToMenu() {
         <div class="title_journeyPack">
             Packs
         </div>
-        <div class="flex flex-row w-full h-1/2 mt-8 h-auto">
-            <div class="flex-1">
-                <img src='static/assets/icon_pack.svg' class='journeyPack'>
-                <div class="price mt-2">
-                    <div class="flex flex-col">
-                        <div class="textprice">
-                        Pack 10 cartes
-                        </div>
-                        <div class="price">
-                            <div class="textprice">
-                             4000
-                            </div>
-                            <img src='static/assets/coin.svg' class='coin mt-1'>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-1">
-                <img src='static/assets/icon_pack.svg' class='journeyPack'>
-                <div class="price mt-2">
-                    <div class="flex flex-col">
-                        <div class="textprice">
-                        Pack 20 cartes
-                        </div>
-                        <div class="price">
-                            <div class="textprice">
-                             7000
-                            </div>
-                            <img src='static/assets/coin.svg' class='coin mt-1'>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex-1">
-                <img src='static/assets/icon_pack.svg' class='journeyPack'>
-                <div class="price mt-2">
-                    <div class="flex flex-col">
-                        <div class="textprice">
-                        Pack 50 cartes
-                        </div>
-                        <div class="price">
-                            <div class="textprice">
-                             22000
-                            </div>
-                            <img src='static/assets/coin.svg' class='coin mt-1'>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flex flex-row w-full justify-center p-8 mt-8 h-auto">
+
+            {#each offers as offer}
+                <OfferDetail bind:offerData={offer} ></OfferDetail>
+            {/each}
+            
         </div>
     </div>
     <div class="flex-1 p-4 flex flex-col justify-between">

@@ -20,13 +20,6 @@ import {ConnexionStatus } from '$lib/Status';
 		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
 		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";
 
-		password = "Azerty123."
-	/*	if (oldValue == undefined && mail != "" && password != ""){
-			Logout()
-			resetInput()
-			setLoader(false)
-			connexionStatusWritable.update(value => value = undefined)
-		}*/
 
 
 		if (mail != "" && password != ""){
@@ -71,6 +64,7 @@ import {ConnexionStatus } from '$lib/Status';
 
 					localStorage.setItem('username', mail)
 					localStorage.setItem('password', password)
+					localStorage.setItem('jwt', $user.jwt)
 
 					bad_credentials = false
 					resetInput()
@@ -120,7 +114,9 @@ import {ConnexionStatus } from '$lib/Status';
 		setLoader(true)
 		connexionStatusWritable.update(value => value = ConnexionStatus.Connecting)
 
-		io.emit("login", {mail,password})
+		var tabID = sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = Math.random();
+
+		io.emit("login", {mail,password,tabID})
 	}
 
 	function Logout() {

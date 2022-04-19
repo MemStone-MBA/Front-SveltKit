@@ -47,3 +47,37 @@ export function removeProps(data,props){
 	return data
 
 }
+
+export function draw(chest, cb) {
+	let total = 0
+	let cards = []
+
+	for(let element in chest) {
+
+		cards.push({
+			id:element,
+			min:total,
+			max:total+(chest[element] - 1)
+		})
+	 	total += parseInt(chest[element]);
+	}
+
+	let randomDraw = randomNb(0, total + 1)
+
+	// console.log("randomDraw : ",randomDraw)
+	// console.log("cards : ",cards)
+
+	for (let card of cards){
+		if (randomDraw >= card.min && randomDraw <= card.max){
+			// console.log("drawed")
+			cb(card.id)
+			return;
+		}
+	}
+
+
+}
+
+export function randomNb(min, max) {
+	return Math.floor(Math.random() * (max - min)) + min;
+}

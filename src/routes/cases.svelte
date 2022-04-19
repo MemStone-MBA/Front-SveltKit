@@ -4,16 +4,27 @@
 import { goto } from "$app/navigation";
 import { io } from "$lib/realtime";
 import { onMount } from "svelte";
-import { user, userCasesWritable } from './auth';
+import { isLog, user, userCardObtained, userCasesWritable } from './auth';
+import { onDestroy } from 'svelte/internal';
+import  CaseDetail  from '../components/caseDetail.svelte';
 
 onMount(() => {
-    if (user == null) {
-        goto("/login");
-    }
-    COINS = $user.coins
-    userCasesWritable.subscribe(data => console.log(data))
+
+    isLog((done) =>{
+        COINS = $user.coins
+
+        getUserCases();
+
+        done();
+
+    },_=>{
+
+    })
 
 
+})
+
+function getUserCases(){
     io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
         if(res.status != 200) {
             return
@@ -21,9 +32,7 @@ onMount(() => {
         userCasesWritable.set(res);
 
     }))
-
-
-})
+}
 
 var CARDS_ID = []
 var CARDS = []
@@ -46,17 +55,11 @@ function goToMenu() {
 
         <div class="flex flex-row flex-wrap w-full mt-8 h-auto">
 
-            {#each $userCasesWritable.cases as baseCase}
+            {#each $userCasesWritable.cases as caseData}
 
-                <div class="min-w-fit flex-1 p-1 flex flex-col">
-                    <div class="price mt-2 mb-4">
-                        <div class="textprice">{baseCase.name}</div>
-                    </div>
-                    <img src='static/assets/icon_pack.svg' class="iconPack">
-                    <div class="price mt-2">
-                        <div class="textprice">{baseCase.count}</div>
-                    </div>
-                </div>
+                <CaseDetail bind:baseCase={caseData}></CaseDetail>
+
+
 
             {/each}
 

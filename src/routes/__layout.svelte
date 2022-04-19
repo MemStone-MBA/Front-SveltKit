@@ -1,36 +1,52 @@
 <script>
-	import Nav from '../components/nav.svelte';
-    import {user} from './auth.js';
+	import { loaderStatusWritable, user } from './auth.js';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { io } from "$lib/realtime";
 	import {connexionStatusWritable} from './auth.js';
 	import Loader from '../components/loader.svelte';
-
+	import FriendPopup from '../components/friendPopup.svelte';
 	import { ConnexionStatus } from '$lib/Status.js';
-	onMount(() => {
 
-        io.on("login-err",(data)=>{
+	var tabID;
+
+	onMount(() => {
+        io.on("login-err",(data, callback)=>{
 					if (data.status == ConnexionStatus.Replace){
 						connexionStatusWritable.update(value => value = ConnexionStatus.Replace )
 						logOut();
+						callback()
 					}
         })
 
+		tabID = sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = Math.random();
+
+		if (!location.pathname.includes("/login")){
+			let jwt =  localStorage.getItem('jwt') ? localStorage.getItem('jwt') : "";
+			io.emit("login-check", {jwt, tabID }, ((res) => {
+				if (res.status != 200){
+					logOut()
+				}
+				user.set(res.data);
+			}))
+		}
 
     })
 
-    function logOut() {
+    export function logOut() {
         $user = null
         window.localStorage.clear();
         goto("/login")
     }
+
+
     
 
 </script>
 <link rel='stylesheet' href='static/css/style.css'>
 
 <Loader></Loader>
+<FriendPopup ></FriendPopup>
 <!--<Nav/>-->
 <!-- Slot représente le reste du code chragé par la page -->
 <slot></slot>

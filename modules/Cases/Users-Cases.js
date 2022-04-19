@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { LogsError } from '../log.js';
-import { removeProps } from '../Utils.js'
+import { draw, removeProps } from '../Utils.js';
+import { getCardsByUser, insertNewCardInventory } from '../database.js';
 
 export const getUserCases = async function(data) {
 	let conf = await process;
@@ -11,7 +12,6 @@ export const getUserCases = async function(data) {
 	}).catch(err => {
 		LogsError(err);
 		return err
-
 
 	})
 
@@ -32,7 +32,7 @@ export const getUserCases = async function(data) {
 	allCases.status = res.status;
 	switch (res.status){
 		case 400:
-
+			LogsError(res)
 			break;
 		case 403:
 
@@ -81,6 +81,7 @@ export const getUserCases = async function(data) {
 				casePatern.status = res.status;
 				switch (res.status){
 					case 400:
+						LogsError(res)
 						break;
 					case 403:
 						LogsError(res)
@@ -107,5 +108,190 @@ export const getUserCases = async function(data) {
 	}
 
 	return allCases;
+
+}
+
+
+export const deleteUserCase = async function(jwt, caseId) {
+	let conf = await process;
+	var res = await axios.delete(  conf.env.URL+'users-cases/' +caseId, {
+		headers: { "Authorization": "Bearer " + jwt, handler : "users-cases.delete"},
+	}).then((res) => {
+		return res
+	}).catch(err => {
+		LogsError(err);
+		return err
+
+	})
+
+	if(res== undefined){
+		LogsError(new Error("res is undefined, .env might send wrong url or does not exist"))
+		return ;
+	}
+
+	let result = {
+		status:400,
+
+	}
+
+	res.status = res.status ? res.status : res.response.status;
+	result.status = res.status;
+	switch (res.status){
+		case 400:
+			LogsError(res)
+			break;
+		case 403:
+			LogsError(res)
+			break;
+		case 200:
+			result = { ...removeProps(res.data,['createdAt','updatedAt','_id','__v','_id']), ...result}
+
+			break;
+		default:
+			LogsError(res)
+			break
+	}
+
+	return  result
+}
+
+
+export const addUserCase = async function(jwt, baseCaseId, userId) {
+	let conf = await process;
+	var res = await axios.post(  conf.env.URL+'users-cases', {
+		idUser:userId,
+		idCase:baseCaseId
+	},{
+		headers: { "Authorization": "Bearer " + jwt, handler : "users-cases.create"},
+	}).then((res) => {
+		return res
+	}).catch(err => {
+		LogsError(err);
+		return err
+
+	})
+
+	if(res== undefined){
+		LogsError(new Error("res is undefined, .env might send wrong url or does not exist"))
+		return ;
+	}
+
+	let result = {
+		status:400,
+		data:[]
+	}
+
+	res.status = res.status ? res.status : res.response.status;
+	result.status = res.status;
+	switch (res.status){
+		case 400:
+
+			break;
+		case 403:
+			LogsError(res)
+			break;
+		case 200:
+			result = { ...removeProps(res.data,['createdAt','updatedAt','_id','__v','_id']), ...result}
+
+			break;
+		default:
+			LogsError(res)
+			break
+	}
+
+	return  result
+}
+
+export function UC_GetUCs(socket){
+
+	socket.on('getUserCases', (data, cb) => {
+		getUserCases(data).then((res) => {
+
+			cb(res)
+		})
+	})
+
+}
+
+export function UC_OpenUc(socket){
+
+	socket.on('openUserCase', (data, cb) => {
+
+
+		draw(data.cards, (cardId)=>{
+
+			getCardsByUser(data.jwt,data.userId).then((userCards)=>{
+
+				let newCard = true
+				userCards.forEach(userCard=>{
+					if (userCard.idCard == cardId){
+						newCard = false;
+					}
+				})
+
+
+				if (newCard){
+					insertNewCardInventory(data.jwt, data.userId, cardId).then(res=>{
+						console.log("Carte ajouté !")
+					})
+
+				}else {
+					//Earn money
+				}
+
+				deleteUserCase(data.jwt, data.case.id).then((delteRes) => {
+
+					getUserCases(data).then((userCases) => {
+
+						cb(userCases, cardId)
+					})
+
+				})
+
+			})
+		})
+
+	})
+}
+
+export function UC_buyUC(socket){
+
+	socket.on('buyUserCase', (data, cb) => {
+
+		let offer = {status:400, count:0 }
+
+		if (data.offer == undefined || data.offer.cases == null ||  !Array.isArray(data.offer.cases)){
+			cb(offer)
+			return;
+		}else {
+			offer = {...offer, ...data.offer}
+		}
+
+		let addUserCasesPromise = [];
+
+		if(offer.cases.length > 0){
+
+			offer.cases.forEach(caseData =>{
+
+				if(caseData.count > 0 && typeof caseData.id === 'string'){
+
+					for(let i = caseData.count ; i > 0; i--){
+						addUserCasesPromise.push(
+							addUserCase(data.jwt,caseData.id,data.userId)
+						)
+					}
+
+				}
+
+			})
+
+			Promise.all(addUserCasesPromise).then(result => {
+
+				cb(result)
+			})
+
+		}
+
+	})
 
 }

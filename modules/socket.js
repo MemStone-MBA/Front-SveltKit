@@ -11,11 +11,13 @@ import {
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
-	buyCoins,
+	buyCoins, me
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
-import { getUserCases } from './Cases/Users-Cases.js';
+import { addUserCase, deleteUserCase, getUserCases, UC_buyUC, UC_GetUCs, UC_OpenUc } from './Cases/Users-Cases.js';
+import { draw } from './Utils.js';
+import { getOffers } from './Offers/Offers.js';
 export let sockets = []
 
 export function SocketServer(server) {
@@ -34,11 +36,13 @@ export function SocketServer(server) {
 					case 200:
 
 
-						if(sockets[res.data.id] != undefined){
+
+						if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
 							console.log("already connected")
 							sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
 
 						}
+
 
 						socket = MF_Initialize(socket)
 						socket = CF_Initialize(socket,res.data)
@@ -46,6 +50,10 @@ export function SocketServer(server) {
 						console.log("connected : ", socket.username)
 
 						sockets[res.data.id] = socket;
+						sockets[res.data.id].tabID = data.tabID
+						console.log(sockets[res.data.id].tabID)
+
+
 						socket.emit("login-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
 						break;
 					default:
@@ -55,6 +63,47 @@ export function SocketServer(server) {
 
 			})
 		})
+
+		socket.on('login-check', (data,callback) => {
+
+
+			console.log(data)
+
+			me(data.jwt, (res) => {
+
+				res.status = res.status ? res.status : res.response.status;
+
+				let result = {
+					status:res.status,
+					data:res.data
+				}
+
+				if (result.status == 200){
+
+
+					if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
+						console.log("already connected")
+						sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
+
+					}
+
+
+					socket = MF_Initialize(socket)
+					socket = CF_Initialize(socket,res.data)
+
+					console.log("connected : ", socket.username)
+
+					sockets[res.data.id] = socket;
+					sockets[res.data.id].tabID = data.tabID
+
+				}
+
+
+				callback(result)
+
+			})
+		})
+
 
 		socket.on('register', (data) => {
 			register(data.username, data.mail, data.password, (res) => {
@@ -157,12 +206,17 @@ export function SocketServer(server) {
 			})
 		})
 
-		socket.on('getUserCases', (data, cb) => {
-			 getUserCases(data).then((res) => {
 
-			 		cb(res)
-			 })
-		})
+		socket.on('getOffers', (data, cb) => {
+			getOffers(data).then((res) => {
+
+					cb(res)
+			})
+	   })
+
+		UC_GetUCs(socket)
+		UC_buyUC(socket)
+		UC_OpenUc(socket)
 
 		socket.on("updateUserPlayground", (data) => {
 			sockets[data.id][data.modifyId].playGround = data.playGround
@@ -175,14 +229,50 @@ export function SocketServer(server) {
 
 		socket.on('changeCardLife', (data) => {
 			let pg = sockets[data.game.id][data.idUser].playGround
-
 			var cardPG = Object.entries(pg).filter((col) => { return col[1].card && col[1].card.id == data.card.id })
 			cardPG[0][1].card.life = data.newLife
 
 			let game = sockets[data.game.id]
 
 			for(let id of game.listIds) {
-				sockets[id].emit('updateLife', {game: game, idUser: data.idUser, card: cardPG[0][1].card})
+				sockets[id].emit('updateLife', {game: game, card: cardPG[0][1].card, idUser: data.idUser})
+			}
+		})
+
+		socket.on('destroyCard', (data) => {
+			let pg = sockets[data.game.id][data.idUser].playGround
+			let id = ""
+			Object.entries(pg).filter((col) => { return col[1].card && col[1].card.id == data.card.id }).map((item) => {
+				id = item[1].id
+				delete pg[parseInt(item[0])].card
+				pg[parseInt(item[0])].empty = true
+			})
+
+			let newCard = Object.entries(pg).filter((col) => { return col[1].id == id })[0][1]
+			let game = sockets[data.game.id]
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('destroyCard', {game: game, card: data.card, idUser: data.idUser, idBoard: id, playground: pg})
+			}
+		})
+
+		socket.on('sendDamageUser', (data) => {
+			let user = sockets[data.game.id][data.idUser]
+			user.life = user.life - data.damage
+
+			let game = sockets[data.game.id]
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('sendDamageUser', {game: game, idUser: data.idUser, user: user})
+			}
+		})
+
+		socket.on('changeTurn', (data) => {
+			let game = sockets[data.game.id]
+			game.turn = game.turn == data.user1 ? data.user2 : data.user1;
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('changeTurn', game)
 			}
 		})
 

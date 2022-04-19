@@ -1,34 +1,23 @@
 
 <script>
-    import { goto } from "$app/navigation";
-    import { onMount } from "svelte";
-    import { user, isLog, loaderStatusWritable } from '../routes/auth';
+    import {  loaderStatusWritable } from '../routes/auth';
 
-    let wait = false;
+
+
+
+    let wait = true;
+    console.log(wait)
     loaderStatusWritable.subscribe(value => {
         //console.log(value)
         wait = value;
-    })
-
-
-
-    var display = true
-
-    onMount(() => {
-        if(!isLog($user)) {
-            goto("/login")
-        } else {
-            display = false
-        }
-
-
+        console.log(wait)
     })
 
 
 
 </script>
 
-{#if wait && display}
+{#if wait}
 <!-- {#if display} -->
 <section class="pageLoader">
     <div class="lds-ripple">
