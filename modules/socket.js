@@ -271,8 +271,44 @@ export function SocketServer(server) {
 			let game = sockets[data.game.id]
 			game.turn = game.turn == data.user1 ? data.user2 : data.user1;
 
+			game.rounds = game.rounds + 1;
+			game[data.user1].rounds = game[data.user1].rounds + 1
+
+			if(game[data.user1].rounds == game[data.user2].rounds) {
+				upMana(game, data)
+			}
+
 			for(let idSocket of game.listIds) {
 				sockets[idSocket].emit('changeTurn', game)
+				sockets[idSocket].emit('timerReset', null)
+			}
+		})
+
+		function upMana(game, data) {
+			newManaUser(game[data.user1], game.maxMana)
+			newManaUser(game[data.user2], game.maxMana)
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('updateMana', game)
+			}
+		}
+
+		function newManaUser(user, maxMana) {
+			if(user.mana < maxMana) {
+				user.mana = user.mana + 1
+			}
+		}
+
+		socket.on('refreshMana', (data) => {
+			console.log('refresh mana')
+			console.log(data)
+
+			let game = sockets[data.game.id]
+
+			game[data.idUser].mana = game[data.idUser].mana - data.card.cost
+			
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('updateMana', game)
 			}
 		})
 

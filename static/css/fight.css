@@ -12,6 +12,7 @@
     width: 97%;
     margin-left: 3%;
     height: 20%;
+    background-color: #2E2E2E;
 }
 
 .pioche {
@@ -114,6 +115,49 @@
     background-size: contain;
     object-fit: contain;
     flex: 1;
+    transition: 1s opacity ease-in-out;
+    opacity: 1;
+}
+
+.cardRemove {
+    opacity: 0 !important;
+}
+
+.changeTurn {
+    width: 7vh;
+    height: 7vh;
+    background-color: red;
+    position: absolute;
+    /* z-index: 10000; */
+    top: 50%;
+    transform: translate(-43px, -50%);
+    border-radius: 30%;
+    animation: changeColor 2s infinite;
+    transition: 0.2s all ease-in-out;
+}
+
+.changeTurn:hover {
+    filter: grayscale(1);
+    cursor: pointer;
+}
+
+.changeTurn img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes changeColor {
+    0% {
+        background-color: #E7C318;
+    }
+    50% {
+        background-color: #f59a23;
+    }
+    100% {
+        background-color: #E7C318;
+    }
 }
 
 .titleRightContainer {
@@ -217,12 +261,38 @@
 }
 
 .turnDiv {
-    height: 20px;
-    width: 20px;
-    border-radius: 200px;
-    background-color: red;
+    width: 100%;
+    background-color: #E7C318;
+    text-align: center;
 }
 
 .noMana {
     filter: grayscale(1);
+}
+
+
+.curveContainer {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 0) scale(0.7);
+    transition: 0.2s all ease-in-out;
+}
+
+.curveContainer:hover {
+    transform: translate(-50%, -25%) scale(1.1);
+}
+
+.curveCard {
+    height: 200px;
+    width: auto;
+    margin: 5px;
+}
+
+.curveCard:hover {
+    transform: scale(2);
+    cursor: pointer;
 }

@@ -268,6 +268,7 @@ function send_fight(_id1,_id2,data,jwt){
         var id = `GAME_${user1.id}_${user2.id}`
 
         var GAME = {
+            "rounds":0,
             "killFeed" : [],
             "id": id,
             "maxMana": MAX_MANA,
@@ -275,6 +276,7 @@ function send_fight(_id1,_id2,data,jwt){
             "turn": user1.id,
             "listIds": [user1.id, user2.id],
             [user1.id]: {
+                rounds: 0,
                 maxLife: LIFE,
                 user: user1,
                 deck: deck_user1,
@@ -284,6 +286,7 @@ function send_fight(_id1,_id2,data,jwt){
                 playGround: []
             },
             [user2.id]: {
+                rounds: 0,
                 maxLife: LIFE,
                 user: user2,
                 deck: deck_user2,
@@ -292,12 +295,6 @@ function send_fight(_id1,_id2,data,jwt){
                 manaRegen: MANA_REGEN,
                 playGround: []
             },
-            changeTurn : () => {
-                this.turn = this.turn == user1.id ? user2.id : user1.id;
-            },
-            getCardInPlayground : (idUser, idCard) => {
-                return Object.entries(this[idUSer].playGround).filter((col) => { return col[1].card && col[1].card.id == idCard })
-            }
         }
 
         sockets[id] = GAME
@@ -308,6 +305,11 @@ function send_fight(_id1,_id2,data,jwt){
 
         sockets[_id1].emit('matchmakingFriend-fight',(data))
         sockets[_id2].emit('matchmakingFriend-fight',(data))
+
+        // setInterval(() => {
+        //     sockets[_id1].emit('timerDown', null)
+        //     sockets[_id2].emit('timerDown', null)
+        // }, 1000)
     })
     
 }

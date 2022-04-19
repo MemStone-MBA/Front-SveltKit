@@ -12,9 +12,23 @@
     var actualUser = {}
     var enemyUser = {}
 
+    var timer = game.time_round || 25
+
+    io.on('timerDown', (data) => {
+        curveCards()
+        timer = timer - 1
+        if(timer <= 0) {
+            if(myTurn())
+                changeTurn()
+        }
+    })
+
+    io.on('timerReset', (data) => {
+        timer = game.time_round
+    })
+
     onMount(() => {
         game = $dataMatch.game
-        console.log(game)
         actualUser = $dataMatch.game[$user.id]
         let enemyUserArray = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
         enemyUser = enemyUserArray[0][1]
@@ -22,9 +36,63 @@
         actualUser = actualUser
         enemyUser = enemyUser
 
-        //generatePlayGround(".EnemyTrail", "e", enemyUser.playGround)
         generatePlayGround(".MyTrail", "m", actualUser.playGround, true)
+
+        setTimeout(() => {
+            curveCards()
+        }, 100)
     })
+
+    function curveCards(card = null) {
+        let cards = document.querySelectorAll('.curveContainer .curveCard')
+        // si pair else impair
+        if(cards.length % 2 == 0) {
+
+        } else {
+            var limiteTrans = 150
+            var limiteRota = 30
+            // for card in cards rotate card to form arc
+            for(let i = 0; i < cards.length / 2 ; i++) {
+                let card = cards[i]
+
+                let angle = i*(150 / (cards.length / 2))
+
+                card.innerHTML = i
+
+                let str = `translateY(${-angle}px) `
+
+                let rota = -limiteRota + i*(limiteRota / (cards.length / 2))
+                
+                let newRota = `rotate(${rota}deg)`
+
+                if(i == Math.round(cards.length / 2) - 1) { 
+                    newRota = ""
+                }
+
+                str += newRota
+                
+                card.style.transform = str
+            }
+
+            for(let i = cards.length - 1; i > cards.length / 2; i--) {
+                let card = cards[i]
+ 
+                let angle = (cards.length - 1 - i)*(150 / (cards.length / 2))
+
+                card.innerHTML = i
+
+                let str = `translateY(${-angle}px) `
+
+                let rota = limiteRota - (cards.length - 1 - i)*(limiteRota / (cards.length / 2))
+                
+                let newRota = `rotate(${rota}deg)`
+
+                str += newRota
+                
+                card.style.transform = str
+            }
+        }
+    }
 
     function updatePlayground(idUser, playground) {
         game[idUser].playGround = playground
@@ -88,12 +156,22 @@
     }
 
     function myTurn() {
-        if(game.turn == actualUser.user.id) {
-            return true
-        } else {
+        try {
+            if(game.turn == actualUser.user.id) {
+                return true
+            } else {
+                return false
+            } 
+        }catch {
             return false
         }
+        
     }
+
+    io.on('updateMana', newGame => {
+        game[actualUser.user.id].mana = newGame[actualUser.user.id].mana
+        game[enemyUser.user.id].mana = newGame[enemyUser.user.id].mana
+    })
 
     io.on('updateUserPlayground', game => {
         let enemyUserArray2 = Object.entries(game).filter((param) => param[1].user && param[1].user.id != actualUser.user.id)
@@ -103,6 +181,8 @@
 
         if(newPlayground && newPlayground != [])
             buildEnemyPlayground(newPlayground)
+
+        curveCards()
     })
 
     function buildEnemyPlayground(playground) {
@@ -118,6 +198,12 @@
                 let img = document.createElement("img")
                 img.src = "http://51.210.104.99:8001/getImage/"+ playground[i].card.path
                 img.classList.add('CardTrail')
+                img.classList.add('cardRemove')
+
+                setTimeout(() => {
+                    img.classList.remove('cardRemove')
+                },10)
+
                 img.id = playground[i].card.id
                 img.classList.add(`CARD_AGRO_${playground[i].card.id}`)
                 img.classList.add('boardCard')
@@ -218,6 +304,9 @@
     })
 
     function changeTurn() {
+        if(!myTurn())
+            return
+
         io.emit('changeTurn', {game: game, user1: actualUser.user.id, user2: enemyUser.user.id})
     }
 
@@ -250,6 +339,11 @@
                 })
 
                 img.classList.add('CardTrail')
+                img.classList.add('cardRemove')
+
+                setTimeout(() => {
+                    img.classList.remove('cardRemove')
+                },10)
 
                 let HpMaxCard = document.createElement("div")
                 HpMaxCard.classList.add('MaxHpCard')
@@ -261,9 +355,6 @@
                 selectedFrame.appendChild(img)
                 HpMaxCard.appendChild(HpCard)
                 selectedFrame.appendChild(HpMaxCard)
-                
-                selectedCard = null
-                selectedFrame = null
 
                 io.emit('updateUserPlayground', {
                     id: game.id,
@@ -271,10 +362,10 @@
                     playGround: actualUser.playGround
                 })
 
+                io.emit("refreshMana", {game: game, idUser: actualUser.user.id, card: selectedCard})
+
                 selectedCard = null
                 selectedFrame = null
-
-                changeTurn()
             }
         }
     }
@@ -295,7 +386,11 @@
             }
 
             container.appendChild(div)
-            array.push({id: attr + "_" + i, div: div, empty: true})
+            array.push({
+                id: attr + "_" + i,
+                div: div,
+                empty: true
+            })
         }
     }
 
@@ -342,8 +437,25 @@
                 </div>
             </div>
         </div>
-        <div class="flex flex-row MyDeck mt-1">
-            <div class="MyHand p-4 pl-12 pr-16 flex flex-row">
+
+            <div class="curveContainer">
+                {#if actualUser.deck != undefined}
+                    {#each actualUser.deck[0].listCards as card}
+                        <img
+                            alt="{card.path}" 
+                            src="http://51.210.104.99:8001/getImage/{card.path}" 
+                            class="curveCard MyCard mr-4 CARD_{card.id} {(game[actualUser.user.id].mana >= card.cost) ? '' : 'noMana'}"
+                            on:click={() =>{
+                                if(game[actualUser.user.id].mana >= card.cost)
+                                    setSelectedCard(card)
+                            }}
+                        >
+                    {/each}
+                {/if}
+            </div>
+
+            <div class="flex flex-row MyDeck mt-1">
+            <!-- <div class="MyHand p-4 pl-12 pr-16 flex flex-row">
                 {#if actualUser.deck != undefined}
                     {#each actualUser.deck[0].listCards as card}
                         <img 
@@ -357,23 +469,27 @@
                         >
                     {/each}
                 {/if}
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="flex-1 rightContainer m-1">
+        {#if game.turn && actualUser.user && game.turn == actualUser.user.id}
+            <div class="changeTurn" on:click={changeTurn}>
+                <img src="static/assets/switch.svg" alt="" class="itemmenu">
+            </div>
+        {/if}
         <div class="flex flex-col h-full">
             <!-- 
                 ENNEMY
             -->
             <div class="EnemyInfo flex-1 flex flex-col">
                 <div class="titleRightContainer">
-                    {#if game.turn && enemyUser.user && game.turn == enemyUser.user.id}
-                        <div class="turnDiv"></div>
-                    {/if}
-
-                    { 
-                        enemyUser.user?.username || ""
-                    }
+                    <div class="{(game.turn && enemyUser.user && game.turn == enemyUser.user.id) ? 'turnDiv' : ''}">
+                        {enemyUser.user?.username || ""} 
+                        {#if game.turn && enemyUser.user && game.turn == enemyUser.user.id}
+                            ({timer})
+                        {/if}
+                    </div>
                 </div>
                 <div class="flex-1 flex flex-row">
                     <div class="EnemyEnergy flex flex-col">
@@ -404,13 +520,12 @@
             -->
             <div class="MyInfo h-full flex-1 flex flex-col">
                 <div class="titleRightContainer">
-                    {#if game.turn && actualUser.user && game.turn == actualUser.user.id}
-                        <div class="turnDiv"></div>
-                    {/if}
-
-                    { 
-                        actualUser.user?.username || ""
-                    }
+                    <div class="{(game.turn && actualUser.user && game.turn == actualUser.user.id) ? 'turnDiv' : ''}">
+                        {actualUser.user?.username || ""}
+                        {#if game.turn && actualUser.user && game.turn == actualUser.user.id}
+                            ({timer})
+                        {/if}
+                    </div>
                 </div>
                 <div class="flex-1 flex flex-row">
                     <div class="MyEnergy flex flex-col">

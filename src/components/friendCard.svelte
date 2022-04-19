@@ -25,11 +25,10 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
             friendContainer = document.querySelector("#friend-container")
 		friendCap = document.querySelector("#friend-cap")
 		
-
-		popup.addEventListener("mouseleave",e=>{
-	
-			 popup.classList.remove("optionFriend-open")
-		})
+		if(popup)
+			popup.addEventListener("mouseleave",e=>{
+				popup.classList.remove("optionFriend-open")
+			})
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
