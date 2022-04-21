@@ -13,7 +13,8 @@ import {
 	getFriendsByUser,
 	buyCoins, 
 	me,
-	updateUserMMR
+	updateUserMMR,
+	getCaseById
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -129,6 +130,12 @@ export function SocketServer(server) {
 
 		socket.on('getCardById', (data, cb) => {
 			getCardById(data.jwt, data.cardId).then((res) => {
+				cb(res)
+			})
+		})
+
+		socket.on('getCaseById', (data, cb) => {
+			getCaseById(data.jwt, data.caseId).then((res) => {
 				cb(res)
 			})
 		})

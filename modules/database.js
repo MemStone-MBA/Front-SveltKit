@@ -117,6 +117,18 @@ export const getCardById = async function(jwt, cardID) {
     return response
 }
 
+export const getCaseById = async function(jwt, caseID) {
+	let conf = await process;
+    var response = axios.get(conf.env.URL+'cases/' + caseID , {
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        return res.data
+    }).catch(err => {
+        LogsError(err);
+    })
+    return response
+}
+
 export const getCardsByUser = async function(jwt, userId) {
     let conf = await process;
     var response = axios.get(  conf.env.URL+'inventory/user/' +userId, {
