@@ -6,6 +6,7 @@
     import { afterUpdate, onMount } from 'svelte';
     import { io } from "$lib/realtime";
     import { Layers } from "three";
+import { goto } from "$app/navigation";
 
 
     var game = {}
@@ -256,7 +257,7 @@
         var newLife = fightAgro.life - damage
 
         if(newLife <= 0) {
-            enemyDamageUser(newLife, enemyUser.user.id)
+            enemyDamageUser(newLife, enemyUser.user.id, actualUser.user.id)
             destroyCard(fightAgro, enemyUser.user.id)
         } else {
             changeLife(fightAgro, newLife)
@@ -282,9 +283,17 @@
         io.emit('changeCardLife', {game: game, idUser: enemyUser.user.id, card: card, newLife: newLife})
     }
 
-    function enemyDamageUser(damage, idUser) {
-        io.emit('sendDamageUser', {game: game, idUser: idUser, damage: damage * -1})
+    function enemyDamageUser(damage, idUser, idAttacker) {
+        io.emit('sendDamageUser', {game: game, idUser: idUser, idAttacker: idAttacker, user : $user, damage: damage * -1})
     }
+
+    io.on('endGame', (data) => {
+        game.turn = data.turn
+        $user.mmr = data.user.mmr
+        $user.game_win = data.user.game_win
+        $user.game_lose = data.user.game_lose
+        goto("/")
+    })
 
     io.on('sendDamageUser', (data) => {
         updatePlaygroundUserLife(data.user)

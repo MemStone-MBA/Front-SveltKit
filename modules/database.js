@@ -246,3 +246,35 @@ export const buyCoins = async function(user, amount) {
     return response
 }
 
+export const updateUserMMR = async function(user, id, change) {
+    let conf = await process;
+    return getUserById(user.jwt, id).then(res => {
+        var newMMR = res.mmr + change
+
+        if(newMMR < 0) {
+            newMMR = 0
+        }
+
+        var newWin = res.game_win, newLose = res.game_lose
+
+        if(change > 0) {
+            newWin = res.game_win + 1
+        } else {
+            newLose = res.game_lose + 1
+        }
+
+        var response = axios.put(  conf.env.URL+'users/' +id, {
+            'mmr': newMMR,
+            'game_win': newWin,
+            'game_lose': newLose
+        },{
+            headers: { "Authorization": "Bearer " + user.jwt},
+        }).then((res) => {
+            return res.data
+        }).catch(err => {
+            LogsError(err);
+        })
+        return response
+    })
+}
+

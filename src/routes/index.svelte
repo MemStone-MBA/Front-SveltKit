@@ -49,8 +49,13 @@
                 userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
             userMMR = $user ? $user.mmr : 1080
             userIcon = $user ? $user.Icon : "avatar.svg"
-            ratio = Math.round( $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5)
-            ratio = Math.round(ratio * 100) / 100
+
+            try {
+                ratio = Math.round(($user.game_win+1) / ($user.game_lose+1) * 100) / 100
+                ratio = Math.round(ratio * 100) / 100
+            } catch {
+                ratio = 0
+            }
             circleDeg = Math.round(180 * ratio)
 
             io.emit("getUserCases", {jwt:$user?.jwt,userId:$user?.id}, ((res) => {

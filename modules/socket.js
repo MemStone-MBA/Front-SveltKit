@@ -11,7 +11,9 @@ import {
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
-	buyCoins, me
+	buyCoins, 
+	me,
+	updateUserMMR
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -24,6 +26,8 @@ export function SocketServer(server) {
 
 	const io = new Server(server.httpServer);
 	const matchMakingSearch = [];
+	var TODAY_CARD = {}
+
 	io.on('connection', (socket) => {
 		socket.on('login', (data) => {
 			login(data.mail, data.password, (res) => {
@@ -256,6 +260,8 @@ export function SocketServer(server) {
 			}
 		})
 
+		const MMR_CHANGE = 50
+
 		socket.on('sendDamageUser', (data) => {
 			let user = sockets[data.game.id][data.idUser]
 			user.life = user.life - data.damage
@@ -264,6 +270,20 @@ export function SocketServer(server) {
 
 			for(let idSocket of game.listIds) {
 				sockets[idSocket].emit('sendDamageUser', {game: game, idUser: data.idUser, user: user})
+			}
+
+			let idLooser = data.idUser
+			let idWinner = data.idAttacker
+
+			if(user.life <= 0) {
+				game.turn = "end"
+
+				updateUserMMR(data.user, idWinner, MMR_CHANGE).then((res) => {
+					sockets[idWinner].emit('endGame', {game: game, user: res})
+				})
+				updateUserMMR(data.user, idLooser, -MMR_CHANGE).then((res) => {
+					sockets[idLooser].emit('endGame', {game: game, user: res})
+				})
 			}
 		})
 
@@ -300,9 +320,6 @@ export function SocketServer(server) {
 		}
 
 		socket.on('refreshMana', (data) => {
-			console.log('refresh mana')
-			console.log(data)
-
 			let game = sockets[data.game.id]
 
 			game[data.idUser].mana = game[data.idUser].mana - data.card.cost
@@ -311,8 +328,6 @@ export function SocketServer(server) {
 				sockets[idSocket].emit('updateMana', game)
 			}
 		})
-
-		var TODAY_CARD = {}
 
 		socket.on('todayCard', (data, cb) =>{
 			let dateNow = Date.now()
