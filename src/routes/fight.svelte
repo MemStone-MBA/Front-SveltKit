@@ -292,6 +292,8 @@ import { goto } from "$app/navigation";
         $user.mmr = data.user.mmr
         $user.game_win = data.user.game_win
         $user.game_lose = data.user.game_lose
+        $user.coins = data.user.coins
+        $user.Level = data.user.Level
         goto("/")
     })
 

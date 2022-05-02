@@ -4,7 +4,7 @@
 	import { onMount } from "svelte";
 	import { user } from './auth.js'
 	import { goto } from '$app/navigation';
-import {ConnexionStatus } from '$lib/Status';
+	import {ConnexionStatus } from '$lib/Status';
 	import { connexionStatusWritable, loaderStatusWritable } from './auth.js';
 
 
@@ -14,61 +14,39 @@ import {ConnexionStatus } from '$lib/Status';
 	var bad_credentials = false;
 	var credentialsMessage = "";
 	onMount(() => {
-
-
-
 		mail = localStorage.getItem('username') ? localStorage.getItem('username') : "";
 		password = localStorage.getItem('password') ? localStorage.getItem('password') : "";
 
-
-
 		if (mail != "" && password != ""){
-
 			Login();
 		}
-
-
 
 		/**
 		 * Server response for login
 		*/
-
 		connexionStatusWritable.subscribe(value => {
-
 			oldValue = value
-
 			showErrors(value)
 		})
 
-
-
 		io.on("login-res", (res) => {
-
-			if (res.status == undefined){
+			if(res.status == undefined){
 				connexionStatusWritable.update(value => value = ConnexionStatus.Error)
 			}else {
-
-					connexionStatusWritable.update(value => value = res.status)
+				connexionStatusWritable.update(value => value = res.status)
 			}
-
 
 			if (res.status == ConnexionStatus.Connected){
 				$user =  res.response;
-
 				if(res == null) {
 					bad_credentials = true
 					resetInput()
-
 				} else {
-
-
 					localStorage.setItem('username', mail)
 					localStorage.setItem('password', password)
 					localStorage.setItem('jwt', $user.jwt)
-
 					bad_credentials = false
 					resetInput()
-
 					goto("/")
 				}
 			}

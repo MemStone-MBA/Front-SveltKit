@@ -234,20 +234,19 @@ export function UC_OpenUc(socket){
 					insertNewCardInventory(data.jwt, data.userId, cardId).then(res=>{
 						console.log("Carte ajouté !")
 					})
-
 				}else {
 					//Earn money
 				}
 
+				if(!data.case) {
+					return
+				}
+
 				deleteUserCase(data.jwt, data.case.id).then((delteRes) => {
-
 					getUserCases(data).then((userCases) => {
-
 						cb(userCases, cardId)
 					})
-
 				})
-
 			})
 		})
 

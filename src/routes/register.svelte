@@ -4,6 +4,8 @@
 	import { onMount } from "svelte";
 	import { user } from './auth.js'
 	import { goto } from '$app/navigation';
+	import {ConnexionStatus } from '$lib/Status';
+	import { connexionStatusWritable, loaderStatusWritable } from './auth.js';
 
 	var username = ""
 	var mail = ""
@@ -11,23 +13,77 @@
 
 	var bad_credentials = false;
 
+	let oldValue
+	var bad_credentials = false;
+	var credentialsMessage = "";
+
 	onMount(() => {
 
 		/**
 		 * Server response for login
 		*/
-		io.on("register-res", res => {
-			$user = res;
-			if(res == null) {
-				bad_credentials = true
-				resetInput()
-			} else {
-				bad_credentials = false
-				resetInput()
+		connexionStatusWritable.subscribe(value => {
+			oldValue = value
+			showErrors(value)
+		})
 
-				goto("/")
+		/**
+		 * Server response for login
+		*/
+		io.on("register-res", res => {
+
+			if(res.status == undefined){
+				connexionStatusWritable.update(value => value = ConnexionStatus.Error)
+			}else {
+				connexionStatusWritable.update(value => value = res.status)
+			}
+
+			if (res.status == ConnexionStatus.Connected){
+				$user =  res.response;
+				if(res == null) {
+					bad_credentials = true
+					resetInput()
+				} else {
+					localStorage.setItem('username', mail)
+					localStorage.setItem('password', password)
+					localStorage.setItem('jwt', $user.jwt)
+					bad_credentials = false
+					resetInput()
+					goto("/")
+				}
 			}
 		})
+
+		function setLoader(loaderVal){
+		loaderStatusWritable.update(value =>  value = loaderVal)
+	}
+
+	function showErrors (value){
+		console.log("value : ",value)
+
+		credentialsMessage = value;
+		switch (value){
+			case ConnexionStatus.ErrorIds:
+				bad_credentials = true;
+				setLoader(false)
+				break;
+			case ConnexionStatus.Replace:
+				bad_credentials = true;
+				setLoader(false)
+				break;
+			case ConnexionStatus.Connected:
+				bad_credentials = false;
+				break;
+			case ConnexionStatus.Connecting:
+
+				bad_credentials = false;
+				break;
+			default:
+				setLoader(false)
+				bad_credentials = false;
+				break;
+		}
+	}
 	})
 
 	/**
