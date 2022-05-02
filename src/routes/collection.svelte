@@ -9,6 +9,8 @@
     import { onMount } from 'svelte';
     import { CanvasTexture,  Mesh,  MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene, WebGLRenderer, Group, Matrix4, Clock } from 'three';
     import { OrbitControls } from '@three-ts/orbit-controls';
+    import FriendPopup ,{  show , hide }  from "../components/friendPopup.svelte";
+    import {popupTextWritable, popupCloseWritable }  from '../lib/Popup.js';
 
     //All existing cards
     var cards = []
@@ -319,6 +321,16 @@
       return str.trim().split(" ").join("_")
     }
 
+    function checkDisabled() {
+      if(Boolean(cardsInDeck!=MAX_CARDS)) {
+        show(true);
+        popupTextWritable.update(popup => popup= `Please add at least 5 cards in your deck`)
+        popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+            hide()
+        })
+      }
+    }
+
 
 </script>
 
@@ -379,7 +391,7 @@
                 {/each}
 
             </div>
-            <div class="flex justify-center">
+            <div class="flex justify-center" on:click={checkDisabled}>
                 <div on:click={saveDeck} disabled={Boolean(cardsInDeck!=MAX_CARDS)} class="buttonSave buttonDetail p-4 m-6">Sauvegarder</div>
             </div>
        </div>

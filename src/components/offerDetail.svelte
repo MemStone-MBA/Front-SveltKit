@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import FriendPopup ,{  show , hide }  from "./friendPopup.svelte";
-	import { popupAcceptWritable, popupDenyWritable, popupTextWritable } from '$lib/Popup.js';
+	import { popupAcceptWritable, popupDenyWritable, popupTextWritable, popupCloseWritable } from '$lib/Popup.js';
 	import Modale from "./modale.svelte";
 
 	export let offerData;
@@ -19,6 +19,11 @@
 	function buyUserCases(price){
 
 		if($user.coins < price){
+			show(true);
+			popupTextWritable.update(popup => popup= `You don't have enough coins`)
+			popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+				hide()
+			})
 			return
 		}
 

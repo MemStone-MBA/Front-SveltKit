@@ -246,9 +246,13 @@ export function SocketServer(server) {
 								cb(res)
 							})
 						})
+					} else {
+						cb({"error": "same"})
 					}
 				})
 
+			} else {
+				cb({"error": "coins"})
 			}
 		})
 
