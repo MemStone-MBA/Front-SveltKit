@@ -129,6 +129,23 @@ export const getCaseById = async function(jwt, caseID) {
     return response
 }
 
+export const createDeck = async function(jwt, idUser, cb) {
+	let conf = await process;
+    var response = axios.post(conf.env.URL+'deck/', {
+        idUser: idUser,
+        listCards: []
+    }, {
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        res.data
+        cb()
+    }).catch(err => {
+        LogsError(err);
+        cb()
+    })
+    response
+}
+
 export const getCardsByUser = async function(jwt, userId) {
     let conf = await process;
     var response = axios.get(  conf.env.URL+'inventory/user/' +userId, {
@@ -221,7 +238,6 @@ export const insertNewCardInventory = async function(jwt, userId, cardId) {
         return err;
     })
 
-
     if(res== undefined){
         LogsError(new Error("res is undefined, .env might send wrong url or does not exist"))
         return ;
@@ -269,10 +285,10 @@ export const buyCoins = async function(user, amount) {
     return response
 }
 
-export const updateUserMMR = async function(user, id, change) {
+export const updateUserMMR = async function(user, id, mmr, xp, coins) {
     let conf = await process;
     return getUserById(user.jwt, id).then(res => {
-        var newMMR = res.mmr + change
+        var newMMR = res.mmr + mmr
 
         if(newMMR < 0) {
             newMMR = 0
@@ -280,16 +296,20 @@ export const updateUserMMR = async function(user, id, change) {
 
         var newWin = res.game_win, newLose = res.game_lose
 
-        if(change > 0) {
+        if(mmr > 0) {
             newWin = res.game_win + 1
         } else {
             newLose = res.game_lose + 1
         }
 
+        console.log(res.Level + xp)
+
         var response = axios.put(  conf.env.URL+'users/' +id, {
             'mmr': newMMR,
             'game_win': newWin,
-            'game_lose': newLose
+            'game_lose': newLose,
+            'Level': res.Level + xp,
+            'coins': res.coins + coins
         },{
             headers: { "Authorization": "Bearer " + user.jwt},
         }).then((res) => {

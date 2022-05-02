@@ -15,7 +15,8 @@ import {
 	buyCoins, 
 	me,
 	updateUserMMR,
-	getCaseById
+	getCaseById,
+	createDeck
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -41,14 +42,11 @@ export function SocketServer(server) {
 						break;
 					case 200:
 
-
-
 						if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
 							console.log("already connected")
 							sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
 
 						}
-
 
 						socket = MF_Initialize(socket)
 						socket = CF_Initialize(socket,res.data)
@@ -58,7 +56,6 @@ export function SocketServer(server) {
 						sockets[res.data.id] = socket;
 						sockets[res.data.id].tabID = data.tabID
 						console.log(sockets[res.data.id].tabID)
-
 
 						socket.emit("login-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
 						break;
@@ -71,7 +68,6 @@ export function SocketServer(server) {
 		})
 
 		socket.on('login-check', (data,callback) => {
-
 
 			console.log(data)
 
@@ -86,13 +82,11 @@ export function SocketServer(server) {
 
 				if (result.status == 200){
 
-
 					if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
 						console.log("already connected")
 						sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
 
 					}
-
 
 					socket = MF_Initialize(socket)
 					socket = CF_Initialize(socket,res.data)
@@ -101,19 +95,39 @@ export function SocketServer(server) {
 
 					sockets[res.data.id] = socket;
 					sockets[res.data.id].tabID = data.tabID
-
 				}
 
-
 				callback(result)
-
 			})
 		})
 
 
 		socket.on('register', (data) => {
 			register(data.username, data.mail, data.password, (res) => {
-				socket.emit("register-res", res)
+
+				switch (res.status){
+					case 400:
+						socket.emit("register-res",({'status': ConnexionStatus.ErrorIds}))
+						break;
+					case 200:
+
+						socket = MF_Initialize(socket)
+						socket = CF_Initialize(socket,res.data)
+
+						console.log("connected : ", socket.username)
+
+						sockets[res.data.id] = socket;
+						sockets[res.data.id].tabID = data.tabID
+						console.log(sockets[res.data.id].tabID)
+
+						createDeck(res.data.jwt, res.data.id, () => {
+							socket.emit("register-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
+						})
+						break;
+					default:
+						socket.emit("register-res",({'status':ConnexionStatus.Error}))
+						break;
+				}
 			})
 		})
 
@@ -224,11 +238,30 @@ export function SocketServer(server) {
 			})
 		})
 
+		socket.on('buyUserCard', (data, cb) => {
+			if(data.user.coins >= data.price){
+				getCardsByUser(data.jwt, data.idUser).then((res) => {
+					var same = false
+					for (let card of res) {
+						if (card.idCard == data.idCard) {
+							same = true
+						}
+					}
+					if (!same) {
+						insertNewCardInventory(data.jwt, data.idUser, data.idCard).then(() => {
+							buyCoins(data.user, data.price * -1).then((res) => {
+								cb(res)
+							})
+						})
+					}
+				})
+
+			}
+		})
 
 		socket.on('getOffers', (data, cb) => {
 			getOffers(data).then((res) => {
-
-					cb(res)
+				cb(res)
 			})
 	   })
 
@@ -275,6 +308,8 @@ export function SocketServer(server) {
 		})
 
 		const MMR_CHANGE = 50
+		const XP_CHANGE = 0.1
+		const COINS_CHANGE = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
 
 		socket.on('sendDamageUser', (data) => {
 			let user = sockets[data.game.id][data.idUser]
@@ -292,10 +327,10 @@ export function SocketServer(server) {
 			if(user.life <= 0) {
 				game.turn = "end"
 
-				updateUserMMR(data.user, idWinner, MMR_CHANGE).then((res) => {
+				updateUserMMR(data.user, idWinner, MMR_CHANGE, XP_CHANGE, COINS_CHANGE).then((res) => {
 					sockets[idWinner].emit('endGame', {game: game, user: res})
 				})
-				updateUserMMR(data.user, idLooser, -MMR_CHANGE).then((res) => {
+				updateUserMMR(data.user, idLooser, -MMR_CHANGE, XP_CHANGE/2, 0).then((res) => {
 					sockets[idLooser].emit('endGame', {game: game, user: res})
 				})
 			}

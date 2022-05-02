@@ -14,6 +14,13 @@ var CARDS = []
 var TIME_LEFT = ""
 var COINS = 0
 
+const price = {
+    "commun": 1,
+    "rare": 2,
+    "epic": 3,
+    "legendary": 4
+}
+
 var BUY_OPTIONS = [
     {
         coins: 1200,
@@ -47,9 +54,6 @@ onMount(() => {
 
 })
 
-
-
-
 function getStoreCards(){
     io.emit("todayCard", {jwt:$user.jwt}, ((res) => {
         if(res.status) {
@@ -70,20 +74,12 @@ function getStoreCards(){
 
 function getOffers(){
     io.emit("getOffers", {jwt:$user.jwt}, ((res) => {
-      
-
        if(res.status != 200)
         return;
 
-
         offers = res?.offers;
-
-
     }))
 }
-
-
-
 
 function buyCoins(amount){
     io.emit("buyCoins", {user:$user, amount:amount}, ((res) => {
@@ -100,6 +96,19 @@ function goToMenu() {
     goto('/')
 }
 
+function buyCard(card, price) {
+    io.emit("buyUserCard", {jwt:$user.jwt,user: $user, idUser:$user.id,idCard:card.id, price: price}, ((res) => {
+        if(res == null) {
+            return
+        }
+
+        console.log(res)
+
+        $user.coins = res.coins
+        COINS = res.coins
+    }))
+}
+
 function buyUserCases(id){
 
     let offre = {
@@ -108,19 +117,18 @@ function buyUserCases(id){
         number:4
     }
 
-        io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
+    io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
 
-            if (Array.isArray(res)){
-                res?.forEach(boxPurchased=>{
-                    if(boxPurchased.status != 200) {
-                        return
-                    }
-                })
+        if (Array.isArray(res)){
+            res?.forEach(boxPurchased=>{
+                if(boxPurchased.status != 200) {
+                    return
+                }
+            })
 
-            }
-            console.log(`${res.length} box purchased`)
-        }))
-
+        }
+        console.log(`${res.length} box purchased`)
+    }))
 }
 
 </script>
@@ -133,11 +141,11 @@ function buyUserCases(id){
         <div class="flex flex-row w-full pb-20 mt-8 h-auto">
 
             {#each CARDS as card}
-                <div class="flex-1">
+                <div class="flex-1 cardBuy" on:click={() => { buyCard(card, price[card.rarety] * 500) }}>
                     <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class='journeyCard'>
                     <div class="price mt-2">
                         <div class="textprice">
-                            200
+                            {price[card.rarety] * 500}
                         </div>
                         <img src='static/assets/coin.svg' class='coin mt-1'>
                     </div>
