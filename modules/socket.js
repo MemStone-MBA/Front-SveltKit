@@ -7,6 +7,7 @@ import {
 	getAllCards,
 	getCardsByUser,
 	getDeckByUser,
+	getUserByUsername,
 	login,
 	register,
 	saveDeckByUser,
@@ -162,6 +163,12 @@ export function SocketServer(server) {
 
 		socket.on('deck-user', (data, cb) => {
 			getDeckByUser(data.jwt, data.userId).then((res) => {
+				cb(res)
+			})
+		})
+		
+		socket.on('getUserByUsername', (data, cb) => {
+			getUserByUsername(data.jwt, data.username).then((res) => {
 				cb(res)
 			})
 		})
