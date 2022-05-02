@@ -16,12 +16,28 @@
 		offerData = offerData;
 	})
 
-	function buyUserCases(){
+	function buyUserCases(price){
+
+		if($user.coins < price){
+			return
+		}
 
 		show();
 		popupTextWritable.update(popup => popup= `confirm your purchase of ${offerData.description}`)
 		popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{
-			io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,offer:offerData}, ((res) => {
+			console.log("accept")
+			io.emit("buyCoins", {user:$user, amount: price * -1}, ((res) => {
+				if(res.status) {
+					return
+				}
+
+				console.log(res)
+
+				$user.coins = res.coins
+
+				console.log($user)
+
+				io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,offer:offerData}, ((res) => {
 
 				if (Array.isArray(res)){
 					res?.forEach(boxPurchased=>{
@@ -33,8 +49,8 @@
 				}
 				hide();
 				console.log(`${res.length} box purchased`)
+				}))
 			}))
-
 		})
 
 		popupDenyWritable.update(denyFunction => denyFunction = ()=>{
@@ -80,7 +96,7 @@
 				<img src='static/assets/coin.svg' class='coin mt-1'>
 			</div>
 			<div class="buttonsContainer">
-				<div on:click={ ()=>{ buyUserCases()}} class="ButtonRetour buttonDetail m4">
+				<div on:click={ ()=>{ buyUserCases(offerData.Price)}} class="ButtonRetour buttonDetail m4">
 					Acheter
 				</div>
 				<div on:click={showModale} class="ButtonRetour buttonDetail m4">
