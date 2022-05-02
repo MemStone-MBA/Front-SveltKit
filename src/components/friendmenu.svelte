@@ -6,10 +6,11 @@
     import {Status} from "../lib/Status.js"
     let friends =  []
 
+    var username = ""
+
     var open = false
 
     onMount(() => {
-
         
         isLog((done) =>{    
             
@@ -83,6 +84,12 @@
     
     }
 
+    function AddFriend(){
+        io.emit("getUserByUsername",{jwt: $user.jwt, username: username}, (res) => {
+            console.log(res)
+        })
+    }
+
     export function ToggleMenu(){
         open = !open
         let friendMenu = document.querySelector('.friend')
@@ -95,14 +102,22 @@
 </script>
 
 <div id="friend-container" class="colorbackfriend w-1/4 text-2xl friend h-full z-40 ">
-    <h1 class="justify-content p-6 pl-0 ml-8 uppercase titlefriend">
-        Amis
+    <h1 class="justify-content p-6 pl-0 ml-8 uppercase titlefriend flex flex-row">
+        <div>
+            Amis
+        </div>
     </h1>
     <div class="listfriend m-6">
-        {#each friends as friend}
+        <div>
+            {#each friends as friend}
             <FriendCard bind:name={friend.name} bind:status={friend.status} bind:matchmakingStatus={friend.matchmakingStatus}  bind:friendId={friend.friendId} ></FriendCard>
         {/each}
+        </div>
     </div>
+    <div class="flex flex-row addFriend">
+        <input type="text" class="inputFriend" bind:value={username}>
+        <div on:click={()=>{AddFriend()}}>Ajouter</div>
+    </div>  
     <div class="closeFriendMenu buttonDetail" on:click={()=>{ToggleMenu()}}>
         {#if open}
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -137,6 +152,18 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    .addFriend{
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inputFriend{
+        width: 50%;
+        margin: 2% 2% 2% 10%;
+        background: rgba(196, 196, 196, 0.78);
+        color: black;
     }
 
 </style>
