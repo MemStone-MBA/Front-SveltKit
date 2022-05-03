@@ -127,11 +127,11 @@ function buyCard(card, price) {
             return
         }
 
-        show(true);
-        popupTextWritable.update(popup => popup= `Card buy !`)
-        popupCloseWritable.update(denyFunction => denyFunction = ()=>{
-            hide()
-        })
+        // show(true);
+        // popupTextWritable.update(popup => popup= `Card buy !`)
+        // popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+        //     hide()
+        // })
 
         $user.coins = res.coins
         COINS = res.coins
