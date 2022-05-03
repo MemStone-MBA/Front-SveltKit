@@ -1,20 +1,19 @@
 
 <script>
+    import { onMount } from 'svelte';
     import {  loaderStatusWritable } from '../routes/auth';
 
-
-
-
     let wait = true;
-    console.log(wait)
     loaderStatusWritable.subscribe(value => {
         //console.log(value)
         wait = value;
-        console.log(wait)
     })
 
-
-
+    onMount(() => {
+        if(window.location.pathname == "/landing") {
+            wait = false
+        }
+    })
 </script>
 
 {#if wait}

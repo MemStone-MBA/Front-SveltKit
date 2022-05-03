@@ -1,7 +1,7 @@
 
 <script>
 import { onMount } from "svelte";
-import { user,dataMatch } from "../routes/auth";
+import { user,dataMatch, isLog } from "../routes/auth";
 import { io } from "$lib/realtime";
 import { goto } from '$app/navigation';
 import { Status, MatchmakingStatus } from "$lib/Status";
@@ -20,15 +20,15 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	onMount(() => {
 
 	
-		popup = document.querySelector("#popup")
-		friendContainer = document.querySelector("#friend-container")
+		isLog((done) =>{    
+            
+            friendContainer = document.querySelector("#friend-container")
 		friendCap = document.querySelector("#friend-cap")
 		
-
-		popup.addEventListener("mouseleave",e=>{
-	
-			 popup.classList.remove("optionFriend-open")
-		})
+		if(popup)
+			popup.addEventListener("mouseleave",e=>{
+				popup.classList.remove("optionFriend-open")
+			})
 
 
 		io.on("matchmakingFriend-duel",(res)=>{
@@ -49,14 +49,10 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 								checkUser(_=>{
 									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId, jwt:$user.jwt }) )
 								})
-
-								
-							
 							})
 
 							popupDenyWritable.update(denyFunction => denyFunction = ()=>{
 								checkUser(_=>{
-									hide();
 									io.emit('matchmakingFriend-cancel', ({userId:friendId , userFriendId: $user.id}) )
 								})
 							})
@@ -89,7 +85,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 		})
 
 		io.on("matchmakingFriend-fight",(res)=>{
-
+			hide();
 			friendCap.classList.remove("card-IsWaiting")
 
 			let actualUser = res.actualUser ;
@@ -101,6 +97,15 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 			//console.log(res)
 		})
 
+		
+				
+				done();
+			},_=>{
+	
+			})
+
+	
+		
 	
     })
 
@@ -137,7 +142,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 
 	function friendClicked(){
 		let pos = findPopupCoords()
-		//console.log(pos);
+
 		
 		if(popup!= null){
 			popup.style.transform = "translate("+pos.x+"px,"+pos.y+"px)";
@@ -160,10 +165,23 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	   }
 	 }
 
-	function fightClicked(){
+	function fightClicked(){ 
 		popup.classList.remove("optionFriend-open")
 		checkUser(_=>{
-			io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId , jwt:$user.jwt}) )
+			io.emit("deck-user", { jwt: $user.jwt, userId: $user.id }, ((res) => {
+				if(res[0].listCards.length > 0) {
+					io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId , jwt:$user.jwt}) )
+				} else {
+					show();
+					popupTextWritable.update(popup => popup= `Please create a deck before matchmaking`)
+					popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+						goto("/collection")
+					})
+					popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+						hide()
+					})
+				}
+			}))
 		})
 
 		
@@ -186,7 +204,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	{
 		//FireFox
 		xpos = mouseEvent.pageX - popup.offsetLeft;
-		ypos = mouseEvent.pageY  - popup.offsetTop;
+		ypos = mouseEvent.pageY  - popup.offsetTop; 
 	}
 	else
 	{
@@ -217,7 +235,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 		
 	</div>
 </div>
-<div  id="popup" class="inline text-black relative  optionFriend cursor-pointer">
+<div bind:this="{popup}"  id="popup" class="inline text-black relative z-50 optionFriend cursor-pointer">
 	
 	<div class=" p-4 optionFriend-bubble" on:click={fightClicked}>
 		Fight

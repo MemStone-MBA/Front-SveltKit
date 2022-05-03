@@ -117,6 +117,35 @@ export const getCardById = async function(jwt, cardID) {
     return response
 }
 
+export const getCaseById = async function(jwt, caseID) {
+	let conf = await process;
+    var response = axios.get(conf.env.URL+'cases/' + caseID , {
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        return res.data
+    }).catch(err => {
+        LogsError(err);
+    })
+    return response
+}
+
+export const createDeck = async function(jwt, idUser, cb) {
+	let conf = await process;
+    var response = axios.post(conf.env.URL+'deck/', {
+        idUser: idUser,
+        listCards: []
+    }, {
+        headers: { "Authorization": "Bearer " + jwt}
+    }).then((res) => {
+        res.data
+        cb()
+    }).catch(err => {
+        LogsError(err);
+        cb()
+    })
+    response
+}
+
 export const getCardsByUser = async function(jwt, userId) {
     let conf = await process;
     var response = axios.get(  conf.env.URL+'inventory/user/' +userId, {
@@ -167,6 +196,17 @@ export const getUserById = async function(jwt, userId) {
     return response
 }
 
+export const getUserByUsername = async function(jwt, username) {
+    let conf = await process;
+    var response = axios.get(  conf.env.URL+'users-friends/user/' +username, {
+        headers: { "Authorization": "Bearer " + jwt, handler : "users-friend.findUserFriendsByUsername"},
+    }).then((res) => {
+        return res.data
+    }).catch(err => {
+        LogsError(err);
+    })
+    return response
+}
 
 export const saveDeckByUser = async function(jwt, deck) {
     let conf = await process;
@@ -197,7 +237,6 @@ export const insertNewCardInventory = async function(jwt, userId, cardId) {
         LogsError(err);
         return err;
     })
-
 
     if(res== undefined){
         LogsError(new Error("res is undefined, .env might send wrong url or does not exist"))
@@ -244,5 +283,41 @@ export const buyCoins = async function(user, amount) {
         LogsError(err);
     })
     return response
+}
+
+export const updateUserMMR = async function(user, id, mmr, xp, coins) {
+    let conf = await process;
+    return getUserById(user.jwt, id).then(res => {
+        var newMMR = res.mmr + mmr
+
+        if(newMMR < 0) {
+            newMMR = 0
+        }
+
+        var newWin = res.game_win, newLose = res.game_lose
+
+        if(mmr > 0) {
+            newWin = res.game_win + 1
+        } else {
+            newLose = res.game_lose + 1
+        }
+
+        console.log(res.Level + xp)
+
+        var response = axios.put(  conf.env.URL+'users/' +id, {
+            'mmr': newMMR,
+            'game_win': newWin,
+            'game_lose': newLose,
+            'Level': res.Level + xp,
+            'coins': res.coins + coins
+        },{
+            headers: { "Authorization": "Bearer " + user.jwt},
+        }).then((res) => {
+            return res.data
+        }).catch(err => {
+            LogsError(err);
+        })
+        return response
+    })
 }
 

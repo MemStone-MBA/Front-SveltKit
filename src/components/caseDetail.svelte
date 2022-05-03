@@ -8,10 +8,7 @@
 	export let baseCase;
 
 	onMount(() => {
-
 		baseCase = baseCase;
-
-
 	})
 
 
@@ -33,17 +30,45 @@
 
 
 	}
+	
+	var openModale = false
+
+	function showModale() {
+		openModale = true
+	}
+
+	function hideModale() {
+		openModale = false
+	}
 
 
 </script>
 
+<style>
+	.buttonsContainer {
+		display: flex;
+		flex-direction: row;
+	}
 
-<div class="min-w-fit case m-20 cursor-pointer flex-1 p-1 flex flex-col" on:click={openUserCases(baseCase)}>
+	.buttonsContainer div {
+		font-size: 22px;
+		margin: 10px;
+		height: auto;
+		padding: 5px
+	}
+</style>
+
+<div class="min-w-fit case flex-1 p-1 flex flex-col">
 	<div class="price mt-2 mb-4">
-		<div class="textprice">{baseCase.name}</div>
+		<div class="textprice">{baseCase.name} : {baseCase.count} caisses</div>
 	</div>
 	<img src='static/assets/icon_pack.svg' class="iconPack">
-	<div class="price mt-2">
-		<div class="textprice">{baseCase.count}</div>
+	<div class="buttonsContainer">
+		<div on:click={() => openUserCases(baseCase)} class="ButtonRetour buttonDetail m4">
+			Ouvrir
+		</div>
+		<div class="ButtonRetour buttonDetail m4">
+			Infos
+		</div>
 	</div>
 </div>

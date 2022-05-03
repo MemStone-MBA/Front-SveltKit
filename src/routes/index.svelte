@@ -13,7 +13,8 @@
     import { goto } from '$app/navigation';
     import { io } from '$lib/realtime.ts';
     import { onDestroy } from 'svelte/internal';
-
+    import FriendPopup ,{  show , hide }  from "../components/friendPopup.svelte";
+    import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
 
 
     var userName;
@@ -49,11 +50,16 @@
                 userExp = userRawLevel ? parseInt(userRawLevel.toString().split('.')[1]) : 0
             userMMR = $user ? $user.mmr : 1080
             userIcon = $user ? $user.Icon : "avatar.svg"
-            ratio = Math.round( $user ? $user.game_lose > 0 ? $user.game_win / $user.game_lose : 1 : 0.5)
-            ratio = Math.round(ratio * 100) / 100
+
+            try {
+                ratio = Math.round(($user.game_win+1) / ($user.game_lose+1) * 100) / 100
+                ratio = Math.round(ratio * 100) / 100
+            } catch {
+                ratio = 0
+            }
             circleDeg = Math.round(180 * ratio)
 
-            io.emit("getUserCases", {jwt:$user.jwt,userId:$user.id}, ((res) => {
+            io.emit("getUserCases", {jwt:$user?.jwt,userId:$user?.id}, ((res) => {
                 if(res.status != 200) {
                     return
                 }
@@ -103,7 +109,21 @@
     }
 
     function goToMM() {
-        goto("/matchmaking")
+        io.emit("deck-user", { jwt: $user.jwt, userId: $user.id }, ((res) => {
+            if(res[0].listCards.length > 0) {
+                goto("/matchmaking")
+            } else {
+                show();
+                popupTextWritable.update(popup => popup= `Please create a deck before matchmaking`)
+                popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+                    goto("/collection")
+                    hide()
+                })
+                popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+                    hide()
+                })
+            }
+        }))
     }
 
     function goToCases() {

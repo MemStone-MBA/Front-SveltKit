@@ -97,7 +97,7 @@ body{
     width: 100vw;
     overflow: hidden;
     position: fixed;
-    z-index: 5000;
+    z-index: 50000;
     background-color: var(--color-darkgraymenu);
 }
 
@@ -149,12 +149,30 @@ body{
 
 .case{
     transition: 0.2s all ease-in-out;
+    box-shadow: -3px -3px 7px  rgba(94, 104, 121, 0.345), 3px 3px 5px rgba(94, 104, 121, 0.145);
+    background: rgba(94, 104, 121, 0.145);
+    max-width: 20vw;
+    margin: 10px;
 }
 
+.cardBuy:hover{
+    transition: 0.2s all ease-in-out;
+    box-shadow: -3px -3px 7px  rgba(94, 104, 121, 0.345), 3px 3px 5px rgba(94, 104, 121, 0.145);
+    background: rgba(94, 104, 121, 0.145);
+    cursor: pointer;
+}
+
+.caseBack {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    width: 30vw;
+}
+/* 
 .case:hover{
     box-shadow: -3px -3px 7px  rgba(94, 104, 121, 0.345), 3px 3px 5px rgba(94, 104, 121, 0.145);
     background: rgba(94, 104, 121, 0.145);
-}
+} */
 
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
@@ -176,4 +194,8 @@ body{
     background-color: #e7c318;
     border-radius: 7px;
     border: 1px solid #2e2e2e;
+}
+
+.hide {
+    display: none;
 }

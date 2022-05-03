@@ -7,12 +7,21 @@ import OfferDetail from "../components/offerDetail.svelte";
 import { onMount } from "svelte";
 import { isLog, user, userCasesWritable } from './auth';
 import { onDestroy } from 'svelte/internal';
+import FriendPopup ,{  show , hide }  from "../components/friendPopup.svelte";
+import {popupTextWritable, popupCloseWritable }  from '../lib/Popup.js';
 
 
 var CARDS_ID = []
 var CARDS = []
 var TIME_LEFT = ""
 var COINS = 0
+
+const price = {
+    "commun": 1,
+    "rare": 2,
+    "epic": 3,
+    "legendary": 4
+}
 
 var BUY_OPTIONS = [
     {
@@ -47,9 +56,6 @@ onMount(() => {
 
 })
 
-
-
-
 function getStoreCards(){
     io.emit("todayCard", {jwt:$user.jwt}, ((res) => {
         if(res.status) {
@@ -70,20 +76,12 @@ function getStoreCards(){
 
 function getOffers(){
     io.emit("getOffers", {jwt:$user.jwt}, ((res) => {
-      
-
        if(res.status != 200)
         return;
 
-
         offers = res?.offers;
-
-
     }))
 }
-
-
-
 
 function buyCoins(amount){
     io.emit("buyCoins", {user:$user, amount:amount}, ((res) => {
@@ -100,27 +98,44 @@ function goToMenu() {
     goto('/')
 }
 
-function buyUserCases(id){
-
-    let offre = {
-        price:1000,
-        caseId:id,
-        number:4
-    }
-
-        io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
-
-            if (Array.isArray(res)){
-                res?.forEach(boxPurchased=>{
-                    if(boxPurchased.status != 200) {
-                        return
-                    }
-                })
-
+function buyCard(card, price) {
+    io.emit("buyUserCard", {jwt:$user.jwt,user: $user, idUser:$user.id,idCard:card.id, price: price}, ((res) => {
+        if(res.error) {
+            switch(res.error) {
+                case "same":
+                    show(true);
+                    popupTextWritable.update(popup => popup= `You have already this card`)
+                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+                        hide()
+                    })
+                    break;
+                case "coins":
+                    show(true);
+                    popupTextWritable.update(popup => popup= `You dont have enough coins`)
+                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+                        hide()
+                    })
+                    break;
+                default:
+                    show(true);
+                    popupTextWritable.update(popup => popup= `Error while buying`)
+                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+                        hide()
+                    })
+                    break
             }
-            console.log(`${res.length} box purchased`)
-        }))
+            return
+        }
 
+        show(true);
+        popupTextWritable.update(popup => popup= `Card buy !`)
+        popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+            hide()
+        })
+
+        $user.coins = res.coins
+        COINS = res.coins
+    }))
 }
 
 </script>
@@ -133,11 +148,11 @@ function buyUserCases(id){
         <div class="flex flex-row w-full pb-20 mt-8 h-auto">
 
             {#each CARDS as card}
-                <div class="flex-1">
+                <div class="flex-1 cardBuy" on:click={() => { buyCard(card, price[card.rarety] * 500) }}>
                     <img alt="{card.path}" src="http://51.210.104.99:8001/getImage/{card.path}" class='journeyCard'>
                     <div class="price mt-2">
                         <div class="textprice">
-                            200
+                            {price[card.rarety] * 500}
                         </div>
                         <img src='static/assets/coin.svg' class='coin mt-1'>
                     </div>

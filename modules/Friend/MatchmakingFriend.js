@@ -268,6 +268,7 @@ export function send_fight(_id1,_id2,data,jwt){
         var id = `GAME_${user1.id}_${user2.id}`
 
         var GAME = {
+            "rounds":0,
             "killFeed" : [],
             "id": id,
             "maxMana": MAX_MANA,
@@ -275,6 +276,7 @@ export function send_fight(_id1,_id2,data,jwt){
             "turn": user1.id,
             "listIds": [user1.id, user2.id],
             [user1.id]: {
+                rounds: 0,
                 maxLife: LIFE,
                 user: user1,
                 deck: deck_user1,
@@ -284,6 +286,7 @@ export function send_fight(_id1,_id2,data,jwt){
                 playGround: []
             },
             [user2.id]: {
+                rounds: 0,
                 maxLife: LIFE,
                 user: user2,
                 deck: deck_user2,
@@ -292,16 +295,21 @@ export function send_fight(_id1,_id2,data,jwt){
                 manaRegen: MANA_REGEN,
                 playGround: []
             },
-            changeTurn : () => {
-                this.turn = this.turn == user1.id ? user2.id : user1.id;
-            }
         }
 
         sockets[id] = GAME
 
         data.game = GAME;
+
+        console.log(data.game)
+
         sockets[_id1].emit('matchmakingFriend-fight',(data))
         sockets[_id2].emit('matchmakingFriend-fight',(data))
+
+        // setInterval(() => {
+        //     sockets[_id1].emit('timerDown', null)
+        //     sockets[_id2].emit('timerDown', null)
+        // }, 1000)
     })
     
 }

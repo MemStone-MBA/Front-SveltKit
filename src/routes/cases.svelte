@@ -47,32 +47,28 @@ function goToMenu() {
 }
 </script>
 
+<style>
+    .casesContainer {
+        margin-bottom: 25vh;
+    }
+</style>
+
 <div class="backgroundsize colorbackmenu flex flex-col justify-between">
     <div>
         <div class="title_journeyCard mt-8">
             Vos packs
         </div>
 
-        <div class="flex flex-row flex-wrap w-full mt-8 h-auto">
-
+        <div class="casesContainer flex flex-row flex-wrap w-full h-auto">
             {#each $userCasesWritable.cases as caseData}
-
                 <CaseDetail bind:baseCase={caseData}></CaseDetail>
-
-
-
             {/each}
-
-
-
-
-
         </div>
 
 
     </div>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center caseBack">
         <div on:click={goToMenu} class="ButtonRetour buttonDetail p-4 m-6">Retour</div>
     </div>
 </div>

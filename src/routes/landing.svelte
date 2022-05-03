@@ -6,13 +6,14 @@
 	import {Scene, Matrix4,Clock ,WebGLRenderer , OrthographicCamera, PlaneGeometry,Mesh,MeshBasicMaterial,CanvasTexture} from 'three'
 	// npm uninstall @three-ts/orbit-controls
 	import { OrbitControls} from '@three-ts/orbit-controls'
+	import { goto } from '$app/navigation';
 
 	onMount(async () => {
 
 		var backCard;
 		var frontCard;
 
-		var card_front = "./static/assets/card_front.png"
+		var card_front = "http://51.210.104.99:8001/getImage/baby%20yoda.png"
 		var card_back = "./static/assets/card_back.png"
 
 		var camera, controls, scene, renderer;
@@ -113,6 +114,8 @@
 				ctx.drawImage( img, 0, 0 );
 
 				var mat=new MeshBasicMaterial();
+				mat.transparent = true;
+          		mat.opacity = 1
 				mat.map = new CanvasTexture(canvas);
 
 				cb(mat)
@@ -125,6 +128,10 @@
 
 
 	})
+
+	function goToGame() {
+		goto('/')
+	}
 
 
 </script>
@@ -141,10 +148,10 @@
 				<div class='uppercase p-4 text-white cursor-pointer'>
 					Actualités
 				</div>
-				<div class='uppercase p-4 pr-16 pl-16 text-white cursor-pointer'>
+				<div on:click={goToGame} class='uppercase p-4 pr-16 pl-16 text-white cursor-pointer'>
 					Mon Compte
 				</div>
-				<div class='title-btn uppercase pr-16 pl-16 p-1 text-black bg-amber-300 cursor-pointer'>
+				<div on:click={goToGame} class='title-btn uppercase pr-16 pl-16 p-1 text-black bg-amber-300 cursor-pointer'>
 					Jouer
 				</div>
 			</div >
@@ -243,7 +250,7 @@
 	<div class='paragraph p-8'>
 
 	<a href='/'>
-		<div class='title-btn bottom-btn uppercase pr-16 pl-16 p-8 text-black bg-amber-300 cursor-pointer'>
+		<div style="width: 50vw; margin-top:50px;" class='title-btn bottom-btn uppercase pr-16 pl-16 p-8 text-black bg-amber-300 cursor-pointer'>
 			Jouer
 		</div>
 	</a>

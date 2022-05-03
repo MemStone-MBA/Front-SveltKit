@@ -8,5 +8,7 @@ export const popupAcceptWritable = writable(() => {
     })
 export const popupDenyWritable = writable(() => {
 
-    }
-)
+    })
+export const popupCloseWritable = writable(() => {
+
+    })

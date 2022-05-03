@@ -7,11 +7,16 @@ import {
 	getAllCards,
 	getCardsByUser,
 	getDeckByUser,
+	getUserByUsername,
 	login,
 	register,
 	saveDeckByUser,
 	getFriendsByUser,
-	buyCoins, me
+	buyCoins, 
+	me,
+	updateUserMMR,
+	getCaseById,
+	createDeck
 } from './database.js';
 import { MF_Fight, MF_Cancel, MF_Initialize, send_fight} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
@@ -24,6 +29,8 @@ export function SocketServer(server) {
 
 	const io = new Server(server.httpServer);
 	const matchMakingSearch = [];
+	var TODAY_CARD = {}
+
 	io.on('connection', (socket) => {
 		socket.on('login', (data) => {
 			login(data.mail, data.password, (res) => {
@@ -35,14 +42,11 @@ export function SocketServer(server) {
 						break;
 					case 200:
 
-
-
 						if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
 							console.log("already connected")
 							sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
 
 						}
-
 
 						socket = MF_Initialize(socket)
 						socket = CF_Initialize(socket,res.data)
@@ -52,7 +56,6 @@ export function SocketServer(server) {
 						sockets[res.data.id] = socket;
 						sockets[res.data.id].tabID = data.tabID
 						console.log(sockets[res.data.id].tabID)
-
 
 						socket.emit("login-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
 						break;
@@ -65,7 +68,6 @@ export function SocketServer(server) {
 		})
 
 		socket.on('login-check', (data,callback) => {
-
 
 			console.log(data)
 
@@ -80,13 +82,11 @@ export function SocketServer(server) {
 
 				if (result.status == 200){
 
-
 					if(sockets[res.data.id] != undefined && sockets[res.data.id].tabID != data.tabID){
 						console.log("already connected")
 						sockets[res.data.id].emit("login-err",({'status':ConnexionStatus.Replace}))
 
 					}
-
 
 					socket = MF_Initialize(socket)
 					socket = CF_Initialize(socket,res.data)
@@ -95,19 +95,39 @@ export function SocketServer(server) {
 
 					sockets[res.data.id] = socket;
 					sockets[res.data.id].tabID = data.tabID
-
 				}
 
-
 				callback(result)
-
 			})
 		})
 
 
 		socket.on('register', (data) => {
 			register(data.username, data.mail, data.password, (res) => {
-				socket.emit("register-res", res)
+
+				switch (res.status){
+					case 400:
+						socket.emit("register-res",({'status': ConnexionStatus.ErrorIds}))
+						break;
+					case 200:
+
+						socket = MF_Initialize(socket)
+						socket = CF_Initialize(socket,res.data)
+
+						console.log("connected : ", socket.username)
+
+						sockets[res.data.id] = socket;
+						sockets[res.data.id].tabID = data.tabID
+						console.log(sockets[res.data.id].tabID)
+
+						createDeck(res.data.jwt, res.data.id, () => {
+							socket.emit("register-res",({'status':ConnexionStatus.Connected,'response': res.data}) )
+						})
+						break;
+					default:
+						socket.emit("register-res",({'status':ConnexionStatus.Error}))
+						break;
+				}
 			})
 		})
 
@@ -129,6 +149,12 @@ export function SocketServer(server) {
 			})
 		})
 
+		socket.on('getCaseById', (data, cb) => {
+			getCaseById(data.jwt, data.caseId).then((res) => {
+				cb(res)
+			})
+		})
+
 		socket.on('cards-user', (data, cb) => {
 			getCardsByUser(data.jwt, data.userId).then((res) => {
 				cb(res)
@@ -137,6 +163,12 @@ export function SocketServer(server) {
 
 		socket.on('deck-user', (data, cb) => {
 			getDeckByUser(data.jwt, data.userId).then((res) => {
+				cb(res)
+			})
+		})
+		
+		socket.on('getUserByUsername', (data, cb) => {
+			getUserByUsername(data.jwt, data.username).then((res) => {
 				cb(res)
 			})
 		})
@@ -219,11 +251,34 @@ export function SocketServer(server) {
 			})
 		})
 
+		socket.on('buyUserCard', (data, cb) => {
+			if(data.user.coins >= data.price){
+				getCardsByUser(data.jwt, data.idUser).then((res) => {
+					var same = false
+					for (let card of res) {
+						if (card.idCard == data.idCard) {
+							same = true
+						}
+					}
+					if (!same) {
+						insertNewCardInventory(data.jwt, data.idUser, data.idCard).then(() => {
+							buyCoins(data.user, data.price * -1).then((res) => {
+								cb(res)
+							})
+						})
+					} else {
+						cb({"error": "same"})
+					}
+				})
+
+			} else {
+				cb({"error": "coins"})
+			}
+		})
 
 		socket.on('getOffers', (data, cb) => {
 			getOffers(data).then((res) => {
-
-					cb(res)
+				cb(res)
 			})
 	   })
 
@@ -269,6 +324,10 @@ export function SocketServer(server) {
 			}
 		})
 
+		const MMR_CHANGE = 50
+		const XP_CHANGE = 0.1
+		const COINS_CHANGE = Math.floor(Math.random() * (30 - 10 + 1)) + 10;
+
 		socket.on('sendDamageUser', (data) => {
 			let user = sockets[data.game.id][data.idUser]
 			user.life = user.life - data.damage
@@ -278,18 +337,63 @@ export function SocketServer(server) {
 			for(let idSocket of game.listIds) {
 				sockets[idSocket].emit('sendDamageUser', {game: game, idUser: data.idUser, user: user})
 			}
+
+			let idLooser = data.idUser
+			let idWinner = data.idAttacker
+
+			if(user.life <= 0) {
+				game.turn = "end"
+
+				updateUserMMR(data.user, idWinner, MMR_CHANGE, XP_CHANGE, COINS_CHANGE).then((res) => {
+					sockets[idWinner].emit('endGame', {game: game, user: res})
+				})
+				updateUserMMR(data.user, idLooser, -MMR_CHANGE, XP_CHANGE/2, 0).then((res) => {
+					sockets[idLooser].emit('endGame', {game: game, user: res})
+				})
+			}
 		})
 
 		socket.on('changeTurn', (data) => {
 			let game = sockets[data.game.id]
 			game.turn = game.turn == data.user1 ? data.user2 : data.user1;
 
+			game.rounds = game.rounds + 1;
+			game[data.user1].rounds = game[data.user1].rounds + 1
+
+			if(game[data.user1].rounds == game[data.user2].rounds) {
+				upMana(game, data)
+			}
+
 			for(let idSocket of game.listIds) {
 				sockets[idSocket].emit('changeTurn', game)
+				sockets[idSocket].emit('timerReset', null)
 			}
 		})
 
-		var TODAY_CARD = {}
+		function upMana(game, data) {
+			newManaUser(game[data.user1], game.maxMana)
+			newManaUser(game[data.user2], game.maxMana)
+
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('updateMana', game)
+			}
+		}
+
+		function newManaUser(user, maxMana) {
+			if(user.mana < maxMana) {
+				user.mana = user.mana + 1
+			}
+		}
+
+		socket.on('refreshMana', (data) => {
+			let game = sockets[data.game.id]
+
+			game[data.idUser].mana = game[data.idUser].mana - data.card.cost
+			
+			for(let idSocket of game.listIds) {
+				sockets[idSocket].emit('updateMana', game)
+			}
+		})
 
 		socket.on('todayCard', (data, cb) =>{
 			let dateNow = Date.now()

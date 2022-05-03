@@ -6,7 +6,7 @@
 <script>
     
 	import { onMount } from "svelte";
-	import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
+	import {popupTextWritable, popupAcceptWritable, popupDenyWritable, popupCloseWritable }  from '../lib/Popup.js';
 
 
 	let popup;
@@ -17,26 +17,42 @@
 	let popupText = "";
 	let popupAccept = ()=>{};
 	let popupDeny = ()=>{};
+	let popupClose = ()=>{};
 
 
 
-	 popupTextWritable.subscribe(value => {
+	popupTextWritable.subscribe(value => {
 		popupText = value;
 	}) 
 
-	 popupAcceptWritable.subscribe(value => {
+	popupAcceptWritable.subscribe(value => {
 		popupAccept = value;
 	}) 
 
-
-	 popupDenyWritable.subscribe(value => {
+	popupDenyWritable.subscribe(value => {
 		popupDeny = value;
+	}) 
+
+	popupCloseWritable.subscribe(value => {
+		popupClose = value;
 	}) 
 
 
 
-	show = () => {
+	show = (soloMode = false) => {
+		console.log(soloMode)
 		popup.classList.remove("popup-hide")
+		if(soloMode) {
+			document.querySelector('.popupButton1').classList.add("hide")
+			document.querySelector('.popupButton2').classList.add("hide")
+
+			document.querySelector('.popupButton3').classList.remove("hide")
+		} else {
+			document.querySelector('.popupButton3').classList.add("hide")
+
+			document.querySelector('.popupButton1').classList.remove("hide")
+			document.querySelector('.popupButton2').classList.remove("hide")
+		}
 	}
 
 	
@@ -61,7 +77,9 @@
 	<div on:click={popupDeny()} class='delay-500 uppercase w-1/5 text-center cursor-pointer popupButton popupButton2 m-4'>
 		deny
 	</div>
-
+	<div on:click={popupClose()} class='delay-500 uppercase w-1/5 text-center cursor-pointer popupButton popupButton3 m-4'>
+		accept
+	</div>
 
 </div>
 

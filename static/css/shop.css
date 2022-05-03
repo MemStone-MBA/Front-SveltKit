@@ -1,5 +1,7 @@
 .main_container {
     width: 70%;
+    max-height: 100vh;
+    overflow-y: scroll;
 }
 
 .title_journeyPack,

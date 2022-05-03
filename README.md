@@ -27,7 +27,7 @@ Front end use svelte.JS framework.
 `npm run dev`
 - Create .env with .env.example
 
-Access to server with [localhost:3000](http://localhost:3000
+Access to server with [localhost:3000](http://localhost:3000)
 
 ### Log Errors configuration
 Front end use log error system te prevent unknows errors

@@ -200,7 +200,7 @@
         <div id="world" ></div>
 
         <div class="flex justify-center">
-            <div on:click={goToMenu} disabled={!drawCardController} class="buttonSave buttonDetail p-4 m-6">Valider</div>
+            <div on:click={goToMenu} class="buttonSave buttonDetail p-4 m-6">Valider</div>
         </div>
    </div>
 </div>
