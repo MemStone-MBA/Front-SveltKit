@@ -8,7 +8,6 @@ import { io } from "$lib/realtime";
 import { user, dataMatch } from './auth';
 import Loader from '../components/loader.svelte';
 
-
     var txt = ""
 
     function cancelMatchmaking() {
@@ -39,8 +38,23 @@ import Loader from '../components/loader.svelte';
         goto('/fight')
     })
 
+
     onMount(() => {
         io.emit('matchmakingSearch', $user)
+
+        io.on("matchmakingFriend-fight",(res)=>{
+
+            console.log(res)
+            let actualUser = res.actualUser ;
+            let selectedUser = res.selectedUser;
+
+            $dataMatch = res
+            goto('/fight')
+
+            //console.log(res)
+        })
+
+
     })
 
     onDestroy(() => {

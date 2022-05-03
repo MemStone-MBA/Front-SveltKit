@@ -226,7 +226,7 @@ function send_duel(_id,data){
     sockets[_id].emit('matchmakingFriend-duel',(data))
 }
 
-function send_fight(_id1,_id2,data,jwt){
+export function send_fight(_id1,_id2,data,jwt){
     let user1 = {}
     let user2 = {}
     let deck_user1 = {}

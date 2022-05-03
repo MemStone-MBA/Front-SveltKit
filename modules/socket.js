@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import { LogsError } from './log.js'
-import {ConnexionStatus} from './Friend/Status.js';
+import { ConnexionStatus, MatchmakingStatus, Status } from './Friend/Status.js';
 import {
 	insertNewCardInventory,
 	getCardById,
@@ -13,7 +13,7 @@ import {
 	getFriendsByUser,
 	buyCoins, me
 } from './database.js';
-import { MF_Fight, MF_Cancel, MF_Initialize} from './Friend/MatchmakingFriend.js';
+import { MF_Fight, MF_Cancel, MF_Initialize, send_fight} from './Friend/MatchmakingFriend.js';
 import { CF_Connected, CF_Disconnected, CF_Initialize } from './Friend/ConnexionFriend.js';
 import { addUserCase, deleteUserCase, getUserCases, UC_buyUC, UC_GetUCs, UC_OpenUc } from './Cases/Users-Cases.js';
 import { draw } from './Utils.js';
@@ -166,14 +166,27 @@ export function SocketServer(server) {
 
 		socket.on('matchmakingSearch', (user) => {
 
+
 			if (matchMakingSearch.length > 0) {
 				var selectedPlayer = matchMakingSearch[matchMakingSearch.length - 1]
 				matchMakingSearch.splice(matchMakingSearch.length - 1, 1);
 
+				console.log("User : ", user)
+				console.log("Selected : ", selectedPlayer)
 				if (selectedPlayer.id != user.id) {
+					send_fight(user.id,selectedPlayer.id,{
+						'selectedUser': {
+							'id': user.id,
+							'status': Status.Connected,
+							'matchmakingStatus': MatchmakingStatus.InMatch
+						},
+						'actualUser': {
+							'id': selectedPlayer.id,
+							'status': Status.Connected,
+							'matchmakingStatus': MatchmakingStatus.InMatch
+						}
 
-					sockets[selectedPlayer.id].emit('matchmakingSearch', { actualUser: selectedPlayer, selectedUser: user })
-					sockets[user.id].emit('matchmakingSearch', { actualUser: user, selectedUser: selectedPlayer })
+					},user.jwt)
 
 					for (let i = 0; i < matchMakingSearch.length; i++) {
 						if (matchMakingSearch[i].id == selectedPlayer.id) {
