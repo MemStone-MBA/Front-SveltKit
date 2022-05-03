@@ -141,6 +141,11 @@
         goto("/login")
     }
 
+    onDestroy(()=>{
+        popupAcceptWritable.subscribe(value => { })
+        popupDenyWritable.subscribe(value => { })
+        popupTextWritable.subscribe(value => { })
+    })
 </script>
 
 

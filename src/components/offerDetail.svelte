@@ -7,6 +7,7 @@
 	import FriendPopup ,{  show , hide }  from "./friendPopup.svelte";
 	import { popupAcceptWritable, popupDenyWritable, popupTextWritable, popupCloseWritable } from '$lib/Popup.js';
 	import Modale from "./modale.svelte";
+	import { onDestroy } from 'svelte/internal';
 
 	export let offerData;
 
@@ -62,6 +63,11 @@
 				hide();
 		})
 	}
+	onDestroy(()=>{
+		popupAcceptWritable.subscribe(value => { })
+		popupDenyWritable.subscribe(value => { })
+		popupTextWritable.subscribe(value => { })
+	})
 
 	function showModale() {
 		openModale = true

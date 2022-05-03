@@ -46,6 +46,7 @@
                 if(res.status) {
                     return
                 }
+                friends = []
                 res?.forEach(friend =>{
                
                     let friendData = {name:friend.username, status:Status.Disconnected ,friendId:friend.id}
@@ -85,11 +86,16 @@
     }
 
     function AddFriend(){
-        io.emit("getUserByUsername",{jwt: $user.jwt, userID: $user.id, username: username}, (res) => {
+        let haveFriend = false
+        friends.forEach(element => {
+            if(element.name == username)
+                haveFriend = true
+        });
+        if(haveFriend){
+            io.emit("getUserByUsername",{jwt: $user.jwt, userID: $user.id, username: username}, (res) => {
             GetFriends()
         })
-
-        
+        }        
     }
 
     export function ToggleMenu(){
