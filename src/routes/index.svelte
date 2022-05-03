@@ -13,7 +13,8 @@
     import { goto } from '$app/navigation';
     import { io } from '$lib/realtime.ts';
     import { onDestroy } from 'svelte/internal';
-
+    import FriendPopup ,{  show , hide }  from "../components/friendPopup.svelte";
+    import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
 
 
     var userName;
@@ -108,7 +109,21 @@
     }
 
     function goToMM() {
-        goto("/matchmaking")
+        io.emit("deck-user", { jwt: $user.jwt, userId: $user.id }, ((res) => {
+            if(res[0].listCards.length > 0) {
+                goto("/matchmaking")
+            } else {
+                show();
+                popupTextWritable.update(popup => popup= `Please create a deck before matchmaking`)
+                popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+                    goto("/collection")
+                    hide()
+                })
+                popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+                    hide()
+                })
+            }
+        }))
     }
 
     function goToCases() {

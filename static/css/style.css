@@ -97,7 +97,7 @@ body{
     width: 100vw;
     overflow: hidden;
     position: fixed;
-    z-index: 5000;
+    z-index: 50000;
     background-color: var(--color-darkgraymenu);
 }
 
@@ -194,4 +194,8 @@ body{
     background-color: #e7c318;
     border-radius: 7px;
     border: 1px solid #2e2e2e;
+}
+
+.hide {
+    display: none;
 }

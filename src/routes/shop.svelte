@@ -7,6 +7,8 @@ import OfferDetail from "../components/offerDetail.svelte";
 import { onMount } from "svelte";
 import { isLog, user, userCasesWritable } from './auth';
 import { onDestroy } from 'svelte/internal';
+import FriendPopup ,{  show , hide }  from "../components/friendPopup.svelte";
+import {popupTextWritable, popupCloseWritable }  from '../lib/Popup.js';
 
 
 var CARDS_ID = []
@@ -98,36 +100,41 @@ function goToMenu() {
 
 function buyCard(card, price) {
     io.emit("buyUserCard", {jwt:$user.jwt,user: $user, idUser:$user.id,idCard:card.id, price: price}, ((res) => {
-        if(res == null) {
+        if(res.error) {
+            switch(res.error) {
+                case "same":
+                    show(true);
+                    popupTextWritable.update(popup => popup= `You have already this card`)
+                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+                        hide()
+                    })
+                    break;
+                case "coins":
+                    show(true);
+                    popupTextWritable.update(popup => popup= `You dont have enough coins`)
+                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+                        hide()
+                    })
+                    break;
+                default:
+                    show(true);
+                    popupTextWritable.update(popup => popup= `Error while buying`)
+                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+                        hide()
+                    })
+                    break
+            }
             return
         }
 
-        console.log(res)
+        show(true);
+        popupTextWritable.update(popup => popup= `Card buy !`)
+        popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+            hide()
+        })
 
         $user.coins = res.coins
         COINS = res.coins
-    }))
-}
-
-function buyUserCases(id){
-
-    let offre = {
-        price:1000,
-        caseId:id,
-        number:4
-    }
-
-    io.emit("buyUserCase", {jwt:$user.jwt,userId:$user.id,caseId:offre.caseId}, ((res) => {
-
-        if (Array.isArray(res)){
-            res?.forEach(boxPurchased=>{
-                if(boxPurchased.status != 200) {
-                    return
-                }
-            })
-
-        }
-        console.log(`${res.length} box purchased`)
     }))
 }
 

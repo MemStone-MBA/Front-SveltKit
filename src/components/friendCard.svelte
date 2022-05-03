@@ -49,14 +49,10 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 								checkUser(_=>{
 									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId, jwt:$user.jwt }) )
 								})
-
-								
-							
 							})
 
 							popupDenyWritable.update(denyFunction => denyFunction = ()=>{
 								checkUser(_=>{
-									
 									io.emit('matchmakingFriend-cancel', ({userId:friendId , userFriendId: $user.id}) )
 								})
 							})
@@ -172,7 +168,20 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	function fightClicked(){ 
 		popup.classList.remove("optionFriend-open")
 		checkUser(_=>{
-			io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId , jwt:$user.jwt}) )
+			io.emit("deck-user", { jwt: $user.jwt, userId: $user.id }, ((res) => {
+				if(res[0].listCards.length > 0) {
+					io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId , jwt:$user.jwt}) )
+				} else {
+					show();
+					popupTextWritable.update(popup => popup= `Please create a deck before matchmaking`)
+					popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+						goto("/collection")
+					})
+					popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+						hide()
+					})
+				}
+			}))
 		})
 
 		
