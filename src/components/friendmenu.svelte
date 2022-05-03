@@ -94,8 +94,8 @@
         // if(haveFriend){
             io.emit("getUserByUsername",{jwt: $user.jwt, userID: $user.id, username: username}, (res) => {
             GetFriends()
-        // })
-        }        
+        })
+        // }        
     }
 
     export function ToggleMenu(){
