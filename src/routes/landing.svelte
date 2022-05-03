@@ -130,7 +130,7 @@
 	})
 
 	function goToGame() {
-		goto('/')
+		goto('/login')
 	}
 
 
