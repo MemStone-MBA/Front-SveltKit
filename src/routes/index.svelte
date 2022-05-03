@@ -117,15 +117,15 @@
             if(res[0].listCards.length > 0) {
                 goto("/matchmaking")
             } else {
-                show();
-                popupTextWritable.update(popup => popup= `Please create a deck before matchmaking`)
-                popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
-                    goto("/collection")
-                    hide()
-                })
-                popupDenyWritable.update(denyFunction => denyFunction = ()=>{
-                    hide()
-                })
+                // show();
+                // popupTextWritable.update(popup => popup= `Please create a deck before matchmaking`)
+                // popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+                //     goto("/collection")
+                //     hide()
+                // })
+                // popupDenyWritable.update(denyFunction => denyFunction = ()=>{
+                //     hide()
+                // })
             }
         }))
     }

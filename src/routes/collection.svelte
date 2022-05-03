@@ -347,11 +347,11 @@
 
     function checkDisabled() {
       if(Boolean(cardsInDeck!=MAX_CARDS)) {
-        show(true);
-        popupTextWritable.update(popup => popup= `Please add at least 5 cards in your deck`)
-        popupCloseWritable.update(denyFunction => denyFunction = ()=>{
-            hide()
-        })
+        // show(true);
+        // popupTextWritable.update(popup => popup= `Please add at least 5 cards in your deck`)
+        // popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+        //     hide()
+        // })
       }
     }
 

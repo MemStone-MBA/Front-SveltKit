@@ -101,29 +101,29 @@ function goToMenu() {
 function buyCard(card, price) {
     io.emit("buyUserCard", {jwt:$user.jwt,user: $user, idUser:$user.id,idCard:card.id, price: price}, ((res) => {
         if(res.error) {
-            switch(res.error) {
-                case "same":
-                    show(true);
-                    popupTextWritable.update(popup => popup= `You have already this card`)
-                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
-                        hide()
-                    })
-                    break;
-                case "coins":
-                    show(true);
-                    popupTextWritable.update(popup => popup= `You dont have enough coins`)
-                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
-                        hide()
-                    })
-                    break;
-                default:
-                    show(true);
-                    popupTextWritable.update(popup => popup= `Error while buying`)
-                    popupCloseWritable.update(denyFunction => denyFunction = ()=>{
-                        hide()
-                    })
-                    break
-            }
+            // switch(res.error) {
+            //     case "same":
+            //         // show(true);
+            //         // popupTextWritable.update(popup => popup= `You have already this card`)
+            //         // popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+            //         //     hide()
+            //         // })
+            //         break;
+            //     case "coins":
+            //         show(true);
+            //         popupTextWritable.update(popup => popup= `You dont have enough coins`)
+            //         popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+            //             hide()
+            //         })
+            //         break;
+            //     default:
+            //         show(true);
+            //         popupTextWritable.update(popup => popup= `Error while buying`)
+            //         popupCloseWritable.update(denyFunction => denyFunction = ()=>{
+            //             hide()
+            //         })
+            //         break
+            // }
             return
         }
 
