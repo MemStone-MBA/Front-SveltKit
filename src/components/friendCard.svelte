@@ -7,6 +7,7 @@ import { goto } from '$app/navigation';
 import { Status, MatchmakingStatus } from "$lib/Status";
 import FriendPopup ,{  show , hide }  from "./friendPopup.svelte";
 import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../lib/Popup.js';
+import { onDestroy } from 'svelte/internal';
 
 	export let name
 	export let matchmakingStatus
@@ -18,6 +19,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	let friendCap;
 	let friendContainer;
 	onMount(() => {
+
 
 	
 		isLog((done) =>{    
@@ -44,7 +46,7 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
                         case MatchmakingStatus.IsWaited:
 							show();
 							popupTextWritable.update(popup => popup= `${name} is waiting you for a duel !`)
-							popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{ 
+						 	popupAcceptWritable.update(acceptFunction => acceptFunction = ()=>{
 
 								checkUser(_=>{
 									io.emit('matchmakingFriend-duel', ({userId:$user.id, userFriendId:friendId, jwt:$user.jwt }) )
@@ -109,6 +111,11 @@ import {popupTextWritable, popupAcceptWritable, popupDenyWritable }  from '../li
 	
     })
 
+onDestroy(()=>{
+	popupAcceptWritable.subscribe(value => { })
+	popupDenyWritable.subscribe(value => { })
+	popupTextWritable.subscribe(value => { })
+})
 	function checkStatus(status,callback){
 
 		if(status == null ||  typeof status !== 'string' ){
