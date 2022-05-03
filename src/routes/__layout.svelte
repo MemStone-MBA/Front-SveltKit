@@ -21,11 +21,14 @@
 
 		tabID = sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = Math.random();
 
-		if (!location.pathname.includes("/login")){
+		if (!location.pathname.includes("/login")  ){
 			let jwt =  localStorage.getItem('jwt') ? localStorage.getItem('jwt') : "";
 			io.emit("login-check", {jwt, tabID }, ((res) => {
 				if (res.status != 200){
-					logOut()
+					if (!location.pathname.includes("/landing")){
+						logOut()
+					}
+					
 				}
 				user.set(res.data);
 			}))
