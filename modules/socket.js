@@ -168,7 +168,7 @@ export function SocketServer(server) {
 		})
 		
 		socket.on('getUserByUsername', (data, cb) => {
-			getUserByUsername(data.jwt, data.username).then((res) => {
+			getUserByUsername(data.jwt, data.userID, data.username).then((res) => {
 				cb(res)
 			})
 		})

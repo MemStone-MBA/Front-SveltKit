@@ -85,9 +85,11 @@
     }
 
     function AddFriend(){
-        io.emit("getUserByUsername",{jwt: $user.jwt, username: username}, (res) => {
-            console.log(res)
+        io.emit("getUserByUsername",{jwt: $user.jwt, userID: $user.id, username: username}, (res) => {
+            GetFriends()
         })
+
+        
     }
 
     export function ToggleMenu(){
@@ -116,7 +118,7 @@
     </div>
     <div class="flex flex-row addFriend">
         <input type="text" class="inputFriend" bind:value={username}>
-        <div on:click={()=>{AddFriend()}}>Ajouter</div>
+        <div class="buttonAddFriend" on:click={()=>{AddFriend()}}>Ajouter</div>
     </div>  
     <div class="closeFriendMenu buttonDetail" on:click={()=>{ToggleMenu()}}>
         {#if open}
@@ -157,15 +159,30 @@
     .addFriend{
         justify-content: center;
         align-items: center;
+        margin: 20px;
+
     }
 
     .inputFriend{
-        width: 50%;
-        margin: 2% 2% 2% 10%;
+        width: 100%;
+        padding: 5px;
+        margin-right: 10px;
+        border-radius: 10px;
         background: rgba(196, 196, 196, 0.78);
         color: black;
     }
 
+    .buttonAddFriend {
+        border: 1px solid black;
+        padding: 5px;
+        border-radius: 10px;
+        background-color: black;
+    }
+
+    .buttonAddFriend:hover {
+        color: #e7c318;
+        cursor: pointer;
+    }
 </style>
 
 

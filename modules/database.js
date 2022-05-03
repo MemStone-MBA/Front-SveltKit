@@ -196,10 +196,11 @@ export const getUserById = async function(jwt, userId) {
     return response
 }
 
-export const getUserByUsername = async function(jwt, username) {
+export const getUserByUsername = async function(jwt,id, username) {
     let conf = await process;
-    var response = axios.get(  conf.env.URL+'users-friends/user/' +username, {
-        headers: { "Authorization": "Bearer " + jwt, handler : "users-friend.findUserFriendsByUsername"},
+    console.log(conf.env.URL+'users-friends/user/' +username +"/"+ id)
+    var response = axios.get(  conf.env.URL+'users-friends/user/' +username +"/"+ id, {
+        headers: { "Authorization": "Bearer " + jwt},
     }).then((res) => {
         return res.data
     }).catch(err => {
