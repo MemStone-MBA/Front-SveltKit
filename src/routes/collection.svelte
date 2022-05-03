@@ -10,7 +10,8 @@
     import { CanvasTexture,  Mesh,  MeshBasicMaterial, PerspectiveCamera, PlaneGeometry, Scene, WebGLRenderer, Group, Matrix4, Clock } from 'three';
     import { OrbitControls } from '@three-ts/orbit-controls';
     import FriendPopup ,{  show , hide }  from "../components/friendPopup.svelte";
-    import {popupTextWritable, popupCloseWritable }  from '../lib/Popup.js';
+    import { popupTextWritable, popupCloseWritable, popupAcceptWritable, popupDenyWritable } from '../lib/Popup.js';
+    import { onDestroy } from 'svelte/internal';
 
     //All existing cards
     var cards = []
@@ -354,6 +355,12 @@
       }
     }
 
+    onDestroy(()=>{
+      popupAcceptWritable.subscribe(value => { })
+      popupDenyWritable.subscribe(value => { })
+      popupTextWritable.subscribe(value => { })
+      popupCloseWritable.subscribe(value => { })
+    })
 
 </script>
 
