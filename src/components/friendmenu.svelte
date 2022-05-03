@@ -87,14 +87,14 @@
 
     function AddFriend(){
         let haveFriend = false
-        friends.forEach(element => {
-            if(element.name == username)
-                haveFriend = true
-        });
-        if(haveFriend){
+        // friends.forEach(element => {
+        //     if(element.name == username)
+        //         haveFriend = true
+        // });
+        // if(haveFriend){
             io.emit("getUserByUsername",{jwt: $user.jwt, userID: $user.id, username: username}, (res) => {
             GetFriends()
-        })
+        // })
         }        
     }
 
