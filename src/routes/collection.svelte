@@ -213,6 +213,13 @@
       cardsInDeck = cards.filter((card) => card.inDeck == true).length;
     }
 
+    const RARETY = {
+      "commun": 1,
+      "rare": 2,
+      "epic": 3,
+      "legendary": 4
+    }
+
     function bindCards(){
         checkUser(_=>{
         io.emit("cards", {jwt:$user.jwt}, ((res) => {
@@ -227,6 +234,22 @@
             }
 
             let myCardsId = res.map(card => { return card.idCard})
+
+            // cards.sort((a, b) => {
+            //   if (RARETY[a.rarety] > RARETY[b.rarety]) return 1;
+            //   if (RARETY[a.rarety] < RARETY[b.rarety]) return -1;
+            //   return 0;
+            // });
+
+            // sort cards by rarity and after by cost
+            cards.sort((a, b) => {
+              if (RARETY[a.rarety] > RARETY[b.rarety]) return 1;
+              if (RARETY[a.rarety] < RARETY[b.rarety]) return -1;
+              if (a.cost > b.cost) return 1;
+              if (a.cost < b.cost) return -1;
+              return 0;
+            });
+
             cards.filter(function(card) {
               if( myCardsId.includes(card.id)) {
                 card.owned = true;
