@@ -53,6 +53,12 @@
             userMMR = $user ? $user.mmr : 1080
             userIcon = $user ? $user.Icon : "avatar.svg"
 
+            if(userIcon.startsWith("http")) {
+                userIcon = userIcon
+            } else {
+                userIcon = `/static/assets/${userIcon}`
+            }
+
             try {
                 ratio = Math.round(($user.game_win+1) / ($user.game_lose+1) * 100) / 100
                 ratio = Math.round(ratio * 100) / 100
@@ -146,10 +152,8 @@
         popupDenyWritable.subscribe(value => { })
         popupTextWritable.subscribe(value => { })
     })
+
 </script>
-
-
-
 
 
 <div class="flex flex-row backgroundsize">
@@ -161,7 +165,7 @@
             <div class="m-4 ml-12 flex flex-row">
                 <div class="flex flex-col justify-end buttonDetail">
                     <div class="profilImage" on:click={logOut}>
-                        <img alt="Avatar" src="static/assets/{userIcon}" class="profil">
+                        <img alt="Avatar" src={userIcon} class="profil">
                     </div>
                 </div>  
                 <div class="flex flex-col ml-8 boxName justify-end">
