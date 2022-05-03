@@ -308,6 +308,12 @@ import { goto } from "$app/navigation";
 
     io.on('destroyCard', (data) => {
         let card = getCardUserPlayground(data.idUser, data.card.id)
+        if(data.idUser == actualUser.user.id) {
+            actualUser.deck[0].listCards.push(data.card)
+            setTimeout(() => {
+                curveCards()
+            },100)
+        }
         card.card = null
         updatePlayground(data.idUser, data.playground)
         deleteCardPlayground(data.idUser, data.card.id)
@@ -367,6 +373,8 @@ import { goto } from "$app/navigation";
                 HpMaxCard.appendChild(HpCard)
                 selectedFrame.appendChild(HpMaxCard)
 
+                io.emit("removeCardFromDeck", {game: game, idUser: actualUser.user.id, card: selectedCard})
+
                 io.emit('updateUserPlayground', {
                     id: game.id,
                     modifyId: actualUser.user.id,
@@ -377,6 +385,10 @@ import { goto } from "$app/navigation";
 
                 selectedCard = null
                 selectedFrame = null
+
+                setTimeout(() => {
+                    curveCards()
+                },100)
             }
         }
     }
