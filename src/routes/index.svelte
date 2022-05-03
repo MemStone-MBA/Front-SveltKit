@@ -26,6 +26,8 @@
     var ratio
     var circleDeg
 
+    var isDisabled = false
+
 
     onMount(() => {
 
@@ -81,6 +83,7 @@
 
         if (baseCase.count > 0){
 
+            isDisabled = true
 
             io.emit("openUserCase", {jwt:$user.jwt,userId:$user.id,cards:baseCase.cards, case:baseCase.userCases.shift()}, ((res,cardId) => {
 
@@ -89,6 +92,7 @@
                 }
                 userCasesWritable.set(res);
                 userCardObtained.set(cardId)
+                isDisabled = false
                 goto("/opening")
             }))
         }
@@ -207,7 +211,7 @@
                                     <div class="iconpack">
                                     </div>
                                 </div>
-                                <div on:click={openUserCases( $userCasesWritable.cases[0])} class="buttonOpen my-4 buttonDetail">
+                                <div on:click={openUserCases( $userCasesWritable.cases[0])} disabled={isDisabled} class="buttonOpen my-4 buttonDetail">
                                     Ouvrir
                                 </div>
                             </div>

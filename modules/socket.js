@@ -307,6 +307,16 @@ export function SocketServer(server) {
 			}
 		})
 
+		socket.on('removeCardFromDeck', (data) => {
+			let userDeck = sockets[data.game.id][data.idUser].deck[0].listCards
+
+			for(let i = 0; i < userDeck.length; i++) {
+				if(userDeck[i].id == data.card.id) {
+					userDeck.splice(i, 1)
+				}
+			}			
+		})
+
 		socket.on('destroyCard', (data) => {
 			let pg = sockets[data.game.id][data.idUser].playGround
 			let id = ""
@@ -318,6 +328,8 @@ export function SocketServer(server) {
 
 			let newCard = Object.entries(pg).filter((col) => { return col[1].id == id })[0][1]
 			let game = sockets[data.game.id]
+
+			sockets[data.game.id][data.idUser].deck[0].listCards.push(data.card)
 
 			for(let idSocket of game.listIds) {
 				sockets[idSocket].emit('destroyCard', {game: game, card: data.card, idUser: data.idUser, idBoard: id, playground: pg})
